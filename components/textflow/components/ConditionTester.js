@@ -23,79 +23,187 @@ export default function ConditionTester() {
   };
 
   return (
-    <div className="space-y-3">
-      <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-4 border border-indigo-200/50">
-        <div className="text-xs font-semibold text-indigo-700 mb-2 flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+    <div className="space-y-3 condition-tester">
+      <style dangerouslySetInnerHTML={{__html: `
+        .condition-tester .monaco-editor, .condition-tester .monaco-editor .monaco-editor-background {
+          background: transparent !important;
+        }
+        .condition-tester .monaco-editor .margin {
+          background: transparent !important;
+        }
+        .condition-tester .monaco-editor .monaco-scrollable-element {
+          background: transparent !important;
+        }
+      `}} />
+      <div 
+        className="rounded-xl p-4 backdrop-blur"
+        style={{
+          background: 'rgba(255, 255, 255, 0.04)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)'
+        }}
+      >
+        <div className="text-xs font-semibold text-white mb-2 flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
           JMESPath Expression
         </div>
-        <div className="bg-white rounded-lg border border-indigo-200/50 overflow-hidden">
+        <div 
+          className="rounded-lg overflow-hidden"
+          style={{
+            background: 'rgba(255, 255, 255, 0.04)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
+          }}
+        >
           <Editor 
             height="90px" 
             defaultLanguage="javascript" 
             value={expr} 
             onChange={(v)=>setExpr(v || "")} 
+            theme="vs-dark"
             options={{ 
               minimap:{enabled:false}, 
               fontSize:12,
               lineNumbers: "off",
               scrollBeyondLastLine: false,
-            }} 
+              scrollbar: {
+                vertical: 'hidden',
+                horizontal: 'hidden',
+                useShadows: false,
+                verticalHasArrows: false,
+                horizontalHasArrows: false,
+              },
+              overviewRulerLanes: 0,
+              hideCursorInOverviewRuler: true,
+            }}
+            beforeMount={(monaco) => {
+              monaco.editor.defineTheme('custom-dark', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [],
+                colors: {
+                  'editor.background': '#00000000',
+                  'editor.foreground': '#FFFFFF',
+                }
+              });
+            }}
+            onMount={(editor, monaco) => {
+              monaco.editor.setTheme('custom-dark');
+            }}
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-4 border border-gray-200/50">
-        <div className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-gray-500"></span>
+      <div 
+        className="rounded-xl p-4 backdrop-blur"
+        style={{
+          background: 'rgba(255, 255, 255, 0.04)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)'
+        }}
+      >
+        <div className="text-xs font-semibold text-white mb-2 flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
           Input JSON
         </div>
-        <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+        <div 
+          className="rounded-lg overflow-hidden"
+          style={{
+            background: 'rgba(255, 255, 255, 0.04)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
+          }}
+        >
           <Editor 
             height="120px" 
             defaultLanguage="json" 
             value={jsonIn} 
             onChange={(v)=>setJsonIn(v || "{}")} 
+            theme="vs-dark"
             options={{ 
               minimap:{enabled:false}, 
               fontSize:12,
               lineNumbers: "off",
               scrollBeyondLastLine: false,
-            }} 
+              scrollbar: {
+                vertical: 'hidden',
+                horizontal: 'hidden',
+                useShadows: false,
+                verticalHasArrows: false,
+                horizontalHasArrows: false,
+              },
+              overviewRulerLanes: 0,
+              hideCursorInOverviewRuler: true,
+            }}
+            beforeMount={(monaco) => {
+              monaco.editor.defineTheme('custom-dark', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [],
+                colors: {
+                  'editor.background': '#00000000',
+                  'editor.foreground': '#FFFFFF',
+                }
+              });
+            }}
+            onMount={(editor, monaco) => {
+              monaco.editor.setTheme('custom-dark');
+            }}
           />
         </div>
       </div>
 
       <button 
-        className="w-full px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2" 
+        className="w-full px-3 py-1.5 text-xs font-semibold transition-all rounded-lg flex items-center justify-center gap-1.5" 
         onClick={run}
+        style={{
+          background: 'rgba(99, 102, 241, 0.2)',
+          color: '#C7D2FE',
+          border: '1px solid rgba(99, 102, 241, 0.3)'
+        }}
       >
-        <Play className="w-4 h-4" />
+        <Play className="w-3 h-3" />
         Test Condition
       </button>
 
       {result && (
-        <div className={`rounded-xl p-4 border ${
-          error 
-            ? 'bg-red-50 border-red-200/50' 
-            : 'bg-emerald-50 border-emerald-200/50'
-        }`}>
+        <div 
+          className="rounded-xl p-4 backdrop-blur"
+          style={{
+            background: error 
+              ? 'rgba(220, 38, 38, 0.1)' 
+              : 'rgba(16, 185, 129, 0.1)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: `1px solid ${error ? 'rgba(220, 38, 38, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`
+          }}
+        >
           <div className="flex items-center gap-2 mb-2">
             {error ? (
               <>
-                <XCircle className="w-4 h-4 text-red-600" />
-                <span className="text-xs font-semibold text-red-700">Error</span>
+                <XCircle className="w-4 h-4 text-red-400" />
+                <span className="text-xs font-semibold text-red-300">Error</span>
               </>
             ) : (
               <>
-                <CheckCircle className="w-4 h-4 text-emerald-600" />
-                <span className="text-xs font-semibold text-emerald-700">Result</span>
+                <CheckCircle className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-semibold text-emerald-300">Result</span>
               </>
             )}
           </div>
-          <pre className={`text-xs font-mono overflow-auto p-3 rounded-lg ${
-            error ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'
-          }`}>
+          <pre 
+            className="text-xs font-mono overflow-auto p-3 rounded-lg text-white"
+            style={{
+              background: error 
+                ? 'rgba(220, 38, 38, 0.15)' 
+                : 'rgba(16, 185, 129, 0.15)',
+              border: `1px solid ${error ? 'rgba(220, 38, 38, 0.2)' : 'rgba(16, 185, 129, 0.2)'}`
+            }}
+          >
             {result}
           </pre>
         </div>

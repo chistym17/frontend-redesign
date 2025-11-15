@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Mic2, CheckCircle2, ShoppingCart, Gift, AlertCircle, X } from "lucide-react";
 
 /* --------------------------  CONFIG  -------------------------- */
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://176.9.16.194:5403/api";
 const WEBRTC_OFFER_URL = process.env.NEXT_PUBLIC_WEBRTC_URL || "http://localhost:8000/api/webrtc/offer";
 
 /* -----------------------  MAIN COMPONENT  --------------------- */

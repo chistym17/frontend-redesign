@@ -1,18 +1,18 @@
 // components/textflow/components/ConfigPanel.js - FIXED TOGGLE ISSUE
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTextflowStore } from "../hooks/useTextflowStore";
 import Editor from "@monaco-editor/react";
 import ConditionTester from "./ConditionTester";
 import { 
   Settings, Trash2, Copy, Play, Target, Globe, Brain, Zap, GitBranch, 
   Layers, Clock, Package, FileJson, Webhook, Calendar, CheckCircle, 
-  XCircle, ChevronDown, Eye, EyeOff, Plug, Shield, Activity 
+  XCircle, ChevronDown, Eye, EyeOff, Plug, Shield, Activity, X
 } from "lucide-react";
 import { 
   getWebhookUrl, testWebhook, createSchedule, deleteSchedule, listCredentials 
 } from "../api/textflowApi";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://esapdev.xyz:7000/agentbuilder/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://176.9.16.194:5403/api';
 
 const ICON_MAP = {
   start: Play,
@@ -87,25 +87,31 @@ function ConnectorSelector({ selectedConnectorId, onSelect, assistantId }) {
   return (
     <div className="space-y-2">
       <label className="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
-        <Plug className="w-4 h-4 text-indigo-400" />
+        <Plug className="w-4 h-4 text-emerald-400" />
         API Connector
       </label>
       
       {selectedConnector ? (
-        <div className="bg-indigo-950/30 border border-indigo-800/50 rounded-lg p-3">
+        <div 
+          className="rounded-lg p-3"
+          style={{
+            background: 'rgba(255, 255, 255, 0.06)',
+            border: '1px solid rgba(255, 255, 255, 0.12)'
+          }}
+        >
           <div className="flex items-start justify-between mb-2">
             <div className="flex-1">
-              <div className="font-medium text-indigo-100">{selectedConnector.name}</div>
-              <div className="text-xs text-indigo-300/70">{selectedConnector.slug}</div>
+              <div className="font-medium text-white">{selectedConnector.name}</div>
+              <div className="text-xs text-gray-400">{selectedConnector.slug}</div>
             </div>
             <button
               onClick={() => onSelect(null)}
-              className="text-indigo-400 hover:text-indigo-300 text-xs"
+              className="text-emerald-400 hover:text-emerald-300 text-xs"
             >
               Change
             </button>
           </div>
-          <div className="flex items-center gap-3 text-xs text-indigo-300/80">
+          <div className="flex items-center gap-3 text-xs text-gray-400">
             <span>{selectedConnector.spec?.endpoints?.length || 0} endpoints</span>
             {selectedConnector.validated && (
               <span className="flex items-center gap-1 text-emerald-400">
@@ -118,7 +124,11 @@ function ConnectorSelector({ selectedConnectorId, onSelect, assistantId }) {
       ) : (
         <button
           onClick={() => setShowPicker(true)}
-          className="w-full px-3 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-sm text-gray-300 hover:bg-gray-800 transition-all flex items-center justify-center gap-2"
+          className="w-full px-3 py-2.5 rounded-lg text-sm text-white transition-all flex items-center justify-center gap-2"
+          style={{
+            background: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid rgba(255, 255, 255, 0.12)'
+          }}
         >
           <Plug className="w-4 h-4" />
           Select Connector
@@ -128,7 +138,15 @@ function ConnectorSelector({ selectedConnectorId, onSelect, assistantId }) {
       {/* Connector Picker Modal */}
       {showPicker && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-gray-900 rounded-xl border border-gray-700 shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-auto p-6">
+          <div 
+            className="rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-auto p-6"
+            style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.12)'
+            }}
+          >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-white">Select Connector</h3>
               <button
@@ -158,7 +176,11 @@ function ConnectorSelector({ selectedConnectorId, onSelect, assistantId }) {
                       onSelect(connector);
                       setShowPicker(false);
                     }}
-                    className="w-full p-3 bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-indigo-600 rounded-lg text-left transition-all"
+                    className="w-full p-3 rounded-lg text-left transition-all"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.06)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)'
+                  }}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -202,7 +224,13 @@ function EndpointSelector({ connector, selectedEndpointId, onSelect }) {
       <label className="text-xs font-semibold text-gray-300">Endpoint</label>
       
       {selectedEndpoint ? (
-        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+        <div 
+          className="rounded-lg p-3"
+          style={{
+            background: 'rgba(255, 255, 255, 0.06)',
+            border: '1px solid rgba(255, 255, 255, 0.12)'
+          }}
+        >
           <div className="flex items-start justify-between mb-2">
             <div className="flex-1">
               <div className="font-medium text-gray-100">{selectedEndpoint.name}</div>
@@ -212,7 +240,7 @@ function EndpointSelector({ connector, selectedEndpointId, onSelect }) {
             </div>
             <button
               onClick={() => setShowPicker(true)}
-              className="text-indigo-400 hover:text-indigo-300 text-xs"
+              className="text-emerald-400 hover:text-emerald-300 text-xs"
             >
               Change
             </button>
@@ -233,7 +261,15 @@ function EndpointSelector({ connector, selectedEndpointId, onSelect }) {
       {/* Endpoint Picker Modal */}
       {showPicker && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-gray-900 rounded-xl border border-gray-700 shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-auto p-6">
+          <div 
+            className="rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-auto p-6"
+            style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.12)'
+            }}
+          >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-white">Select Endpoint</h3>
               <button
@@ -252,7 +288,11 @@ function EndpointSelector({ connector, selectedEndpointId, onSelect }) {
                     onSelect(endpoint);
                     setShowPicker(false);
                   }}
-                  className="w-full p-3 bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-indigo-600 rounded-lg text-left transition-all"
+                  className="w-full p-3 rounded-lg text-left transition-all"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.06)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)'
+                  }}
                 >
                   <div className="flex items-start gap-3">
                     <span className={`px-2 py-1 rounded text-xs font-mono font-semibold ${
@@ -310,7 +350,11 @@ function EndpointParametersEditor({ endpoint, params, onChange }) {
                 value={params[param.name] || ''}
                 onChange={(e) => onChange({ ...params, [param.name]: e.target.value })}
                 placeholder={`{{variable}} or literal value`}
-                className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white text-sm focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 rounded-lg text-white text-sm transition-colors"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)'
+                }}
               />
               {param.description && (
                 <div className="text-xs text-gray-600">{param.description}</div>
@@ -335,7 +379,11 @@ function EndpointParametersEditor({ endpoint, params, onChange }) {
                 value={params[param.name] || ''}
                 onChange={(e) => onChange({ ...params, [param.name]: e.target.value })}
                 placeholder={param.default || `{{variable}} or value`}
-                className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white text-sm focus:border-indigo-500 transition-colors"
+                className="w-full px-3 py-2 rounded-lg text-white text-sm transition-colors"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)'
+                }}
               />
             </div>
           ))}
@@ -346,7 +394,15 @@ function EndpointParametersEditor({ endpoint, params, onChange }) {
       {hasBody && (
         <div className="space-y-2">
           <label className="text-xs font-semibold text-gray-300">Request Body (JSON)</label>
-          <div className="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden">
+          <div 
+            className="rounded-lg overflow-hidden"
+            style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}
+          >
             <Editor
               height="150px"
               defaultLanguage="json"
@@ -365,9 +421,100 @@ function EndpointParametersEditor({ endpoint, params, onChange }) {
                 fontSize: 12,
                 lineNumbers: "off",
                 scrollBeyondLastLine: false,
+                scrollbar: {
+                  vertical: 'hidden',
+                  horizontal: 'hidden',
+                  useShadows: false,
+                  verticalHasArrows: false,
+                  horizontalHasArrows: false,
+                },
+                overviewRulerLanes: 0,
+                hideCursorInOverviewRuler: true,
+              }}
+              beforeMount={(monaco) => {
+                monaco.editor.defineTheme('custom-dark', {
+                  base: 'vs-dark',
+                  inherit: true,
+                  rules: [],
+                  colors: {
+                    'editor.background': '#00000000',
+                    'editor.foreground': '#FFFFFF',
+                  }
+                });
+              }}
+              onMount={(editor, monaco) => {
+                monaco.editor.setTheme('custom-dark');
               }}
             />
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// CUSTOM SELECT DROPDOWN COMPONENT
+// ============================================================================
+
+function CustomSelectDropdown({ value, options, onChange }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={dropdownRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-2 py-1 text-xs rounded-lg transition-all text-white text-left flex items-center justify-between"
+        style={{
+          background: 'rgba(255, 255, 255, 0.08)',
+          border: '1px solid rgba(255, 255, 255, 0.12)'
+        }}
+      >
+        <span className="capitalize">{value}</span>
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {isOpen && (
+        <div
+          className="absolute z-50 w-full mt-1 rounded-lg shadow-lg overflow-hidden"
+          style={{
+            background: '#2D3748',
+            border: '1px solid rgba(255, 255, 255, 0.12)'
+          }}
+        >
+          {options.map((option) => (
+            <button
+              key={option}
+              type="button"
+              onClick={() => {
+                onChange(option);
+                setIsOpen(false);
+              }}
+              className="w-full px-2 py-1.5 text-left text-xs text-white hover:bg-emerald-500/20 transition-colors capitalize"
+              style={{
+                background: value === option 
+                  ? 'rgba(19, 245, 132, 0.2)' 
+                  : 'transparent',
+                color: value === option ? '#9EFBCD' : '#FFFFFF'
+              }}
+            >
+              {option}
+            </button>
+          ))}
         </div>
       )}
     </div>
@@ -454,7 +601,7 @@ function TriggerConfig({ node, assistantId }) {
 
   if (!assistantId) {
     return (
-      <div className="space-y-3 pt-3 border-t border-gray-700/50">
+      <div className="space-y-3 pt-2">
         <div className="bg-yellow-950/40 border border-yellow-800/60 rounded-lg p-3 backdrop-blur">
           <div className="text-xs text-yellow-300 font-medium">⚠️ No assistant ID available</div>
           <div className="text-xs text-yellow-300/70 mt-1">Trigger configuration requires a valid assistant ID.</div>
@@ -464,7 +611,7 @@ function TriggerConfig({ node, assistantId }) {
   }
 
   return (
-    <div className="space-y-3 pt-3 border-t border-gray-700/50">
+    <div className="space-y-2 pt-2">
       <div className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Trigger Configuration</div>
 
       {triggerKind === "webhook" && (
@@ -488,7 +635,13 @@ function TriggerConfig({ node, assistantId }) {
                     type="text"
                     value={webhookUrl}
                     readOnly
-                    className="flex-1 px-3 py-2 text-xs bg-gray-900/50 border border-gray-700 rounded-lg text-gray-300 font-mono hover:bg-gray-900/80 transition-colors"
+                    className="flex-1 px-3 py-2 text-xs rounded-lg text-white font-mono transition-colors"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      backdropFilter: 'blur(10px)',
+                      WebkitBackdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)'
+                    }}
                   />
                   <button
                     onClick={handleCopyWebhook}
@@ -502,12 +655,26 @@ function TriggerConfig({ node, assistantId }) {
             )}
           </div>
 
-          <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50 backdrop-blur">
+          <div 
+            className="rounded-lg p-4 backdrop-blur"
+            style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
+            }}
+          >
             <label className="text-xs font-semibold text-gray-300 block mb-3">Test Webhook</label>
             <textarea
               value={testPayload}
               onChange={(e) => setTestPayload(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-gray-900/50 border border-gray-700 rounded-lg text-gray-300 font-mono resize-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-600 transition-all"
+              className="w-full px-3 py-2 text-xs rounded-lg text-white font-mono resize-none transition-all"
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}
               rows={3}
             />
             <button
@@ -536,7 +703,13 @@ function TriggerConfig({ node, assistantId }) {
               type="text"
               value={cronExpression}
               onChange={(e) => setCronExpression(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-gray-900/50 border border-gray-700 rounded-lg text-gray-300 font-mono focus:ring-2 focus:ring-purple-500/50 focus:border-purple-600 transition-all"
+              className="w-full px-3 py-2 text-xs rounded-lg text-white font-mono transition-all"
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}
               placeholder="0 9 * * *"
             />
             <div className="mt-3 text-[10px] text-purple-300/80 space-y-1 bg-purple-950/30 p-2 rounded border border-purple-800/30">
@@ -565,13 +738,29 @@ function TriggerConfig({ node, assistantId }) {
             </button>
           </div>
           {scheduleStatus && (
-            <div className="text-xs text-center py-2 text-gray-300 bg-gray-800/50 rounded-lg border border-gray-700/50">{scheduleStatus}</div>
+            <div 
+              className="text-xs text-center py-2 text-gray-300 rounded-lg"
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}
+            >{scheduleStatus}</div>
           )}
         </div>
       )}
 
       {triggerKind === "manual" && (
-        <div className="bg-gray-800/50 rounded-lg p-4 text-xs text-gray-400 border border-gray-700/50 backdrop-blur">
+        <div 
+          className="rounded-lg p-4 text-xs text-gray-400 backdrop-blur"
+          style={{
+            background: 'rgba(255, 255, 255, 0.04)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
+          }}
+        >
           Manual trigger — executes when explicitly called via API or editor.
         </div>
       )}
@@ -584,7 +773,7 @@ function TriggerConfig({ node, assistantId }) {
 // ============================================================================
 
 export default function ConfigPanel({ assistantId }) {
-  const { flow, selection, setNodes } = useTextflowStore();
+  const { flow, selection, setNodes, setSelection } = useTextflowStore();
   const node = flow.nodes.find((n) => n.id === selection);
   const [config, setConfig] = useState({});
   const [activeTab, setActiveTab] = useState('config');
@@ -606,37 +795,69 @@ export default function ConfigPanel({ assistantId }) {
   }, [assistantId]);
 
   // FIXED: Node loading logic - ADDED CONFIG DEPENDENCY
+  // FIXED: Check both node config AND local config state to avoid race conditions
   useEffect(() => {
     if (node) {
       const nodeConfig = node.data?.config || {};
-      setConfig(nodeConfig);
+      
+      // Only update config if it's different (avoid unnecessary re-renders)
+      // But always check both nodeConfig and local config for connector_id
+      const hasConnectorId = !!(nodeConfig.connector_id || config.connector_id);
       
       console.log('🔍 ConfigPanel: Node loaded', {
         nodeId: node.id,
         nodeType: node.type,
-        hasConnectorId: !!nodeConfig.connector_id,
-        connectorId: nodeConfig.connector_id,
-        endpointId: nodeConfig.endpoint_id,
+        hasConnectorId: hasConnectorId,
+        nodeConfigConnectorId: nodeConfig.connector_id,
+        localConfigConnectorId: config.connector_id,
+        endpointId: nodeConfig.endpoint_id || config.endpoint_id,
         fullConfig: nodeConfig
       });
       
+      // Only update config state if node config is different
+      if (JSON.stringify(nodeConfig) !== JSON.stringify(config)) {
+        setConfig(nodeConfig);
+      }
+      
       // Detect if this is a connector-based HTTP node
-      if (node.type === 'http' && nodeConfig.connector_id) {
-        console.log('✅ Switching to CONNECTOR mode');
-        setHttpMode('connector');
+      // Check both nodeConfig and local config to handle async updates
+      if (node.type === 'http' && hasConnectorId) {
+        // Only switch mode if it's not already in connector mode (avoid flickering)
+        if (httpMode !== 'connector') {
+          console.log('✅ Switching to CONNECTOR mode');
+          setHttpMode('connector');
+        }
         setConnectorLoaded(false);
-        loadConnectorData(nodeConfig.connector_id, nodeConfig.endpoint_id);
-        setEndpointParams(nodeConfig.endpoint_params || {});
-      } else {
-        console.log('✅ Switching to TRADITIONAL mode');
+        const connectorId = nodeConfig.connector_id || config.connector_id;
+        const endpointId = nodeConfig.endpoint_id || config.endpoint_id;
+        if (connectorId) {
+          loadConnectorData(connectorId, endpointId);
+        }
+        setEndpointParams(nodeConfig.endpoint_params || config.endpoint_params || {});
+      } else if (node.type === 'http' && !hasConnectorId && httpMode === 'connector') {
+        // Only switch to traditional if we're currently in connector mode but no connector_id exists
+        console.log('✅ Switching to TRADITIONAL mode (no connector_id found)');
         setHttpMode('traditional');
         setSelectedConnector(null);
         setSelectedEndpoint(null);
         setEndpointParams({});
         setConnectorLoaded(false);
+      } else if (node.type === 'http' && !hasConnectorId && httpMode !== 'connector') {
+        // Ensure traditional mode is set if not already
+        if (httpMode !== 'traditional') {
+          console.log('✅ Ensuring TRADITIONAL mode');
+          setHttpMode('traditional');
+        }
+        // Only clear if we're switching from connector mode
+        if (selectedConnector || selectedEndpoint) {
+          setSelectedConnector(null);
+          setSelectedEndpoint(null);
+          setEndpointParams({});
+          setConnectorLoaded(false);
+        }
       }
     }
-  }, [node?.id, node?.data?.config?.connector_id, node?.data?.config?.endpoint_id]);
+  }, [node?.id, node?.data?.config?.connector_id, node?.data?.config?.endpoint_id, config.connector_id, config.endpoint_id]);
 
   // FIXED: Load connector data function
   const loadConnectorData = async (connectorId, endpointId) => {
@@ -677,13 +898,23 @@ export default function ConfigPanel({ assistantId }) {
 
   if (!node) {
     return (
-      <div className="h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-slate-900 border border-gray-700/50 rounded-2xl p-8">
+      <div 
+        className="h-full flex flex-col items-center justify-center rounded-3xl p-8"
+        style={{
+          background: 'rgba(255, 255, 255, 0.04)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.12)'
+        }}
+      >
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl flex items-center justify-center mb-4 shadow-2xl">
-            <Settings className="w-8 h-8 text-gray-600" />
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 shadow-2xl" style={{
+            background: 'rgba(255, 255, 255, 0.08)'
+          }}>
+            <Settings className="w-8 h-8 text-gray-400" />
           </div>
-          <p className="text-sm font-semibold text-gray-200 mb-1">No node selected</p>
-          <p className="text-xs text-gray-500">Click a node to configure</p>
+          <p className="text-sm font-semibold text-white mb-1">No node selected</p>
+          <p className="text-xs text-gray-400">Click a node to configure</p>
         </div>
       </div>
     );
@@ -843,6 +1074,7 @@ export default function ConfigPanel({ assistantId }) {
   const handleDelete = () => {
     const updated = flow.nodes.filter(n => n.id !== node.id);
     setNodes(updated);
+    setSelection(null); // Close the modal after deletion
   };
 
   const handleDuplicate = () => {
@@ -858,22 +1090,33 @@ export default function ConfigPanel({ assistantId }) {
     return (
       <div className="space-y-4">
         {/* HTTP Mode Selector - FIXED */}
-        <div className="bg-gradient-to-br from-violet-950/40 to-purple-950/40 rounded-xl p-4 border border-violet-800/50 backdrop-blur">
+        <div 
+          className="rounded-xl p-4 border backdrop-blur"
+          style={{
+            background: 'rgba(255, 255, 255, 0.06)',
+            borderColor: 'rgba(255, 255, 255, 0.12)'
+          }}
+        >
           <div className="flex items-center gap-2 mb-3">
-            <Globe className="w-4 h-4 text-violet-400" />
-            <span className="text-xs font-semibold text-violet-100">HTTP Configuration Mode</span>
+            <Globe className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs font-semibold text-white">HTTP Configuration Mode</span>
             {/* DEBUG INFO (remove after testing) */}
             <span className="ml-auto text-[10px] text-gray-500 font-mono">
               Mode: {httpMode} | Connector: {selectedConnector ? 'YES' : 'NO'} | Loaded: {connectorLoaded ? 'YES' : 'NO'}
             </span>
           </div>
-          <div className="flex gap-2 bg-gray-900/50 rounded-lg p-1">
+          <div 
+            className="flex gap-2 rounded-lg p-1"
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)'
+            }}
+          >
             <button
               onClick={handleSwitchToConnector}
               className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-all ${
                 httpMode === 'connector'
-                  ? 'bg-indigo-600 text-white shadow-lg'
-                  : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800/50'
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg'
+                  : 'text-gray-400 hover:text-gray-300'
               }`}
             >
               <Plug className="w-3 h-3 inline mr-1" />
@@ -883,8 +1126,8 @@ export default function ConfigPanel({ assistantId }) {
               onClick={handleSwitchToTraditional}
               className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-all ${
                 httpMode === 'traditional'
-                  ? 'bg-indigo-600 text-white shadow-lg'
-                  : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800/50'
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg'
+                  : 'text-gray-400 hover:text-gray-300'
               }`}
             >
               Traditional
@@ -924,7 +1167,7 @@ export default function ConfigPanel({ assistantId }) {
             )}
 
             {/* Credential Selection */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
                 <Shield className="w-4 h-4 text-amber-400" />
                 Authentication
@@ -935,7 +1178,14 @@ export default function ConfigPanel({ assistantId }) {
                   ...endpointParams,
                   credential_id: e.target.value
                 })}
-                className="w-full px-3 py-2.5 text-sm bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-600 focus:bg-gray-800 transition-all text-gray-100"
+                className="w-full px-2 py-1 text-xs rounded-lg transition-all text-white"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
               >
                 <option value="">No authentication</option>
                 {credentials.map((cred) => (
@@ -947,7 +1197,7 @@ export default function ConfigPanel({ assistantId }) {
             </div>
 
             {/* Optional Timeout Override */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className="text-xs font-semibold text-gray-300">
                 Timeout (seconds)
               </label>
@@ -958,7 +1208,14 @@ export default function ConfigPanel({ assistantId }) {
                   ...endpointParams,
                   timeout: parseInt(e.target.value)
                 })}
-                className="w-full px-3 py-2.5 text-sm bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-600 focus:bg-gray-800 transition-all text-gray-100"
+                className="w-full px-2 py-1 text-xs rounded-lg transition-all text-white"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
               />
             </div>
           </div>
@@ -967,23 +1224,36 @@ export default function ConfigPanel({ assistantId }) {
         {/* Traditional Mode - Existing Fields */}
         {httpMode === 'traditional' && (
           <div className="space-y-3">
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
                 Method
                 <span className="text-red-400 text-sm">•</span>
               </label>
-              <select
-                value={config.method || 'GET'}
-                onChange={(e) => handleChange('method', e.target.value)}
-                className="w-full px-3 py-2.5 text-sm bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-600 focus:bg-gray-800 transition-all text-gray-100"
-              >
-                {['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].map((method) => (
-                  <option key={method} value={method}>{method}</option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  value={config.method || 'GET'}
+                  onChange={(e) => handleChange('method', e.target.value)}
+                  className="w-full px-2 py-1 pr-7 text-xs rounded-lg transition-all text-white appearance-none cursor-pointer"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  {['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].map((method) => (
+                    <option key={method} value={method} style={{ background: 'rgba(26, 26, 26, 0.95)', color: '#FFFFFF' }}>{method}</option>
+                  ))}
+                </select>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
                 URL
                 <span className="text-red-400 text-sm">•</span>
@@ -992,30 +1262,59 @@ export default function ConfigPanel({ assistantId }) {
                 type="text"
                 value={config.url || ""}
                 onChange={(e) => handleChange('url', e.target.value)}
-                className="w-full px-3 py-2.5 text-sm bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-600 focus:bg-gray-800 transition-all text-gray-100 placeholder-gray-600 hover:bg-gray-800/70"
+                className="w-full px-2 py-1 text-xs rounded-lg transition-all text-white placeholder-gray-400"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
                 placeholder="https://api.example.com/endpoint"
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className="text-xs font-semibold text-gray-300">Authentication</label>
-              <select
-                value={config.credential_id || ''}
-                onChange={(e) => handleChange('credential_id', e.target.value)}
-                className="w-full px-3 py-2.5 text-sm bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-600 focus:bg-gray-800 transition-all text-gray-100"
-              >
-                <option value="">No authentication</option>
-                {credentials.map((cred) => (
-                  <option key={cred.credential_id} value={cred.credential_id}>
-                    {cred.name} ({cred.credential_type.replace('_', ' ')})
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  value={config.credential_id || ''}
+                  onChange={(e) => handleChange('credential_id', e.target.value)}
+                  className="w-full px-2 py-1 pr-7 text-xs rounded-lg transition-all text-white appearance-none cursor-pointer"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  <option value="" style={{ background: 'rgba(26, 26, 26, 0.95)', color: '#FFFFFF' }}>No authentication</option>
+                  {credentials.map((cred) => (
+                    <option key={cred.credential_id} value={cred.credential_id} style={{ background: 'rgba(26, 26, 26, 0.95)', color: '#FFFFFF' }}>
+                      {cred.name} ({cred.credential_type.replace('_', ' ')})
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className="text-xs font-semibold text-gray-300">Headers (JSON)</label>
-              <div className="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-colors">
+              <div 
+                className="rounded-lg overflow-hidden transition-colors"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
+              >
                 <Editor
                   height="110px"
                   defaultLanguage="json"
@@ -1037,9 +1336,18 @@ export default function ConfigPanel({ assistantId }) {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className="text-xs font-semibold text-gray-300">Query Params (JSON)</label>
-              <div className="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-colors">
+              <div 
+                className="rounded-lg overflow-hidden transition-colors"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
+              >
                 <Editor
                   height="110px"
                   defaultLanguage="json"
@@ -1061,9 +1369,18 @@ export default function ConfigPanel({ assistantId }) {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className="text-xs font-semibold text-gray-300">Body (JSON)</label>
-              <div className="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-colors">
+              <div 
+                className="rounded-lg overflow-hidden transition-colors"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
+              >
                 <Editor
                   height="110px"
                   defaultLanguage="json"
@@ -1085,13 +1402,20 @@ export default function ConfigPanel({ assistantId }) {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className="text-xs font-semibold text-gray-300">Timeout (seconds)</label>
               <input
                 type="number"
                 value={config.timeout || 30}
                 onChange={(e) => handleChange('timeout', parseInt(e.target.value))}
-                className="w-full px-3 py-2.5 text-sm bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-600 focus:bg-gray-800 transition-all text-gray-100"
+                className="w-full px-2 py-1 text-xs rounded-lg transition-all text-white"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
               />
             </div>
           </div>
@@ -1131,7 +1455,7 @@ export default function ConfigPanel({ assistantId }) {
     return (
       <div className="space-y-3">
         {nodeFields.map((field) => (
-          <div key={field.name} className="space-y-2">
+          <div key={field.name} className="space-y-1.5">
             <label className="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
               {field.label}
               {field.required && <span className="text-red-400 text-sm">•</span>}
@@ -1142,7 +1466,15 @@ export default function ConfigPanel({ assistantId }) {
                 type="text"
                 value={config[field.name] || ""}
                 onChange={(e) => handleChange(field.name, e.target.value)}
-                className="w-full px-3 py-2.5 text-sm bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-600 focus:bg-gray-800 transition-all text-gray-100 placeholder-gray-600 hover:bg-gray-800/70"
+                className="w-full px-2 py-1 text-xs rounded-lg transition-all text-white placeholder-gray-400"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  textAlign: config[field.name] ? 'left' : 'center',
+                  outline: 'none'
+                }}
                 placeholder={field.label}
               />
             )}
@@ -1152,24 +1484,36 @@ export default function ConfigPanel({ assistantId }) {
                 type="number"
                 value={config[field.name] || ""}
                 onChange={(e) => handleChange(field.name, parseInt(e.target.value))}
-                className="w-full px-3 py-2.5 text-sm bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-600 focus:bg-gray-800 transition-all text-gray-100"
+                className="w-full px-2 py-1 text-xs rounded-lg transition-all text-white"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
               />
             )}
 
             {field.type === "select" && (
-              <select
+              <CustomSelectDropdown
                 value={config[field.name] || field.options[0]}
-                onChange={(e) => handleChange(field.name, e.target.value)}
-                className="w-full px-3 py-2.5 text-sm bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-600 focus:bg-gray-800 transition-all text-gray-100"
-              >
-                {field.options.map((opt) => (
-                  <option key={opt} value={opt}>{opt}</option>
-                ))}
-              </select>
+                options={field.options}
+                onChange={(value) => handleChange(field.name, value)}
+              />
             )}
 
             {field.type === "checkbox" && (
-              <label className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg border border-gray-700 cursor-pointer hover:bg-gray-800/70 transition-all">
+              <label 
+                className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
+              >
                 <input
                   type="checkbox"
                   checked={config[field.name] || false}
@@ -1184,14 +1528,30 @@ export default function ConfigPanel({ assistantId }) {
               <textarea
                 value={config[field.name] || ""}
                 onChange={(e) => handleChange(field.name, e.target.value)}
-                className="w-full px-3 py-2.5 text-sm bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-600 focus:bg-gray-800 transition-all resize-none font-mono text-gray-100 placeholder-gray-600 hover:bg-gray-800/70"
+                className="w-full px-2 py-1 text-xs rounded-lg transition-all resize-none font-mono text-white placeholder-gray-400"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
                 rows={4}
                 placeholder={field.label}
               />
             )}
 
             {field.type === "json" && (
-              <div className="bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-colors">
+              <div 
+                className="rounded-lg overflow-hidden transition-colors"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
+              >
                 <Editor
                   height="110px"
                   defaultLanguage="json"
@@ -1219,58 +1579,197 @@ export default function ConfigPanel({ assistantId }) {
   };
 
   return (
-    <div className="h-full bg-gradient-to-br from-gray-900 to-slate-900 border border-gray-700/50 rounded-2xl flex flex-col shadow-2xl backdrop-blur-xl overflow-hidden">
+    <div 
+      className="rounded-3xl flex flex-col shadow-2xl overflow-hidden config-panel h-full"
+      style={{
+        background: 'rgba(255, 255, 255, 0.02)',
+        backdropFilter: 'blur(60px)',
+        WebkitBackdropFilter: 'blur(60px)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        overflow: 'hidden',
+        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        height: '100%'
+      }}
+    >
       {/* Header */}
-      <div className="p-5 border-b border-gray-700/50 bg-gradient-to-r from-gray-800/50 to-gray-900/50 backdrop-blur-sm flex-shrink-0">
-        <div className="flex items-center gap-4 mb-4">
-          <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-2xl`}>
-            <Icon className="w-7 h-7 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">{node.type}</div>
-            <div className="text-lg font-bold text-gray-100 truncate">{node.data?.label || node.type}</div>
-          </div>
+      <div className="p-3 flex-shrink-0" style={{ gap: '12px' }}>
+        {/* Header Title and Close */}
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-base font-bold text-white" style={{
+            background: 'linear-gradient(180deg, rgba(248, 248, 248, 1) 18%, rgba(146, 146, 146, 1) 82%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}>
+            {node.data?.label || node.type.charAt(0).toUpperCase() + node.type.slice(1)}
+          </h2>
+          <button
+            onClick={() => setSelection(null)}
+            className="w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+            title="Close"
+          >
+            <X className="w-6 h-6" />
+          </button>
         </div>
         
         {/* Tabs */}
-        <div className="flex gap-1 bg-gray-800/30 rounded-lg p-1 border border-gray-700/30">
+        <div className="flex gap-6 pb-0">
           <button
             onClick={() => setActiveTab('config')}
-            className={`flex-1 px-3 py-2 text-xs font-semibold rounded-md transition-all ${
+            className={`px-0 py-2 text-xs font-medium transition-all uppercase ${
               activeTab === 'config' 
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20' 
+                ? 'text-[#13F584] border-b-2 border-[#13F584]' 
                 : 'text-gray-400 hover:text-gray-300'
             }`}
+            style={{ height: '28px' }}
           >
-            Config
+            Configuration
           </button>
           <button
             onClick={() => setActiveTab('advanced')}
-            className={`flex-1 px-3 py-2 text-xs font-semibold rounded-md transition-all ${
+            className={`px-0 py-2 text-xs font-medium transition-all uppercase ${
               activeTab === 'advanced' 
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20' 
+                ? 'text-[#13F584] border-b-2 border-[#13F584]' 
                 : 'text-gray-400 hover:text-gray-300'
             }`}
+            style={{ height: '28px' }}
           >
-            Advanced
+            Advance
           </button>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-4 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800/50">
+      <style dangerouslySetInnerHTML={{__html: `
+        .config-panel-content::-webkit-scrollbar {
+          width: 8px;
+        }
+        .config-panel-content::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 4px;
+        }
+        .config-panel-content::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 4px;
+        }
+        .config-panel-content::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+        .monaco-editor .monaco-scrollable-element > .scrollbar {
+          display: none !important;
+        }
+        .monaco-editor .monaco-scrollable-element > .scrollbar > .slider {
+          display: none !important;
+        }
+        .monaco-editor .overflow-guard {
+          overflow: hidden !important;
+        }
+        .monaco-editor, .monaco-editor .monaco-editor-background {
+          background: transparent !important;
+        }
+        .monaco-editor .margin {
+          background: transparent !important;
+        }
+        .monaco-editor .monaco-scrollable-element {
+          background: transparent !important;
+        }
+        .config-panel select option {
+          background: rgba(26, 26, 26, 0.95) !important;
+          color: #FFFFFF !important;
+        }
+        .config-panel select:focus option:checked {
+          background: rgba(19, 245, 132, 0.2) !important;
+        }
+        .config-panel input::placeholder {
+          color: rgba(156, 163, 175, 0.8) !important;
+          opacity: 1 !important;
+          text-align: center;
+        }
+        .config-panel input:not(:placeholder-shown) {
+          text-align: left !important;
+        }
+        .config-panel input:focus,
+        .config-panel textarea:focus,
+        .config-panel select:focus {
+          outline: none !important;
+          border-color: rgba(255, 255, 255, 0.1) !important;
+          box-shadow: none !important;
+          ring: none !important;
+        }
+        .config-panel input,
+        .config-panel textarea,
+        .config-panel select {
+          outline: none !important;
+        }
+        .config-panel input:focus-visible,
+        .config-panel textarea:focus-visible,
+        .config-panel select:focus-visible {
+          outline: none !important;
+          border-color: rgba(255, 255, 255, 0.1) !important;
+          box-shadow: none !important;
+          ring: none !important;
+        }
+        .config-panel input *,
+        .config-panel textarea *,
+        .config-panel select * {
+          outline: none !important;
+        }
+        .config-panel [class*="ring"],
+        .config-panel [class*="ring-blue"],
+        .config-panel [class*="ring-indigo"] {
+          --tw-ring-color: transparent !important;
+          --tw-ring-shadow: 0 0 #0000 !important;
+        }
+        .config-panel input:focus,
+        .config-panel input:focus-visible,
+        .config-panel input:active,
+        .config-panel textarea:focus,
+        .config-panel textarea:focus-visible,
+        .config-panel textarea:active,
+        .config-panel select:focus,
+        .config-panel select:focus-visible,
+        .config-panel select:active {
+          border: 1px solid rgba(255, 255, 255, 0.1) !important;
+          border-color: rgba(255, 255, 255, 0.1) !important;
+          outline: 2px solid transparent !important;
+          outline-offset: 2px !important;
+          box-shadow: 0 0 0 0 transparent !important;
+          --tw-ring-offset-shadow: 0 0 #0000 !important;
+          --tw-ring-shadow: 0 0 #0000 !important;
+          --tw-shadow: 0 0 #0000 !important;
+          --tw-shadow-colored: 0 0 #0000 !important;
+        }
+      `}} />
+
+      {/* Content - Scrollable */}
+      <div 
+        className="flex-1 overflow-y-auto overflow-x-hidden p-3 pb-20 config-panel-content" 
+        style={{ 
+          gap: '12px', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(255, 255, 255, 0.2) transparent',
+          msOverflowStyle: 'none',
+          minHeight: 0,
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
         {activeTab === 'config' ? (
           <>
             {/* JSON Config Section */}
-            <div className="bg-gradient-to-br from-indigo-950/40 to-purple-950/40 rounded-xl p-4 border border-indigo-800/50 backdrop-blur">
-              <div className="flex items-start gap-3 mb-3">
-                <FileJson className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm text-indigo-100">Paste Config JSON</div>
-                  <div className="text-xs text-indigo-300/80">Quickly configure via JSON</div>
-                </div>
-              </div>
-              <div className="bg-gray-900/50 rounded-lg border border-indigo-700/50 overflow-hidden">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label className="text-xs font-semibold" style={{ color: '#919EAB', fontSize: '12px', fontWeight: 600 }}>
+                Paste config JSON
+              </label>
+              <div 
+                className="rounded-lg overflow-hidden"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  borderRadius: '8px',
+                  overflow: 'hidden'
+                }}
+              >
                 <Editor
                   height="110px"
                   defaultLanguage="json"
@@ -1291,6 +1790,15 @@ export default function ConfigPanel({ assistantId }) {
                     fontSize: 12,
                     lineNumbers: "off",
                     scrollBeyondLastLine: false,
+                    scrollbar: {
+                      vertical: 'hidden',
+                      horizontal: 'hidden',
+                      useShadows: false,
+                      verticalHasArrows: false,
+                      horizontalHasArrows: false,
+                    },
+                    overviewRulerLanes: 0,
+                    hideCursorInOverviewRuler: true,
                   }}
                 />
               </div>
@@ -1301,7 +1809,7 @@ export default function ConfigPanel({ assistantId }) {
 
             {/* Conditional tester */}
             {node.type === "conditional" && (
-              <div className="pt-2 border-t border-gray-700/50">
+              <div className="pt-2">
                 <ConditionTester />
               </div>
             )}
@@ -1313,21 +1821,57 @@ export default function ConfigPanel({ assistantId }) {
           </>
         ) : (
           <div className="space-y-3">
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50 backdrop-blur">
-              <div className="text-xs font-semibold text-gray-300 mb-2 uppercase tracking-wide">Node ID</div>
-              <div className="text-xs font-mono text-gray-400 bg-gray-900/50 p-3 rounded-lg break-all border border-gray-700/50 select-all">{node.id}</div>
+            <div 
+              className="rounded-xl p-4 border backdrop-blur"
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                borderColor: 'rgba(255, 255, 255, 0.1)'
+              }}
+            >
+              <div className="text-xs font-semibold text-white mb-2 uppercase tracking-wide">Node ID</div>
+              <div 
+                className="text-xs font-mono text-white p-3 rounded-lg break-all select-all"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
+              >
+                {node.id}
+              </div>
             </div>
             
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50 backdrop-blur">
-              <div className="text-xs font-semibold text-gray-300 mb-3 uppercase tracking-wide">Position</div>
-              <div className="text-sm text-gray-400 space-y-2 bg-gray-900/30 p-3 rounded-lg">
+            <div 
+              className="rounded-xl p-4 border backdrop-blur"
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                borderColor: 'rgba(255, 255, 255, 0.1)'
+              }}
+            >
+              <div className="text-xs font-semibold text-white mb-3 uppercase tracking-wide">Position</div>
+              <div 
+                className="text-sm text-white space-y-2 p-3 rounded-lg"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  outline: 'none'
+                }}
+              >
                 <div className="flex justify-between">
                   <span>X:</span>
-                  <span className="font-mono text-gray-300">{node.position.x}</span>
+                  <span className="font-mono text-white">{node.position.x}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Y:</span>
-                  <span className="font-mono text-gray-300">{node.position.y}</span>
+                  <span className="font-mono text-white">{node.position.y}</span>
                 </div>
               </div>
             </div>
@@ -1336,7 +1880,13 @@ export default function ConfigPanel({ assistantId }) {
               onClick={() => {
                 navigator.clipboard.writeText(JSON.stringify(config, null, 2));
               }}
-              className="w-full px-3 py-2.5 bg-gray-800/50 hover:bg-gray-800 text-gray-300 rounded-lg text-sm font-semibold border border-gray-700/50 transition-all flex items-center justify-center gap-2"
+              className="w-full px-3 py-2.5 text-white rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2"
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}
             >
               <Copy className="w-4 h-4" />
               Copy Config
@@ -1346,19 +1896,34 @@ export default function ConfigPanel({ assistantId }) {
       </div>
 
       {/* Actions Footer */}
-      <div className="p-5 border-t border-gray-700/50 bg-gradient-to-r from-gray-800/30 to-gray-900/30 backdrop-blur-sm flex-shrink-0 space-y-2.5">
+      <div className="p-3 flex-shrink-0 flex items-center gap-2">
         <button
           onClick={handleDuplicate}
-          className="w-full px-4 py-2.5 bg-gray-800/50 hover:bg-gray-800 text-gray-300 rounded-lg text-sm font-semibold transition-all shadow-lg flex items-center justify-center gap-2 border border-gray-700/50 hover:shadow-gray-900/50"
+          className="px-3 py-1.5 text-xs font-semibold transition-all rounded-lg flex items-center justify-center gap-1.5"
+          style={{
+            background: 'rgba(142, 51, 255, 0.08)',
+            color: '#C684FF',
+            height: '28px',
+            fontSize: '11px',
+            lineHeight: '1.5em'
+          }}
         >
-          <Copy className="w-4 h-4" />
+          <Copy className="w-3 h-3" />
           Duplicate Node
         </button>
         <button
           onClick={handleDelete}
-          className="w-full px-4 py-2.5 bg-gradient-to-r from-red-600/80 to-red-700/80 hover:from-red-600 hover:to-red-700 text-white rounded-lg text-sm font-semibold transition-all shadow-lg shadow-red-500/20 hover:shadow-red-500/30 flex items-center justify-center gap-2"
+          className="px-3 py-1.5 text-xs font-semibold transition-all rounded-lg flex items-center justify-center gap-1.5"
+          style={{
+            background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.8) 0%, rgba(185, 28, 28, 0.8) 100%)',
+            color: '#FFFFFF',
+            height: '28px',
+            fontSize: '11px',
+            lineHeight: '1.5em',
+            boxShadow: '0 4px 14px 0 rgba(220, 38, 38, 0.2)'
+          }}
         >
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className="w-3 h-3" />
           Delete Node
         </button>
       </div>

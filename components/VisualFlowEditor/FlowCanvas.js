@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import ReactFlow, {
   Background,
   Controls,
-  MiniMap,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -23,124 +22,209 @@ const defaultEdgeOptions = {
     type: MarkerType.ArrowClosed,
     width: 20,
     height: 20,
-    color: '#10b981',
+    color: '#13F584',
   },
   style: {
-    stroke: '#10b981',
-    strokeWidth: 2,
+    stroke: '#13F584',
+    strokeWidth: 1,
+    opacity: 0.6,
   },
-  animated: true,
-  labelStyle: { fill: '#9ca3af', fontWeight: 500 },
-  labelBgStyle: { fill: '#1f2937', fillOpacity: 0.8 },
+  animated: false,
+  labelStyle: { fill: '#FFFFFF', fontWeight: 500 },
+  labelBgStyle: { fill: 'rgba(20, 26, 33, 0.8)', fillOpacity: 0.8 },
 };
 
-// Custom connection line style with green
 const connectionLineStyle = {
-  stroke: '#10b981',
-  strokeWidth: 2,
+  stroke: '#13F584',
+  strokeWidth: 1,
   strokeDasharray: '5 5',
+  opacity: 0.6,
 };
 
 // -------------------- Condition Builder (inline, no visual restyle) --------------------
 function ConditionRow({ row, onChange, onRemove }) {
   const type = row.when || 'user.contains';
   return (
-    <div className="flex items-center gap-2 mb-2">
-      <select
-        value={type}
-        onChange={(e) => onChange({ ...row, when: e.target.value })}
-        className="px-2 py-1 bg-slate-800 border border-slate-700 rounded text-slate-100 text-xs"
-      >
-        <option value="user.contains">user.contains</option>
-        <option value="user.regex">user.regex</option>
-        <option value="intent_is">intent_is</option>
-        <option value="tool.ok">tool.ok</option>
-        <option value="parameters.has">parameters.has</option>
-        <option value="parameters.equals">parameters.equals</option>
-        <option value="tool.field_equals">tool.field_equals</option>
-      </select>
+    <div className="flex items-center gap-4">
+      {/* Condition Type Select */}
+      <div className="flex flex-col gap-2.5" style={{ width: '199px' }}>
+        <select
+          value={type}
+          onChange={(e) => onChange({ ...row, when: e.target.value })}
+          className="h-10 px-3.5 py-0 flex items-center rounded-lg text-sm text-white focus:border-[#13F584] focus:outline-none"
+          style={{
+            background: 'rgba(255, 255, 255, 0.04)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(145, 158, 171, 0.2)'
+          }}
+        >
+          <option value="user.contains" className="bg-[#141A21]">User.contains</option>
+          <option value="user.regex" className="bg-[#141A21]">User.regex</option>
+          <option value="intent_is" className="bg-[#141A21]">Intent_is</option>
+          <option value="tool.ok" className="bg-[#141A21]">Tool.ok</option>
+          <option value="parameters.has" className="bg-[#141A21]">Parameters.has</option>
+          <option value="parameters.equals" className="bg-[#141A21]">Parameters.equals</option>
+          <option value="tool.field_equals" className="bg-[#141A21]">Tool.field_equals</option>
+        </select>
+      </div>
 
       {/* Fields by type */}
       {type === 'user.contains' && (
-        <input
-          placeholder='value'
-          value={row.value || ''}
-          onChange={(e) => onChange({ ...row, value: e.target.value })}
-          className="flex-1 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-slate-100 text-xs"
-        />
+        <div className="flex-1">
+          <input
+            placeholder='Value'
+            value={row.value || ''}
+            onChange={(e) => onChange({ ...row, value: e.target.value })}
+            className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+            style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(145, 158, 171, 0.2)'
+            }}
+          />
+        </div>
       )}
 
       {type === 'user.regex' && (
-        <input
-          placeholder='regex'
-          value={row.value || ''}
-          onChange={(e) => onChange({ ...row, value: e.target.value })}
-          className="flex-1 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-slate-100 text-xs"
-        />
+        <div className="flex-1">
+          <input
+            placeholder='Regex'
+            value={row.value || ''}
+            onChange={(e) => onChange({ ...row, value: e.target.value })}
+            className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+            style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(145, 158, 171, 0.2)'
+            }}
+          />
+        </div>
       )}
 
       {type === 'intent_is' && (
-        <input
-          placeholder='intent name'
-          value={row.value || ''}
-          onChange={(e) => onChange({ ...row, value: e.target.value })}
-          className="flex-1 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-slate-100 text-xs"
-        />
+        <div className="flex-1">
+          <input
+            placeholder='Intent name'
+            value={row.value || ''}
+            onChange={(e) => onChange({ ...row, value: e.target.value })}
+            className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+            style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(145, 158, 171, 0.2)'
+            }}
+          />
+        </div>
       )}
 
       {type === 'tool.ok' && (
-        <span className="text-xs text-slate-400 px-1">✓ true when tool returns ok: true</span>
+        <div className="flex-1">
+          <div className="h-10 px-3.5 py-0 flex items-center rounded-lg text-sm text-[#919EAB]">
+            ✓ true when tool returns ok: true
+          </div>
+        </div>
       )}
 
       {type === 'parameters.has' && (
-        <input
-          placeholder='key'
-          value={row.key || ''}
-          onChange={(e) => onChange({ ...row, key: e.target.value })}
-          className="flex-1 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-slate-100 text-xs"
-        />
+        <div className="flex-1">
+          <input
+            placeholder='Key'
+            value={row.key || ''}
+            onChange={(e) => onChange({ ...row, key: e.target.value })}
+            className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+            style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              border: '1px solid rgba(145, 158, 171, 0.2)'
+            }}
+          />
+        </div>
       )}
 
       {type === 'parameters.equals' && (
         <>
-          <input
-            placeholder='key'
-            value={row.key || ''}
-            onChange={(e) => onChange({ ...row, key: e.target.value })}
-            className="flex-1 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-slate-100 text-xs"
-          />
-          <input
-            placeholder='value'
-            value={row.value ?? ''}
-            onChange={(e) => onChange({ ...row, value: e.target.value })}
-            className="flex-1 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-slate-100 text-xs"
-          />
+          <div className="flex-1">
+            <input
+              placeholder='Key'
+              value={row.key || ''}
+              onChange={(e) => onChange({ ...row, key: e.target.value })}
+              className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(145, 158, 171, 0.2)'
+              }}
+            />
+          </div>
+          <div className="flex-1">
+            <input
+              placeholder='Value'
+              value={row.value ?? ''}
+              onChange={(e) => onChange({ ...row, value: e.target.value })}
+              className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(145, 158, 171, 0.2)'
+              }}
+            />
+          </div>
         </>
       )}
 
       {type === 'tool.field_equals' && (
         <>
-          <input
-            placeholder='path (e.g. data.status)'
-            value={row.path || ''}
-            onChange={(e) => onChange({ ...row, path: e.target.value })}
-            className="flex-1 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-slate-100 text-xs"
-          />
-          <input
-            placeholder='value'
-            value={row.value ?? ''}
-            onChange={(e) => onChange({ ...row, value: e.target.value })}
-            className="flex-1 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-slate-100 text-xs"
-          />
+          <div className="flex-1">
+            <input
+              placeholder='Path (e.g. data.status)'
+              value={row.path || ''}
+              onChange={(e) => onChange({ ...row, path: e.target.value })}
+              className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(145, 158, 171, 0.2)'
+              }}
+            />
+          </div>
+          <div className="flex-1">
+            <input
+              placeholder='Value'
+              value={row.value ?? ''}
+              onChange={(e) => onChange({ ...row, value: e.target.value })}
+              className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(145, 158, 171, 0.2)'
+              }}
+            />
+          </div>
         </>
       )}
 
+      {/* Delete Button */}
       <button
         onClick={onRemove}
-        className="px-2 py-1 text-xs border border-slate-700 rounded text-slate-300 hover:bg-slate-700"
+        className="w-12 h-12 flex items-center justify-center rounded border transition-colors"
+        style={{
+          background: 'rgba(255, 86, 48, 0.08)',
+          borderColor: 'rgba(255, 86, 48, 0.3)'
+        }}
         title="Remove condition"
       >
-        Remove
+        <svg className="w-5 h-5 text-[#FF5630]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
       </button>
     </div>
   );
@@ -198,86 +282,195 @@ function ConditionModal({ edge, onSave, onClose, onDeleteEdge }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      {/* modal */}
-      <div className="relative bg-slate-900 border border-slate-700 rounded-xl w-[520px] max-w-[90vw] p-4 shadow-2xl">
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-slate-200 text-sm font-semibold">
-            Edge Condition
+      <style dangerouslySetInnerHTML={{__html: `
+        .edge-condition-modal select option {
+          background: rgba(26, 26, 26, 0.95) !important;
+          color: #FFFFFF !important;
+        }
+        .edge-condition-modal select:focus option:checked {
+          background: rgba(19, 245, 132, 0.2) !important;
+        }
+        .edge-condition-modal select {
+          background: rgba(255, 255, 255, 0.04) !important;
+        }
+      `}} />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div 
+        className="relative rounded-3xl w-[810px] max-w-[90vw] shadow-2xl edge-condition-modal"
+        style={{
+          background: 'rgba(255, 255, 255, 0.04)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.12)'
+        }}
+      >
+        <div className="flex flex-col gap-4 p-5">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-2">
+              <h2 className="text-xl font-bold text-white">Edge Condition</h2>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+              title="Close"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          <button
-            className="px-2 py-1 text-xs border border-slate-700 rounded text-slate-300 hover:bg-slate-700"
-            onClick={onClose}
-            title="Close"
-          >
-            ✕
-          </button>
-        </div>
 
-        <div className="text-xs text-slate-400 mb-2">
-          <div><b>Source:</b> {edge?.source?.replace('reactflow_', '')}</div>
-          <div><b>Target:</b> {edge?.target?.replace('reactflow_', '')}</div>
-        </div>
+          {/* Connection Section */}
+          <div className="flex gap-16 pt-4">
+            <div className="flex flex-col gap-2.5" style={{ width: '150px' }}>
+              <h3 className="text-base font-semibold text-white">Connection</h3>
+            </div>
+            <div className="flex-1 flex flex-col gap-16">
+              <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Source Field */}
+                  <div className="flex flex-col gap-2.5">
+                    <label className="text-xs font-semibold text-[#919EAB]">Source</label>
+                    <div 
+                      className="h-[53px] px-3 py-0 flex items-center rounded-lg"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.04)',
+                        backdropFilter: 'blur(10px)',
+                        WebkitBackdropFilter: 'blur(10px)'
+                      }}
+                    >
+                      <span className="text-sm text-[#919EAB]/80">
+                        {edge?.source?.replace('reactflow_', '') || 'Source name'}
+                      </span>
+                    </div>
+                  </div>
 
-        <div className="mb-3">
-          <label className="text-xs text-slate-300 mr-2">Mode</label>
-          <select
-            value={mode}
-            onChange={(e) => setMode(e.target.value)}
-            className="px-2 py-1 bg-slate-800 border border-slate-700 rounded text-slate-100 text-xs"
-          >
-            <option value="single">Single</option>
-            <option value="any">ANY (or)</option>
-            <option value="all">ALL (and)</option>
-            <option value="not">NOT</option>
-          </select>
-        </div>
+                  {/* Target Field */}
+                  <div className="flex flex-col gap-2.5">
+                    <label className="text-xs font-semibold text-[#919EAB]">Target</label>
+                    <div 
+                      className="h-[53px] px-3 py-0 flex items-center rounded-lg"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.04)',
+                        backdropFilter: 'blur(10px)',
+                        WebkitBackdropFilter: 'blur(10px)'
+                      }}
+                    >
+                      <span className="text-sm text-[#919EAB]/80">
+                        {edge?.target?.replace('reactflow_', '') || 'node_0012dk005'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <div className="max-h-[46vh] overflow-auto pr-1">
-          {rows.map((row, idx) => (
-            <ConditionRow
-              key={idx}
-              row={row}
-              onChange={(val) => updateRow(idx, val)}
-              onRemove={() => removeRow(idx)}
-            />
-          ))}
-        </div>
+          <div className="flex gap-16 py-4">
+            <div className="flex flex-col gap-2.5" style={{ width: '150px' }}>
+              <h3 className="text-base font-semibold text-white">Conditions</h3>
+            </div>
+            <div className="flex-1 flex flex-col gap-16">
+              <div className="flex flex-col gap-4">
+                {/* Mode Selector */}
+                <div className="flex items-center gap-4">
+                  <label className="text-xs font-semibold text-[#919EAB]">Mode</label>
+                  <div className="relative">
+                    <select
+                      value={mode}
+                      onChange={(e) => setMode(e.target.value)}
+                      className="h-9 pl-3 pr-8 rounded-lg border text-sm font-semibold text-white transition-colors appearance-none cursor-pointer"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.04)',
+                        backdropFilter: 'blur(10px)',
+                        WebkitBackdropFilter: 'blur(10px)',
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        color: '#FFFFFF'
+                      }}
+                    >
+                      <option value="single">Single</option>
+                      <option value="any">ANY (or)</option>
+                      <option value="all">ALL (and)</option>
+                      <option value="not">NOT</option>
+                    </select>
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end">
+                  <button
+                    onClick={addRow}
+                    className="h-9 px-3 flex items-center gap-2 rounded border text-sm font-bold text-[#9EFBCD] transition-colors"
+                    style={{
+                      background: 'rgba(19, 245, 132, 0.08)',
+                      borderColor: 'rgba(19, 245, 132, 0.3)'
+                    }}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Condition
+                  </button>
+                </div>
 
-        <div className="flex items-center justify-between mt-3">
-          <button
-            onClick={addRow}
-            className="px-3 py-1 text-xs border border-slate-700 rounded text-slate-300 hover:bg-slate-700"
-          >
-            + Add condition
-          </button>
-          <div className="flex gap-2">
+                {/* Condition Rows */}
+                <div className="flex flex-col gap-4">
+                  {rows.map((row, idx) => (
+                    <ConditionRow
+                      key={idx}
+                      row={row}
+                      onChange={(val) => updateRow(idx, val)}
+                      onRemove={() => removeRow(idx)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Actions */}
+          <div className="flex items-center justify-between gap-2.5 pt-4">
             <button
               onClick={onDeleteEdge}
-              className="px-3 py-1 text-xs border border-red-500 text-red-300 rounded hover:bg-red-600/10"
-              title="Delete entire edge"
+              className="h-9 px-3 flex items-center gap-2 rounded border text-sm font-bold text-[#FFAC82] transition-colors"
+              style={{
+                background: 'rgba(255, 86, 48, 0.08)',
+                borderColor: 'rgba(255, 86, 48, 0.3)'
+              }}
             >
-              Delete Edge
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Delete edge
             </button>
-            <button
-              onClick={() => onSave(null)}
-              className="px-3 py-1 text-xs border border-slate-700 rounded text-slate-300 hover:bg-slate-700"
-              title="Clear"
-            >
-              Clear
-            </button>
-            <button
-              onClick={() => onSave(buildCondition())}
-              className="px-3 py-1 text-xs border border-emerald-500 text-emerald-300 rounded hover:bg-emerald-600/10"
-            >
-              Save
-            </button>
+            <div className="flex gap-2.5">
+              <button
+                onClick={onClose}
+                className="h-9 px-3 flex items-center gap-2 rounded border text-sm font-bold text-white transition-colors"
+                style={{
+                  background: 'rgba(145, 158, 171, 0.08)',
+                  borderColor: 'rgba(145, 158, 171, 0.2)'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => onSave(buildCondition())}
+                className="h-9 px-3 flex items-center gap-2 rounded border text-sm font-bold text-[#9EFBCD] transition-colors"
+                style={{
+                  background: 'rgba(19, 245, 132, 0.08)',
+                  borderColor: 'rgba(19, 245, 132, 0.3)'
+                }}
+              >
+                Save
+              </button>
+            </div>
           </div>
-        </div>
-
-        <div className="mt-3 text-[11px] text-slate-500">
-          Examples: {"{ when:'user.contains', value:'rate' }"}, {"{ any:[...] }"}, {"{ all:[...] }"}, {"{ when:'tool.ok' }"}
         </div>
       </div>
     </div>
@@ -406,7 +599,7 @@ export default function FlowCanvas({
       id: `edge_${Date.now()}`,
       ...defaultEdgeOptions,
       type: 'smoothstep',
-      animated: true,
+      animated: false,
       data: { condition: null }, // id, source, target first; condition added after click
     };
     setEdges((eds) => addEdge(newEdge, eds));
@@ -425,15 +618,16 @@ export default function FlowCanvas({
       selected: selectedEdge?.id === edge.id,
       style: {
         ...edge.style,
-        stroke: selectedEdge?.id === edge.id ? '#34d399' : edge.style?.stroke || '#10b981',
-        strokeWidth: selectedEdge?.id === edge.id ? 3 : edge.style?.strokeWidth || 2,
+        stroke: selectedEdge?.id === edge.id ? '#9EFBCD' : edge.style?.stroke || '#13F584',
+        strokeWidth: selectedEdge?.id === edge.id ? 1.5 : edge.style?.strokeWidth || 1,
+        opacity: selectedEdge?.id === edge.id ? 1 : edge.style?.opacity || 0.6,
       }
     }));
   }, [edges, selectedEdge]);
 
-  // Custom styles for dark theme
+  // Custom styles for dark theme - Figma Design
   const reactFlowStyles = {
-    background: '#0f172a',
+    background: '#141A21',
     height: '100%',
     width: '100%',
   };
@@ -458,7 +652,19 @@ export default function FlowCanvas({
   };
 
   return (
-    <div className="w-full h-full bg-slate-950">
+    <div className="w-full h-full bg-[#141A21]">
+      <style dangerouslySetInnerHTML={{__html: `
+        .react-flow__controls button svg path {
+          stroke: #FFFFFF !important;
+          fill: #FFFFFF !important;
+        }
+        .react-flow__controls button {
+          color: #FFFFFF !important;
+        }
+        .react-flow__controls button svg {
+          color: #FFFFFF !important;
+        }
+      `}} />
       <ReactFlow
         nodes={nodesWithSelection}
         edges={edgesWithSelection}
@@ -491,67 +697,26 @@ export default function FlowCanvas({
         snapGrid={[15, 15]}
         proOptions={{ hideAttribution: true }}
       >
+        {/* Dot Pattern Background - Figma Design */}
         <Background 
-          color="#10b981" 
-          gap={60} 
+          color="#FFFFFF" 
+          gap={10} 
           size={1.5}
-          variant="lines"
-          style={{ opacity: 0.25 }}
+          variant="dots"
+          style={{ opacity: 0.2 }}
         />
         
         <Controls 
-          className="!bg-slate-800 !border-slate-700 !rounded-xl !shadow-2xl"
+          className="!bg-white/8 !border-white/20 !rounded-xl !shadow-2xl !backdrop-blur-xl [&_button]:!bg-transparent [&_button]:!border-white/20 [&_button:hover]:!bg-white/10 [&_button]:!text-white [&_svg]:!text-white [&_svg_path]:!stroke-white [&_svg_path]:!fill-white"
           showInteractive={false}
-          style={{
-            button: {
-              backgroundColor: '#334155',
-              color: '#e2e8f0',
-              borderColor: '#475569',
-            }
-          }}
-        />
-        
-        <MiniMap
-          nodeColor={(node) => {
-            if (node.selected) return '#10b981';
-            return '#475569';
-          }}
-          className="!bg-slate-800 !border-slate-700 !rounded-xl !shadow-2xl"
-          maskColor="rgba(15, 23, 42, 0.7)"
-          pannable
-          zoomable
-          style={{
-            backgroundColor: '#1e293b',
-            maskColor: 'rgba(15, 23, 42, 0.7)',
+          style={{ 
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
           }}
         />
 
-        {/* Zoom indicator */}
-        <Panel position="bottom-left" className="!bg-transparent !m-4">
-          <div className="bg-slate-800/90 backdrop-blur-sm text-slate-400 text-xs px-3 py-1.5 rounded-lg border border-slate-700/50 shadow-xl">
-            Nodes: {nodes.length} | Edges: {edges.length}
-          </div>
-        </Panel>
-
-        {/* Keyboard shortcuts hint */}
-        <Panel position="top-right" className="!bg-transparent !m-4">
-          <div className="bg-slate-800/90 backdrop-blur-sm text-slate-400 text-xs px-3 py-1.5 rounded-lg border border-slate-700/50 shadow-xl">
-            <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">Delete</kbd>
-                <span>Remove</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">Click Edge</kbd>
-                <span>Edit Condition</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-slate-700 rounded text-slate-300">Drag</kbd>
-                <span>Connect</span>
-              </span>
-            </div>
-          </div>
-        </Panel>
       </ReactFlow>
 
       {activeEdge && (

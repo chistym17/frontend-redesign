@@ -1,13 +1,25 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { CheckCircle2, XCircle, Play, AlertTriangle } from 'lucide-react';
+import { Play, AlertTriangle } from 'lucide-react';
 import { useApiService } from '../lib/apiService'; // Use authenticated API service
 import { validateToolConfig } from '../lib/toolValidation';
 
-const ChecklistItem = ({ ok, text }) => (
-  <div className={`flex items-center text-sm ${ok ? 'text-emerald-700' : 'text-red-600'}`}>
-    {ok ? <CheckCircle2 size={16} className="mr-2" /> : <XCircle size={16} className="mr-2" />}
-    {text}
+const INPUT_STYLES =
+  'w-full rounded-lg px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none transition-all';
+
+const INPUT_STYLE_OBJ = {
+  background: 'rgba(255, 255, 255, 0.04)',
+  backdropFilter: 'blur(10px)',
+  WebkitBackdropFilter: 'blur(10px)'
+};
+
+const SectionLabel = ({ title }) => (
+  <div className="w-full md:w-[150px] shrink-0 text-white/70">
+    <h3 className="text-base font-semibold text-white">{title}</h3>
   </div>
+);
+
+const FieldLabel = ({ children }) => (
+  <span className="text-[11px] font-semibold text-white/60">{children}</span>
 );
 
 const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
@@ -16,7 +28,7 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
-  
+
   // Use authenticated API service instead of toolsService
   const apiService = useApiService();
 
@@ -41,10 +53,10 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
     loadNames();
   }, [assistantId, tool.name]);
 
-  const headerEntries = useMemo(() => Object.entries(tool.headers || {}), [tool.headers]);
-
   const runTest = async () => {
-    setRunning(true); setError(null); setResult(null);
+    setRunning(true);
+    setError(null);
+    setResult(null);
     try {
       let init = { method: tool.method, headers: tool.headers || {} };
       if (tool.method !== 'GET' && body && body.trim()) {
@@ -76,14 +88,13 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
     try {
       const updated = {
         ...tool,
-        is_verified: passed, // Changed from complex verification object
+        is_verified: passed,
       };
-      
+
       if (tool.id) {
-        // Use authenticated API service instead of toolsService
         await apiService.updateTool(assistantId, tool.id, updated);
       }
-      
+
       onVerified?.(updated);
     } catch (error) {
       console.error('Failed to save verification:', error);
@@ -93,114 +104,118 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
     }
   };
 
+  // Format verification checks text
+  const verificationChecksText = useMemo(() => {
+    const checks = [];
+    checks.push(`Config & schema basics (${validation.errors.length === 0 ? 'ok' : 'issues'})`);
+    checks.push(`Live call succeeded (2xx)`);
+    checks.push(`Response JSON (when output schema provided)`);
+
+    if (validation.errors.length > 0) {
+      validation.errors.forEach(err => {
+        checks.push(`• ${err}`);
+      });
+    }
+
+    return checks.join('\n');
+  }, [validation]);
+
   return (
-    <div className="space-y-4">
-      <div className="border rounded p-4 bg-gray-50">
-        <h4 className="font-semibold text-gray-800 mb-3">Request Preview</h4>
-        <div className="text-sm text-gray-700 grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
-            <div className="text-gray-500 text-xs mb-1">Method</div>
-            <div className="inline-block px-2 py-1 rounded bg-white border text-sm">{tool.method}</div>
-          </div>
-          <div className="md:col-span-2">
-            <div className="text-gray-500 text-xs mb-1">URL</div>
-            <div className="px-2 py-1 rounded bg-white border truncate text-sm" title={tool.endpoint_url}>{tool.endpoint_url}</div>
-          </div>
-        </div>
-        <div className="mt-3 text-sm text-gray-700">
-          <div className="text-gray-500 text-xs mb-1">Headers</div>
-          {headerEntries.length === 0 ? (
-            <div className="px-2 py-1 rounded bg-white border inline-block text-gray-500 text-xs">None</div>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {headerEntries.map(([k, v]) => (
-                <div key={k} className="px-2 py-1 rounded bg-white border text-xs">
-                  <span className="text-gray-500 mr-1">{k}:</span>
-                  <span className="text-gray-800">{String(v)}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="border rounded p-4 bg-white">
-        <h4 className="font-semibold text-gray-800 mb-3">Test Tool</h4>
-        <div className="text-sm text-gray-600 mb-2">Provide a sample request body (JSON) if your method is not GET.</div>
-        <textarea className="w-full border px-3 py-2 rounded font-mono text-xs" rows={4} value={body} onChange={e => setBody(e.target.value)} />
-        <div className="mt-3">
-          <button disabled={running} onClick={runTest} className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 disabled:opacity-50 inline-flex items-center">
-            <Play size={16} className="mr-2" /> {running ? 'Running...' : 'Run Test'}
-          </button>
-        </div>
-        {error && (
-          <div className="mt-3 text-sm text-red-600 flex items-center"><AlertTriangle size={16} className="mr-2" /> {error}</div>
-        )}
-      </div>
-
-      <div className="flex gap-6">
-        <div className="flex-1 border rounded p-4 bg-white">
-          <h4 className="font-semibold text-gray-800 mb-3">Verification Checks</h4>
+    <div className="space-y-4 pt-4">
+      {/* Test Tool Section */}
+      <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+        <SectionLabel title="Test Tool" />
+        <div className="flex-1 space-y-4">
           <div className="space-y-2">
-            <ChecklistItem ok={validation.errors.length === 0} text={`Config & schema basics (${validation.errors.length === 0 ? 'ok' : 'issues'})`} />
-            <ChecklistItem ok={!!result && result.ok} text={`Live call succeeded (2xx)`} />
-            <ChecklistItem ok={!tool.output_schema || (!!result && !!result.json && typeof result.json === 'object')} text={`Response JSON (when output schema provided)`} />
-            {validation.errors.length > 0 && (
-              <div className="text-xs text-red-600 mt-2 space-y-1">
-                {validation.errors.map((e, idx) => (<div key={idx}>• {e}</div>))}
-              </div>
-            )}
+            <FieldLabel>Body (JSON)</FieldLabel>
+            <textarea
+              className={`${INPUT_STYLES} font-mono text-xs resize-none`}
+              rows={4}
+              value={body}
+              onChange={e => setBody(e.target.value)}
+              placeholder='{"key": "value"}'
+              style={INPUT_STYLE_OBJ}
+            />
           </div>
-        </div>
 
-        <div className="flex-1 border rounded p-4 bg-white">
-          <h4 className="font-semibold text-gray-800 mb-3">Test Results</h4>
-          {result ? (
-            <div className="text-sm text-gray-700 space-y-2">
-              <div className="flex justify-between">
-                <span>Status:</span>
-                <span className={result.ok ? 'text-emerald-600' : 'text-red-600'}>
-                  {result.status} {result.ok ? '(OK)' : '(Error)'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>Latency:</span>
-                <span>{result.duration} ms</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Content-Type:</span>
-                <span className="text-xs">{result.contentType || 'n/a'}</span>
-              </div>
-              <div className="mt-3">
-                <div className="font-medium text-xs mb-1">Response Body:</div>
-                <pre className="bg-gray-50 border rounded p-2 overflow-auto max-h-32 text-xs">
-{result.json ? JSON.stringify(result.json, null, 2) : (result.text || '')}
-                </pre>
-              </div>
+          <div className="flex items-center gap-3">
+            <button
+              disabled={running}
+              onClick={runTest}
+              className="px-4 py-2 rounded-xl border border-emerald-300/40 bg-emerald-400/20 text-emerald-200 hover:bg-emerald-400/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-semibold"
+            >
+              {running ? (
+                <>
+                  <div className="h-4 w-4 border-2 border-emerald-200 border-t-transparent rounded-full animate-spin" />
+                  Running...
+                </>
+              ) : (
+                <>
+                  <Play size={14} />
+                  Run
+                </>
+              )}
+            </button>
+          </div>
+
+          {error && (
+            <div className="text-[11px] text-red-400 flex items-center gap-2">
+              <AlertTriangle size={14} />
+              {error}
             </div>
-          ) : (
-            <div className="text-sm text-gray-500">Run a test to see the response here.</div>
           )}
         </div>
       </div>
 
-      {/* Action Bar */}
-      <div className="pt-4 border-t flex items-center justify-between bg-white p-4 rounded">
-        <div className={`text-sm ${passed ? 'text-emerald-700' : 'text-gray-500'}`}>
-          {passed ? '🎉 All checks passed! Click "Mark as Verified" to proceed.' : 'Complete the checks to proceed.'}
+      {/* Test Results Section */}
+      <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+        <SectionLabel title="Test Results" />
+        <div className="flex-1 space-y-4">
+          <div className="space-y-2">
+            <FieldLabel>Response</FieldLabel>
+            <textarea
+              className={`${INPUT_STYLES} font-mono text-xs resize-none`}
+              rows={4}
+              value={result ? (result.json ? JSON.stringify(result.json, null, 2) : (result.text || '')) : 'Run a test to see the response here.'}
+              readOnly
+              placeholder="Run a test to see the response here."
+              style={INPUT_STYLE_OBJ}
+            />
+          </div>
         </div>
-        <button 
-          onClick={saveVerification} 
+      </div>
+
+      {/* Verification Checks Section */}
+      <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+        <SectionLabel title="Verification Checks" />
+        <div className="flex-1 space-y-4">
+          <div className="space-y-2">
+            <FieldLabel>Checks</FieldLabel>
+            <textarea
+              className={`${INPUT_STYLES} font-mono text-xs resize-none`}
+              rows={6}
+              value={verificationChecksText}
+              readOnly
+              style={INPUT_STYLE_OBJ}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-end items-center pt-4 border-t border-white/10">
+        <button
+          onClick={saveVerification}
           disabled={saving}
-          className={`px-4 py-2 rounded ${passed ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-gray-200 text-gray-600 cursor-pointer'} disabled:opacity-50`}
+          className="px-4 py-2 rounded-xl border border-emerald-300/40 bg-emerald-400/20 text-emerald-200 hover:bg-emerald-400/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-semibold"
         >
           {saving ? (
             <>
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2 inline"></div>
+              <div className="h-4 w-4 border-2 border-emerald-200 border-t-transparent rounded-full animate-spin" />
               Saving...
             </>
           ) : (
-            passed ? '✅ Mark as Verified' : 'Save Verification Result'
+            'Save Verification Result'
           )}
         </button>
       </div>

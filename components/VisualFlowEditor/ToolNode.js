@@ -6,140 +6,154 @@ export default function ToolNode({ data, selected }) {
   
   return (
     <div 
-      className={`relative transition-all duration-300 transform ${
-        selected ? 'scale-105' : isHovered ? 'scale-102' : 'scale-100'
-      }`}
+      className="relative transition-all duration-300"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Glow effect for selected node */}
-      {selected && (
-        <div className="absolute inset-0 rounded-xl bg-green-500/20 blur-xl animate-pulse" />
-      )}
-      
-      <div className={`relative bg-slate-800 rounded-xl border-2 shadow-2xl min-w-[240px] max-w-[280px] ${
-        selected 
-          ? 'border-green-500 shadow-green-500/20' 
-          : isHovered 
-            ? 'border-slate-600 shadow-slate-700/30'
-            : 'border-slate-700 shadow-slate-900/50'
-      } transition-all duration-300 cursor-pointer backdrop-blur-sm`}>
-        
-        <Handle
-          type="target"
-          position={Position.Top}
-          className={`!w-3 !h-3 !border-2 transition-all duration-300 ${
-            selected || isHovered
-              ? '!bg-green-500 !border-slate-800 scale-125'
-              : '!bg-slate-600 !border-slate-800'
-          }`}
-          style={{ top: -6 }}
-        />
-        
-        {/* Header */}
-        <div className={`px-4 py-3 rounded-t-xl transition-all duration-300 ${
-          selected 
-            ? 'bg-gradient-to-r from-green-600/20 to-purple-600/20 border-b border-green-500/30' 
-            : 'bg-gradient-to-r from-slate-700/30 to-slate-700/20 border-b border-slate-700'
-        }`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {/* Node type icon */}
-              <div className={`w-2 h-2 rounded-full animate-pulse ${
-                selected ? 'bg-green-400' : 'bg-green-400'
-              }`} />
-              <h3 className="font-semibold text-sm text-slate-100 truncate">
+      {/* Main Card - Compact Size */}
+      <div 
+        className={`relative rounded-xl min-w-[150px] max-w-[150px] overflow-hidden ${selected ? 'border-2' : 'border-0'}`}
+        style={{
+          background: 'rgba(255, 255, 255, 0.04)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderColor: selected ? '#13F584' : 'transparent',
+          boxShadow: selected 
+            ? '0 25px 50px -12px rgba(19, 245, 132, 0.3)'
+            : '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+        }}
+      >
+          {/* Light Green Gradient Effect - Top Right */}
+          <div 
+            className="absolute top-0 right-0 w-6 h-6 pointer-events-none"
+            style={{
+              background: 'radial-gradient(circle at top right, rgba(19, 245, 132, 0.2) 0%, rgba(19, 245, 132, 0) 70%)',
+            }}
+          />
+          
+          {/* Top Handle */}
+          <Handle
+            type="target"
+            position={Position.Top}
+            className="!w-2.5 !h-2.5 !border-2 !bg-white/40 !border-[#141A21] transition-all duration-300"
+            style={{ 
+              top: -5,
+              transform: selected || isHovered ? 'scale(1.2)' : 'scale(1)'
+            }}
+          />
+          
+          {/* Header - Compact */}
+          <div className="px-2.5 py-1.5 flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <h3 className="text-[7px] font-semibold text-white/60 truncate max-w-[80px]">
                 {data.title || data.id}
               </h3>
             </div>
-            {/* Status indicator */}
-            <div className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-              data.respond_immediately 
-                ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-            }`}>
+            {/* Fast Badge */}
+            <div 
+              className="px-0.5 py-0.5 rounded border text-[7px] font-bold flex-shrink-0"
+              style={{
+                background: 'rgba(19, 245, 132, 0.16)',
+                color: '#9EFBCD',
+                borderColor: 'rgba(19, 245, 132, 0.3)'
+              }}
+            >
               {data.respond_immediately ? 'Fast' : 'Wait'}
             </div>
           </div>
-        </div>
-        
-        {/* Content */}
-        <div className="px-4 py-3">
-          {/* Functions section */}
-          {data.functions && data.functions.length > 0 ? (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
-                  Functions
-                </span>
-                <span className="text-xs text-slate-500 bg-slate-700/50 px-1.5 py-0.5 rounded">
-                  {data.functions.length}
-                </span>
-              </div>
-              <div className="space-y-1.5">
-                {data.functions.slice(0, 3).map((func, index) => (
-                  <div 
-                    key={index} 
-                    className="flex items-center gap-2 group"
-                  >
-                    <div className="w-1 h-1 bg-green-400 rounded-full group-hover:scale-150 transition-transform" />
-                    <span className="text-xs text-slate-300 truncate font-mono">
-                      {func}
-                    </span>
-                  </div>
-                ))}
-                {data.functions.length > 3 && (
-                  <div className="text-xs text-slate-500 pl-3 italic">
-                    +{data.functions.length - 3} more...
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center py-4">
-              <div className="text-xs text-slate-600 italic">No functions configured</div>
-            </div>
-          )}
           
-          {/* Prompt preview */}
-          {data.prompt && (
-            <div className="mt-3 pt-3 border-t border-slate-700/50">
-              <div className="text-xs text-slate-500 mb-1 uppercase tracking-wider">Prompt</div>
-              <div className="text-xs text-slate-400 line-clamp-2 opacity-70">
-                {data.prompt}
+          {/* Content - Compact */}
+          <div className="px-2.5 py-1.5 space-y-0.5">
+            {/* Functions section */}
+            {data.functions && data.functions.length > 0 ? (
+              <div className="space-y-0.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[7px] font-medium text-white/60 uppercase tracking-wider">
+                    Functions
+                  </span>
+                  <span 
+                    className="text-[7px] px-0.5 py-0.5 rounded"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      color: 'rgba(255, 255, 255, 0.5)'
+                    }}
+                  >
+                    {data.functions.length}
+                  </span>
+                </div>
+                <div className="space-y-0.5">
+                  {data.functions.slice(0, 2).map((func, index) => (
+                    <div 
+                      key={index} 
+                      className="flex items-center gap-0.5"
+                    >
+                      <div className="w-0.5 h-0.5 bg-white/40 rounded-full flex-shrink-0" />
+                      <span className="text-[7px] text-white/60 truncate font-mono">
+                        {func}
+                      </span>
+                    </div>
+                  ))}
+                  {data.functions.length > 2 && (
+                    <div className="text-[7px] text-white/40 pl-1 italic">
+                      +{data.functions.length - 2} more...
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-        
-        {/* Footer status bar */}
-        <div className="px-4 py-2 bg-slate-900/50 rounded-b-xl border-t border-slate-700/50">
-          <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${
-                data.respond_immediately ? 'bg-green-400' : 'bg-yellow-400'
-              } animate-pulse`} />
-              <span className="text-slate-500">
-                {data.respond_immediately ? 'Immediate' : 'Deferred'}
-              </span>
-            </div>
-            <span className="text-slate-600 font-mono text-[10px]">
-              {data.id}
-            </span>
+            ) : (
+              <div className="flex items-center justify-center py-0.5">
+                <div className="text-[7px] text-white/60">No functions</div>
+              </div>
+            )}
+            
+            {/* Prompt preview */}
+            {data.prompt && (
+              <div className="mt-1 pt-1">
+                <div className="text-[7px] text-white/60 mb-0.5 uppercase tracking-wider font-mono truncate">
+                  {data.id || 'MSQSSL'}
+                </div>
+                <div className="text-[7px] text-white/60 line-clamp-2 leading-tight">
+                  {data.prompt.length > 40 ? data.prompt.substring(0, 40) + '...' : data.prompt}
+                </div>
+              </div>
+            )}
           </div>
+          
+          {/* Footer - Compact */}
+          <div className="px-2.5 py-1.5 flex items-center justify-between gap-0.5">
+            <div 
+              className="px-0.5 py-0.5 rounded border text-[7px] font-bold truncate"
+              style={{
+                background: 'rgba(19, 245, 132, 0.16)',
+                color: '#9EFBCD',
+                borderColor: 'rgba(19, 245, 132, 0.3)'
+              }}
+            >
+              {data.respond_immediately ? 'Immediate' : 'Wait'}
+            </div>
+            <div 
+              className="px-0.5 py-0.5 rounded border text-[7px] font-bold font-mono truncate max-w-[50px]"
+              style={{
+                background: 'rgba(19, 245, 132, 0.16)',
+                color: '#9EFBCD',
+                borderColor: 'rgba(19, 245, 132, 0.3)'
+              }}
+            >
+              {data.id || 'Node_002'}
+            </div>
+          </div>
+          
+          {/* Bottom Handle */}
+          <Handle
+            type="source"
+            position={Position.Bottom}
+            className="!w-2.5 !h-2.5 !border-2 !bg-white/40 !border-[#141A21] transition-all duration-300"
+            style={{ 
+              bottom: -5,
+              transform: selected || isHovered ? 'scale(1.2)' : 'scale(1)'
+            }}
+          />
         </div>
-        
-        <Handle
-          type="source"
-          position={Position.Bottom}
-          className={`!w-3 !h-3 !border-2 transition-all duration-300 ${
-            selected || isHovered
-              ? '!bg-green-500 !border-slate-800 scale-125'
-              : '!bg-slate-600 !border-slate-800'
-          }`}
-          style={{ bottom: -6 }}
-        />
-      </div>
     </div>
   );
 }

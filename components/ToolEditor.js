@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { X, Save, Link as LinkIcon, ToggleLeft, ToggleRight, Plus, Trash2, Code, CheckCircle2, AlertCircle, Zap } from 'lucide-react';
+import { X, Save, Plus, Trash2, Info } from 'lucide-react';
 import { toolsService } from '../lib/toolsService';
 import ToolVerifyPanel from './ToolVerifyPanel';
 import { validateToolConfig } from '../lib/toolValidation';
@@ -8,7 +8,7 @@ const emptyTool = {
   id: '',
   name: '',
   description: '',
-  is_enabled: true,
+  is_enabled: false,
   method: 'GET',
   endpoint_url: '',
   headers: [], // [{key, value}]
@@ -22,11 +22,31 @@ const sanitizeToolName = (name) => {
   return name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
 };
 
+const INPUT_STYLES =
+  'w-full rounded-lg px-3 py-2 text-sm text-white placeholder-white/40 focus:outline-none transition-all';
+
+const INPUT_STYLE_OBJ = {
+  background: 'rgba(255, 255, 255, 0.04)',
+  backdropFilter: 'blur(10px)',
+  WebkitBackdropFilter: 'blur(10px)'
+};
+
+const SectionLabel = ({ title }) => (
+  <div className="w-full md:w-[150px] shrink-0 text-white/70">
+    <h3 className="text-base font-semibold text-white">{title}</h3>
+  </div>
+);
+
+const FieldLabel = ({ children }) => (
+  <span className="text-[11px] font-semibold text-white/60">{children}</span>
+);
+
 const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved }) => {
   const [form, setForm] = useState(emptyTool);
   const [saving, setSaving] = useState(false);
   const [step, setStep] = useState('configure'); // 'configure' | 'verify'
   const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
 
   const loadExistingNames = async () => {
     try {
@@ -61,6 +81,7 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved }) => {
     } else {
       setForm({ ...emptyTool, id: '' });
     }
+    setHasAttemptedSubmit(false); // Reset validation state when tool changes
   }, [tool]);
 
   // --- NEW: keep schema text as editable strings so paste/typing won't be blocked ---
@@ -99,6 +120,14 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setHasAttemptedSubmit(true);
+    
+    // Check validation before proceeding
+    if (validation.errors.length > 0) {
+      setSaving(false);
+      return;
+    }
+    
     setSaving(true);
     try {
       const headersObj = form.headers.reduce((acc, h) => { if (h.key) acc[h.key] = h.value; return acc; }, {});
@@ -117,28 +146,41 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved }) => {
         // keep existing form.output_schema if parse fails
       }
 
-      const payload = { 
-        ...form, 
-        headers: headersObj, 
-        input_schema: parsedInput, 
-        output_schema: parsedOutput 
+      const payload = {
+        ...form,
+        headers: headersObj,
+        input_schema: parsedInput,
+        output_schema: parsedOutput
       };
-      
+
       // Sanitize tool name for Gemini compatibility
       payload.name = sanitizeToolName(payload.name);
-      
+
       // Force disabled until verified
       if (!payload.is_verified) {
         payload.is_enabled = false;
       }
-      
+
+      // Log payload to verify all fields are included
+      console.log('💾 Saving tool with payload:', {
+        name: payload.name,
+        description: payload.description,
+        method: payload.method,
+        endpoint_url: payload.endpoint_url,
+        headers: payload.headers,
+        is_enabled: payload.is_enabled,
+        input_schema: payload.input_schema,
+        output_schema: payload.output_schema,
+        is_verified: payload.is_verified
+      });
+
       let savedTool;
       if (tool?.id) {
         savedTool = await toolsService.updateTool(assistantId, tool.id, payload);
       } else {
         savedTool = await toolsService.createTool(assistantId, payload);
       }
-      
+
       onSaved(savedTool);
     } catch (e) {
       console.error(e);
@@ -152,21 +194,21 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved }) => {
     // Ensure headers are in the correct format for the form
     const updatedWithCorrectHeaders = {
       ...updated,
-      headers: Array.isArray(updated.headers) 
-        ? updated.headers 
+      headers: Array.isArray(updated.headers)
+        ? updated.headers
         : Object.entries(updated.headers || {}).map(([key, value]) => ({ key, value }))
     };
     setForm(updatedWithCorrectHeaders);
-    
+
     // Show success message
     if (updated.is_verified) {
       setShowSuccessToast(true);
       setTimeout(() => setShowSuccessToast(false), 3000);
     }
-    
+
     // Switch back to configure step
     setStep('configure');
-    
+
     // Trigger parent reload if callback exists
     if (onSaved) {
       onSaved(updated);
@@ -176,327 +218,321 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved }) => {
   const canEnable = form.is_verified;
 
   return (
-    <div className="min-h-screen bg-green-100 p-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
+    <div
+      className="relative w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden"
+      style={{
+        background: 'rgba(255, 255, 255, 0.04)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255, 255, 255, 0.12)'
+      }}
+    >
+      <div className="relative z-10 p-5 space-y-4">
+      {/* Success Toast */}
+      {showSuccessToast && (
+        <div className="mb-4 p-3 bg-emerald-500/20 border border-emerald-400/40 rounded-lg flex items-center animate-fade-in-up">
+          <div className="w-4 h-4 bg-emerald-400 rounded-full flex items-center justify-center mr-2">
+            <span className="text-[#141A21] text-[10px] font-bold">✓</span>
+          </div>
+          <div className="text-emerald-300 text-sm">
+            <span className="font-medium">Tool verified successfully!</span>
+            <span className="text-xs ml-2">You can now enable it in the Configure step.</span>
+          </div>
         </div>
+      )}
 
-        <div className="relative backdrop-blur-sm bg-green-100/130 rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
-          {/* Glassmorphism overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-green-50/20 to-green-100/5 pointer-events-none"></div>
-          
-          <div className="relative p-8">
-            {/* Success Toast */}
-            {showSuccessToast && (
-              <div className="mb-8 p-4 bg-gradient-to-r from-emerald-500/10 to-green-500/10 backdrop-blur-md border border-emerald-200/50 rounded-2xl flex items-center animate-in slide-in-from-top-4 duration-500">
-                <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full flex items-center justify-center mr-4 animate-bounce">
-                  <CheckCircle2 size={18} className="text-white" />
-                </div>
-                <div className="text-emerald-800">
-                  <span className="font-semibold">Tool verified successfully!</span>
-                  <span className="text-sm ml-2 opacity-80">You can now enable it in the Configure step.</span>
+      {/* Header */}
+      <div className="flex items-center justify-between pb-2">
+        <h2 className="text-base font-semibold text-white">{tool ? 'Edit Tool' : 'Create New Tool'}</h2>
+        <button
+          onClick={onCancel}
+          className="w-8 h-8 flex items-center justify-center rounded-full border border-white/20 text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+        >
+          <X size={16} />
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-4 pb-2">
+        <button
+          className={`pb-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] ${
+            step === 'configure' ? 'text-white border-b-2 border-emerald-300' : 'text-white/50'
+          }`}
+          onClick={() => setStep('configure')}
+        >
+          Configuration
+        </button>
+        <button
+          className={`pb-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] ${
+            step === 'verify' ? 'text-white border-b-2 border-emerald-300' : 'text-white/50'
+          }`}
+          onClick={() => setStep('verify')}
+        >
+          Verify
+        </button>
+      </div>
+
+      {step === 'configure' ? (
+        <form onSubmit={onSubmit} className="space-y-3 pt-4">
+          {/* Section: Basics */}
+          <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+            <SectionLabel title="Basic Information" />
+            <div className="flex-1 space-y-4">
+              <div className="space-y-2">
+                <FieldLabel required>Tool Name</FieldLabel>
+                <div className="relative">
+                  <input
+                    className={INPUT_STYLES}
+                    value={form.name}
+                    onChange={e => update('name', e.target.value)}
+                    required
+                    placeholder="e.g., add product"
+                    disabled={!!tool?.id}
+                    style={INPUT_STYLE_OBJ}
+                  />
+                  {form.name && (
+                    <div className="mt-2 flex items-start gap-2 text-[11px] text-white/60">
+                      <Info size={14} className="mt-0.5" />
+                      <span>
+                        Tool name will be stored as{' '}
+                        <code className="bg-white/5 px-1 py-0.5 rounded text-emerald-300">{sanitizeToolName(form.name)}</code>
+                      </span>
+                    </div>
+                  )}
+                  {hasAttemptedSubmit && validation.errors.length > 0 && (
+                    <div className="mt-1.5 text-[11px] text-red-400">{validation.errors[0]}</div>
+                  )}
                 </div>
               </div>
-            )}
 
-            {/* Header */}
-            <div className="flex items-center justify-between mb-10">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                  <Zap className="text-white" size={24} />
-                </div>
-                <div>
-                  <h2 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                    {tool ? 'Edit Tool' : 'Create New Tool'}
-                  </h2>
-                  <p className="text-slate-500 text-sm mt-1">Configure and verify your API integration</p>
-                </div>
+              <div className="space-y-2">
+                <FieldLabel>Description</FieldLabel>
+                <textarea
+                  className={`${INPUT_STYLES} resize-none`}
+                  rows={3}
+                  value={form.description}
+                  onChange={e => update('description', e.target.value)}
+                  placeholder="Describe what this tool does..."
+                  style={INPUT_STYLE_OBJ}
+                />
               </div>
-              <button 
-                onClick={onCancel} 
-                className="w-12 h-12 rounded-2xl bg-slate-100/80 hover:bg-slate-200/80 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
-              >
-                <X size={20} className="text-slate-600" />
-              </button>
-            </div>
 
-            {/* Modern Stepper */}
-            <div className="flex space-x-2 mb-10 bg-slate-100/50 rounded-2xl p-2">
-              <button 
-                className={`flex-1 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
-                  step === 'configure' 
-                    ? 'bg-white shadow-lg text-blue-600 transform scale-105' 
-                    : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'
-                }`} 
-                onClick={() => setStep('configure')}
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <Code size={16} />
-                  <span>Configure</span>
-                </div>
-              </button>
-              <button 
-                className={`flex-1 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
-                  step === 'verify' 
-                    ? 'bg-white shadow-lg text-blue-600 transform scale-105' 
-                    : 'text-slate-600 hover:text-slate-800 hover:bg-white/50'
-                }`} 
-                onClick={() => setStep('verify')}
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <CheckCircle2 size={16} />
-                  <span>Verify</span>
-                </div>
-              </button>
-            </div>
-
-            {step === 'configure' ? (
-              <div className="grid lg:grid-cols-2 gap-10">
-                {/* Left Section - Basic Configuration */}
-                <div className="space-y-8">
-                  <form onSubmit={onSubmit} className="space-y-8">
-                    {/* Basic Info Card */}
-                    <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/80 shadow-sm">
-                      <h3 className="text-lg font-semibold text-slate-800 mb-6 flex items-center">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                        Basic Information
-                      </h3>
-                      <div className="space-y-6">
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">Tool Name *</label>
-                          <input 
-                            className="w-full bg-white/80 border border-slate-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:bg-white" 
-                            value={form.name} 
-                            onChange={e => update('name', e.target.value)} 
-                            required 
-                            placeholder="e.g., add product" 
-                          />
-                          {form.name && (
-                            <div className="text-xs text-slate-500 mt-2 p-2 bg-slate-50 rounded-lg">
-                              Gemini will use: <code className="bg-slate-200 px-2 py-1 rounded font-mono">{sanitizeToolName(form.name)}</code>
-                            </div>
-                          )}
-                          {validation.errors.length > 0 && (
-                            <div className="flex items-center mt-2 text-xs text-red-600">
-                              <AlertCircle size={12} className="mr-1" />
-                              {validation.errors[0]}
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
-                          <textarea 
-                            className="w-full bg-white/80 border border-slate-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:bg-white resize-none" 
-                            rows={3} 
-                            value={form.description} 
-                            onChange={e => update('description', e.target.value)}
-                            placeholder="Describe what this tool does..."
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-3">Status</label>
-                          <button 
-                            type="button" 
-                            disabled={!canEnable} 
-                            onClick={() => update('is_enabled', !form.is_enabled)} 
-                            className={`inline-flex items-center px-4 py-3 rounded-xl border transition-all duration-200 ${
-                              canEnable ? 'hover:scale-105 active:scale-95' : 'opacity-50 cursor-not-allowed'
-                            } ${form.is_enabled ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-600'}`}
-                          >
-                            {form.is_enabled ? 
-                              <ToggleRight size={20} className="mr-2 text-emerald-600" /> : 
-                              <ToggleLeft size={20} className="mr-2 text-slate-400" />
-                            }
-                            {form.is_enabled ? 'Enabled' : 'Disabled'}
-                          </button>
-                          {!canEnable && (
-                            <div className="text-xs text-slate-500 mt-2 flex items-center">
-                              <AlertCircle size={12} className="mr-1" />
-                              Tool will be activated once verified
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* HTTP Configuration Card */}
-                    <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/80 shadow-sm">
-                      <h3 className="text-lg font-semibold text-slate-800 mb-6 flex items-center">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
-                        HTTP Configuration
-                      </h3>
-                      <div className="space-y-6">
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Method *</label>
-                            <select 
-                              className="w-full bg-white/80 border border-slate-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:bg-white" 
-                              value={form.method} 
-                              onChange={e => update('method', e.target.value)} 
-                              required
-                            >
-                              <option>GET</option>
-                              <option>POST</option>
-                              <option>PUT</option>
-                              <option>DELETE</option>
-                            </select>
-                          </div>
-                          <div className="lg:col-span-2">
-                            <label className="block text-sm font-medium text-slate-700 mb-2">Endpoint URL *</label>
-                            <div className="relative">
-                              <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">
-                                <LinkIcon size={16} />
-                              </div>
-                              <input 
-                                className="w-full bg-white/80 border border-slate-200 pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:bg-white" 
-                                value={form.endpoint_url} 
-                                onChange={e => update('endpoint_url', e.target.value)} 
-                                required 
-                                placeholder="https://api.example.com/endpoint" 
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <div className="flex items-center justify-between mb-4">
-                            <label className="block text-sm font-medium text-slate-700">Headers</label>
-                            <button 
-                              type="button" 
-                              onClick={addHeader} 
-                              className="flex items-center px-3 py-1.5 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-all duration-200"
-                            >
-                              <Plus size={14} className="mr-1" />
-                              Add Header
-                            </button>
-                          </div>
-                          <div className="space-y-3">
-                            {form.headers.map((h, idx) => (
-                              <div key={idx} className="flex gap-3 items-center group">
-                                <input 
-                                  className="flex-1 bg-white/80 border border-slate-200 px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:bg-white" 
-                                  placeholder="Key" 
-                                  value={h.key} 
-                                  onChange={e => updateHeader(idx, 'key', e.target.value)} 
-                                />
-                                <input 
-                                  className="flex-1 bg-white/80 border border-slate-200 px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:bg-white" 
-                                  placeholder="Value" 
-                                  value={h.value} 
-                                  onChange={e => updateHeader(idx, 'value', e.target.value)} 
-                                />
-                                <button 
-                                  type="button" 
-                                  onClick={() => removeHeader(idx)} 
-                                  className="w-8 h-8 flex items-center justify-center text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200"
-                                >
-                                  <Trash2 size={14} />
-                                </button>
-                              </div>
-                            ))}
-                            {form.headers.length === 0 && (
-                              <div className="text-center py-8 text-slate-400 text-sm">
-                                No headers configured
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex justify-between items-center pt-6">
-                      <button 
-                        type="button" 
-                        onClick={() => setStep('verify')} 
-                        className="px-6 py-3 bg-slate-100/80 hover:bg-slate-200/80 text-slate-700 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95"
-                      >
-                        Go to Verify
-                      </button>
-                      <div className="flex space-x-3">
-                        <button 
-                          type="button" 
-                          onClick={onCancel} 
-                          className="px-6 py-3 bg-white/80 hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95"
-                        >
-                          Cancel
-                        </button>
-                        <button 
-                          type="submit" 
-                          disabled={saving} 
-                          className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center"
-                        >
-                          {saving ? (
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                          ) : (
-                            <Save size={16} className="mr-2" />
-                          )}
-                          {tool ? 'Save Changes' : 'Create Tool'}
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-
-                {/* Right Section - Schema Configuration */}
-                <div className="space-y-8">
-                  <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/80 shadow-sm">
-                    <h3 className="text-lg font-semibold text-slate-800 mb-6 flex items-center">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                      JSON Schemas
-                    </h3>
-                    <div className="space-y-6">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Input Schema</label>
-                        <textarea
-                          className="w-full bg-white text-slate-800 border border-slate-300 px-4 py-3 rounded-xl font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
-                          rows={10}
-                          value={inputSchemaText}
-                          onChange={e => {
-                            setInputSchemaText(e.target.value);
-                            // try to update parsed schema in form when valid JSON is pasted/entered
-                            try { update('input_schema', JSON.parse(e.target.value)); } catch {}
-                          }}
-                          placeholder="Enter JSON schema for input parameters..."
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Output Schema</label>
-                        <textarea
-                          className="w-full bg-white text-slate-800 border border-slate-300 px-4 py-3 rounded-xl font-mono text-xs focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
-                          rows={10}
-                          value={outputSchemaText}
-                          onChange={e => {
-                            setOutputSchemaText(e.target.value);
-                            // try to update parsed schema in form when valid JSON is pasted/entered
-                            try { update('output_schema', JSON.parse(e.target.value)); } catch {}
-                          }}
-                          placeholder="Enter JSON schema for output response..."
-                        />
-                      </div>
-                    </div>
+              <div className="space-y-2">
+                <FieldLabel required>Status</FieldLabel>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    disabled={!canEnable}
+                    onClick={() => update('is_enabled', !form.is_enabled)}
+                    className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
+                      form.is_enabled ? 'bg-emerald-500/30 border-emerald-400/50' : 'bg-white/5 border-white/15'
+                    } ${canEnable ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        form.is_enabled ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                  <div className="text-[13px] text-white/70">
+                    {form.is_enabled ? 'Enabled' : 'Disabled'}
+                    {!canEnable && <div className="text-[11px] text-white/40">Tool activates after verification.</div>}
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-white/80 shadow-sm">
-                <ToolVerifyPanel 
-                  assistantId={assistantId} 
-                  tool={{
-                    ...form, 
-                    headers: Array.isArray(form.headers) 
-                      ? form.headers.reduce((acc, h) => { if (h.key) acc[h.key] = h.value; return acc; }, {})
-                      : form.headers || {}
-                  }} 
-                  onVerified={onVerified} 
+            </div>
+          </div>
+
+          {/* Section: HTTP Configuration */}
+          <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+            <SectionLabel title="HTTP Configuration" />
+            <div className="flex-1 space-y-4">
+              <div className="space-y-1.5">
+                <FieldLabel required>Method</FieldLabel>
+                <div className="relative">
+                  <select
+                    className={`${INPUT_STYLES} appearance-none pr-10`}
+                    value={form.method}
+                    onChange={e => update('method', e.target.value)}
+                    required
+                    style={INPUT_STYLE_OBJ}
+                  >
+                    <option value="GET" className="bg-[#141A21]">GET</option>
+                    <option value="POST" className="bg-[#141A21]">POST</option>
+                    <option value="PUT" className="bg-[#141A21]">PUT</option>
+                    <option value="DELETE" className="bg-[#141A21]">DELETE</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-white/50">▾</div>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <FieldLabel required>Endpoint URL</FieldLabel>
+                <input
+                  className={INPUT_STYLES}
+                  value={form.endpoint_url}
+                  onChange={e => update('endpoint_url', e.target.value)}
+                  required
+                  placeholder="https://api.example.com/endpoint"
+                  disabled={!!tool?.id}
+                  style={INPUT_STYLE_OBJ}
                 />
               </div>
-            )}
+
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
+                      form.headers.length > 0 ? 'bg-emerald-500/30 border-emerald-400/50' : 'bg-white/5 border-white/15'
+                    }`}
+                    onClick={() => {
+                      if (form.headers.length === 0) {
+                        addHeader();
+                      } else {
+                        setForm(prev => ({ ...prev, headers: [] }));
+                      }
+                    }}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        form.headers.length > 0 ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                  <p className="text-sm text-white/70">Headers</p>
+                  <button
+                    type="button"
+                    onClick={addHeader}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-xs font-semibold text-white/80 hover:bg-white/10 transition"
+                  >
+                    <Plus size={14} />
+                    Add Header
+                  </button>
+                </div>
+
+                {form.headers.map((h, idx) => (
+                  <div key={idx} className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                    <input
+                      className={INPUT_STYLES}
+                      placeholder="Key"
+                      value={h.key}
+                      onChange={e => updateHeader(idx, 'key', e.target.value)}
+                      style={INPUT_STYLE_OBJ}
+                    />
+                    <div className="flex gap-3">
+                      <input
+                        className={`${INPUT_STYLES} flex-1`}
+                        placeholder="Value"
+                        value={h.value}
+                        onChange={e => updateHeader(idx, 'value', e.target.value)}
+                        style={INPUT_STYLE_OBJ}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeHeader(idx)}
+                        className="h-11 w-11 rounded-2xl border border-red-400/40 bg-red-500/10 text-red-200 hover:bg-red-500/20 flex items-center justify-center transition"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+
+          {/* Section: JSON Schemas */}
+          <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+            <SectionLabel title="JSON Schemas" />
+            <div className="flex-1 space-y-4">
+              <div className="space-y-2">
+                <FieldLabel required>Input Schema</FieldLabel>
+                <textarea
+                  className={`${INPUT_STYLES} font-mono text-xs resize-none`}
+                  rows={6}
+                  value={inputSchemaText}
+                  onChange={e => {
+                    setInputSchemaText(e.target.value);
+                    try {
+                      update('input_schema', JSON.parse(e.target.value));
+                    } catch {
+                      /* ignore */
+                    }
+                  }}
+                  placeholder='{"type": "object", "properties": {}}'
+                  style={INPUT_STYLE_OBJ}
+                />
+              </div>
+              <div className="space-y-2">
+                <FieldLabel required>Output Schema</FieldLabel>
+                <textarea
+                  className={`${INPUT_STYLES} font-mono text-xs resize-none`}
+                  rows={6}
+                  value={outputSchemaText}
+                  onChange={e => {
+                    setOutputSchemaText(e.target.value);
+                    try {
+                      update('output_schema', JSON.parse(e.target.value));
+                    } catch {
+                      /* ignore */
+                    }
+                  }}
+                  placeholder='{"type": "object", "properties": {}}'
+                  style={INPUT_STYLE_OBJ}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-6 border-t border-white/10">
+            <button
+              type="button"
+              disabled
+              className="px-5 py-2.5 rounded-2xl border border-white/15 text-white/40 bg-white/5 cursor-not-allowed text-sm font-semibold tracking-wide"
+            >
+              Go to Verify
+            </button>
+            <div className="flex gap-2.5">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="px-3.5 py-2 rounded-2xl border border-red-400/40 text-red-200 bg-red-500/10 hover:bg-red-500/20 transition text-[13px]"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="px-4 py-2 rounded-2xl border border-emerald-300/40 bg-emerald-400/20 text-white font-semibold hover:bg-emerald-400/30 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-[13px]"
+              >
+                {saving ? (
+                  <>
+                    <div className="h-4 w-4 border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save size={16} />
+                    {tool ? 'Save Changes' : 'Create Tool'}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      ) : (
+        <ToolVerifyPanel
+          assistantId={assistantId}
+          tool={{
+            ...form,
+            headers: Array.isArray(form.headers)
+              ? form.headers.reduce((acc, h) => { if (h.key) acc[h.key] = h.value; return acc; }, {})
+              : form.headers || {}
+          }}
+          onVerified={onVerified}
+        />
+      )}
       </div>
     </div>
   );

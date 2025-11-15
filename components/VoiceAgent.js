@@ -3,13 +3,13 @@
  *  Sunrise Café – voice-only client (+ dynamic tools)
  *  Dynamic panels for any assistant/tools (audio untouched)
  * -------------------------------------------------- */
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Mic2, CheckCircle2, ShoppingCart, Gift, AlertCircle, X } from "lucide-react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { Mic2, CheckCircle2, Gift, AlertCircle, X } from "lucide-react";
 
 /* --------------------------  CONFIG  -------------------------- */
 const WS_AUDIO = "wss://esapdev.xyz:7000/agentbuilder/ws/audio";
 const OUTPUT_SAMPLE_RATE = 24_000;          // backend streams 24-kHz PCM
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://esapdev.xyz:7000/agentbuilder/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://176.9.16.194:5403/api";
 
 /* -----------------------  MAIN COMPONENT  --------------------- */
 export default function Home() {
@@ -28,6 +28,7 @@ export default function Home() {
   const [assistants, setAssistants] = useState([]);
   const [assistantId, setAssistantId] = useState(null);
   const [loadingAssistant, setLoadingAssistant] = useState(true);
+  const [assistantSearch, setAssistantSearch] = useState("");
 
   // ---------- session continuity ----------
   const [sessionId, setSessionId] = useState(null);
@@ -339,6 +340,29 @@ export default function Home() {
     [activePanelId]
   );
 
+  const handleAssistantChange = useCallback((id) => {
+    setAssistantId(id);
+    if (typeof window !== "undefined") {
+      if (id) localStorage.setItem("assistant_id", id);
+      else localStorage.removeItem("assistant_id");
+    }
+  }, []);
+
+  const filteredAssistants = useMemo(() => {
+    const term = assistantSearch.trim().toLowerCase();
+    if (!term) return assistants;
+    return assistants.filter((a) => {
+      const name = a?.name?.toLowerCase?.() ?? "";
+      const desc = a?.description?.toLowerCase?.() ?? "";
+      return name.includes(term) || desc.includes(term);
+    });
+  }, [assistants, assistantSearch]);
+
+  const panelEntries = useMemo(
+    () => Object.entries(panels).sort((a, b) => a[1].ts - b[1].ts),
+    [panels]
+  );
+
   /* ------------------------------------------------------------ *
    *  Phase-2: load/create assistant list                         *
    * ------------------------------------------------------------ */
@@ -353,7 +377,7 @@ export default function Home() {
         setAssistants(items);
         const saved = typeof window !== "undefined" ? localStorage.getItem("assistant_id") : null;
         const initial = saved && items.find((a) => a.id === saved) ? saved : items[0]?.id ?? null;
-        setAssistantId(initial);
+        handleAssistantChange(initial);
         setLoadingAssistant(false);
       } catch {
         try {
@@ -366,10 +390,7 @@ export default function Home() {
           const created = await res2.json();
           if (!mounted) return;
           setAssistants([created]);
-          setAssistantId(created.id);
-          if (typeof window !== "undefined") {
-            localStorage.setItem("assistant_id", created.id);
-          }
+          handleAssistantChange(created.id);
         } catch (e) {
           console.error("Assistant bootstrap failed:", e);
         } finally {
@@ -531,107 +552,47 @@ export default function Home() {
   };
 
 /* -------------------------  UI pieces  ---------------------- */
-const CartPanel = () => (
-  <div
-    className="
-      fixed 
-      inset-x-3 bottom-24 w-[72vw] max-w-[220px]
-      sm:inset-auto sm:right-6 sm:bottom-[5rem]
-      sm:w-72 sm:max-w-none
-      z-30 bg-white/95 backdrop-blur-md rounded-2xl 
-      p-3 sm:p-5
-      text-gray-800 shadow-2xl border border-gray-200/50 
-      animate-in slide-in-from-bottom-4 sm:slide-in-from-right-5 duration-300
-      max-h-[28vh] sm:max-h-48 overflow-hidden
-      text-[13px] sm:text-base
-    "
-  >
-    <h3 className="font-semibold mb-2 sm:mb-3 flex items-center text-gray-900">
-      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-100 flex items-center justify-center mr-2 sm:mr-3">
-        <ShoppingCart size={14} className="text-emerald-600 sm:hidden" />
-        <ShoppingCart size={16} className="text-emerald-600 hidden sm:block" />
-      </div>
-      <span className="text-sm sm:text-base">Shopping Cart</span>
-    </h3>
-
-    {!cart.length ? (
-      <div className="text-center py-4 sm:py-8">
-        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-2 sm:mb-3">
-          <ShoppingCart size={18} className="text-gray-400 sm:hidden" />
-          <ShoppingCart size={24} className="text-gray-400 hidden sm:block" />
-        </div>
-        <p className="text-xs sm:text-sm text-gray-500">Your cart is empty</p>
-      </div>
-    ) : (
-      <div className="space-y-1.5 sm:space-y-2 max-h-[18vh] sm:max-h-48 overflow-y-auto">
-        {cart.map((l, idx) => (
-          <div
-            key={l.item}
-            className="flex justify-between items-center p-2 rounded-lg bg-gray-50/50 animate-in fade-in duration-200"
-            style={{ animationDelay: `${idx * 50}ms` }}
-          >
-            <span className="text-sm sm:text-base font-medium leading-tight">
-              {l.qty}× {l.item}
-            </span>
-            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-100 flex items-center justify-center">
-              <span className="text-[11px] sm:text-xs text-emerald-600 font-semibold">{l.qty}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    )}
-
-    {total && (
-      <div className="mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-gray-200">
-        <div className="flex justify-between items-center">
-          <span className="font-semibold text-gray-900 text-sm sm:text-base">Total</span>
-          <span className="text-lg sm:text-xl font-bold text-emerald-600">${total}</span>
-        </div>
-      </div>
-    )}
-
-    {submitted && (
-      <div className="mt-2 sm:mt-3 p-2 rounded-lg bg-emerald-50 border border-emerald-200 animate-in slide-in-from-bottom-2">
-        <p className="text-[12px] sm:text-sm text-emerald-700 flex items-center">
-          <CheckCircle2 size={14} className="mr-2" />
-          Order submitted successfully!
-        </p>
-      </div>
-    )}
-  </div>
-);
-
-const MenuPanel = () => (
-  <div className="fixed left-6 top-24 z-30 w-80 bg-white/95 backdrop-blur-md rounded-2xl p-5 text-gray-800 shadow-2xl border border-gray-200/50 max-h-[70vh] overflow-hidden animate-in slide-in-from-left-5 duration-300">
-    <h3 className="font-semibold mb-4 text-gray-900 flex items-center">
-      <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center mr-3">
-        <Gift size={16} className="text-emerald-600" />
-      </div>
+const MenuPanel = ({ className = "" }) => (
+  <div className={`rounded-3xl border border-white/10 bg-white/5 p-4 text-white shadow-lg shadow-black/30 backdrop-blur-xl ${className}`}>
+    <h3 className="mb-3 flex items-center text-xs font-semibold uppercase tracking-wide text-white/60">
+      <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-200">
+        <Gift size={16} />
+      </span>
       Menu
     </h3>
-    <div className="overflow-y-auto max-h-[calc(70vh-100px)] space-y-2">
+    <div className="space-y-2 overflow-y-auto pr-1 max-h-[34vh]">
       {menu.map((m, idx) => (
-        <div key={m.id} className="flex justify-between items-center p-3 rounded-xl bg-gray-50/50 hover:bg-gray-100/50 transition-all duration-200 animate-in fade-in cursor-pointer group" style={{ animationDelay: `${idx * 50}ms` }}>
-          <span className="font-medium text-gray-700 group-hover:text-gray-900">{m.name}</span>
-          <span className="font-bold text-emerald-600 px-3 py-1 rounded-full bg-emerald-50">${m.price}</span>
+        <div
+          key={m.id ?? idx}
+          className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 px-3 py-2 text-xs transition-all duration-200 hover:border-emerald-400/40 hover:bg-white/10"
+          style={{ animationDelay: `${idx * 50}ms` }}
+        >
+          <span className="font-medium text-white/80">{m.name}</span>
+          <span className="rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-200">
+            ${m.price}
+          </span>
         </div>
       ))}
     </div>
   </div>
 );
 
-const OffersPanel = () => (
-  <div className="fixed left-6 bottom-8 z-30 w-80 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 text-white shadow-2xl border border-emerald-400/30 max-h-64 overflow-hidden animate-in slide-in-from-left-5 duration-300">
-    <h3 className="font-semibold mb-4 flex items-center">
-      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-3">
-        <Gift size={16} className="text-white" />
-      </div>
+const OffersPanel = ({ className = "" }) => (
+  <div className={`rounded-3xl border border-emerald-400/30 bg-gradient-to-br from-emerald-500/25 to-emerald-600/40 p-4 text-white shadow-lg shadow-emerald-500/20 backdrop-blur-xl ${className}`}>
+    <h3 className="mb-3 flex items-center text-xs font-semibold uppercase tracking-wide text-white/70">
+      <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-2xl bg-white/10">
+        <Gift size={16} />
+      </span>
       Special Offers
     </h3>
-    <div className="overflow-y-auto max-h-40 space-y-2">
+    <div className="space-y-2 overflow-y-auto pr-1 max-h-[28vh]">
       {offers.map((o, i) => (
-        <div key={i} className="p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 animate-in fade-in duration-200" style={{ animationDelay: `${i * 100}ms` }}>
-          <p className="text-sm font-medium">{o.title}</p>
+        <div
+          key={`${o.title}-${i}`}
+          className="rounded-2xl border border-white/10 bg-white/10 px-3 py-2 text-xs text-white/90 shadow-inner shadow-black/20"
+          style={{ animationDelay: `${i * 80}ms` }}
+        >
+          {o.title}
         </div>
       ))}
     </div>
@@ -668,6 +629,92 @@ const ComplaintToast = () => (
   </div>
 );
 
+const AssistantList = ({ className = "" }) => {
+  return (
+    <div className={`flex h-full w-full flex-col rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20 backdrop-blur-xl ${className}`}>
+      <div className="flex items-center justify-between">
+        <h3 className="text-base font-semibold text-white">Agent List</h3>
+        <span className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-0.5 text-[11px] font-medium uppercase tracking-wide text-emerald-200">
+          {assistants.length} Active
+        </span>
+      </div>
+      <div className="relative mt-4">
+        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/40">🔍</span>
+        <input
+          value={assistantSearch}
+          onChange={(e) => setAssistantSearch(e.target.value)}
+          placeholder="Search contacts..."
+          className="w-full rounded-2xl border border-white/5 bg-white/5 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-white/40 focus:border-emerald-400/40 focus:outline-none focus:ring-2 focus:ring-emerald-400/30"
+          disabled={loadingAssistant}
+        />
+      </div>
+      <div className="mt-4 flex flex-1 flex-col overflow-hidden min-h-0 space-y-2.5">
+        {loadingAssistant ? (
+          <div className="space-y-2">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="h-14 animate-pulse rounded-2xl bg-white/5"
+                style={{ animationDelay: `${idx * 80}ms` }}
+              />
+            ))}
+          </div>
+        ) : filteredAssistants.length ? (
+          <div className="flex-1 space-y-2 overflow-y-auto pr-1 min-h-0">
+            {filteredAssistants.map((assistant) => {
+              const isActive = assistantId === assistant.id;
+              return (
+                <button
+                  key={assistant.id}
+                  type="button"
+                  onClick={() => handleAssistantChange(assistant.id)}
+                  className={`group flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left text-sm transition-all duration-200 ${
+                    isActive
+                      ? "border-emerald-400/60 bg-emerald-500/20 shadow-lg shadow-emerald-500/20"
+                      : "border-white/5 bg-white/5 hover:border-emerald-400/30 hover:bg-white/10"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-white/10 to-white/5 text-base font-semibold ${
+                        isActive ? "text-emerald-200" : "text-white/70"
+                      }`}
+                    >
+                      {(assistant.name ?? "?").slice(0, 2).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-white">
+                        {assistant.name || "Untitled Assistant"}
+                      </div>
+                      <div className="text-xs text-white/50 leading-snug">
+                        {assistant.description || "No description provided"}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className={`flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-semibold transition-colors ${
+                      isActive
+                        ? "border-emerald-300 bg-emerald-500/80 text-white"
+                        : "border-white/20 text-white/40 group-hover:border-emerald-200/40 group-hover:text-emerald-200"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    {isActive ? "✓" : ""}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-white/5 bg-white/5 px-4 py-10 text-center text-sm text-white/50">
+            No assistants matched your search.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const AssistantPicker = () => (
   <div className="flex items-center gap-3">
     <div className="flex items-center gap-2 text-gray-700">
@@ -677,14 +724,7 @@ const AssistantPicker = () => (
     <select
       className="bg-white/90 backdrop-blur-sm text-gray-800 border border-gray-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 hover:bg-white min-w-[160px] appearance-none cursor-pointer"
       value={assistantId ?? ""}
-      onChange={(e) => {
-        const id = e.target.value || null;
-        setAssistantId(id);
-        if (typeof window !== "undefined") {
-          if (id) localStorage.setItem("assistant_id", id);
-          else localStorage.removeItem("assistant_id");
-        }
-      }}
+      onChange={(e) => handleAssistantChange(e.target.value || null)}
       disabled={loadingAssistant}
     >
       {assistants.map((a) => (
@@ -697,7 +737,7 @@ const AssistantPicker = () => (
 );
 
 /* ------------------- Flow HUD ------------------ */
-const FlowHUD = () => {
+const FlowHUD = ({ className = "" }) => {
   if (!flowEnabled) return null;
   if (!flowEvents.length && !flowCurrent && !currentMode) return null;
 
@@ -710,43 +750,45 @@ const FlowHUD = () => {
   const funcs = [...new Set(flowEvents.filter((e) => e.flow === "register_function").map((e) => e.name))];
 
   return (
-    <div className="fixed left-6 top-1/2 -translate-y-1/2 z-30 w-96 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 overflow-hidden animate-in slide-in-from-left-5 duration-300">
-      <div className="px-5 py-3 bg-gradient-to-r from-gray-50 to-gray-100/50 border-b border-gray-200/50">
-        <h3 className="font-semibold text-gray-800 flex items-center">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-3"></div>
-          Flow Monitor
-        </h3>
+    <div className={`rounded-3xl border border-white/10 bg-white/5 text-white shadow-xl shadow-black/30 backdrop-blur-xl ${className}`}>
+      <div className="flex items-center gap-3 border-b border-white/5 px-5 py-4">
+        <div className="h-3 w-3 rounded-full bg-emerald-400 animate-pulse" />
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-white/70">Flow Monitor</h3>
       </div>
-      <div className="p-5 space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-4 p-5">
+        <div className="grid grid-cols-2 gap-4 text-sm text-white/70">
           <div>
-            <div className="text-xs text-gray-500 uppercase font-medium mb-1">Current Node</div>
-            <div className="font-semibold text-gray-900 truncate">{flowCurrent?.title || flowCurrent?.id || "—"}</div>
+            <div className="text-xs font-medium uppercase tracking-wide text-white/40">Current Node</div>
+            <div className="mt-1 font-semibold text-white">{flowCurrent?.title || flowCurrent?.id || "—"}</div>
           </div>
           <div>
-            <div className="text-xs text-gray-500 uppercase font-medium mb-1">Mode</div>
-            <div className="font-semibold text-gray-900">{currentMode || (flowEnabled ? "flow" : "direct")}</div>
+            <div className="text-xs font-medium uppercase tracking-wide text-white/40">Mode</div>
+            <div className="mt-1 font-semibold text-white">
+              {currentMode || (flowEnabled ? "flow" : "direct")}
+            </div>
           </div>
         </div>
 
         <div>
-          <div className="text-xs text-gray-500 uppercase font-medium mb-2">Recent Path</div>
+          <div className="mb-2 text-xs font-medium uppercase tracking-wide text-white/40">Recent Path</div>
           {!nodes.length ? (
-            <div className="text-gray-400 text-center py-4 text-sm">No path data</div>
+            <div className="rounded-2xl border border-white/5 bg-white/5 py-4 text-center text-xs text-white/40">
+              No path data
+            </div>
           ) : (
             <div className="flex flex-wrap items-center gap-2">
               {nodes.map((n, i) => (
                 <React.Fragment key={i}>
                   <span
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                    className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
                       i === nodes.length - 1
-                        ? "bg-emerald-100 text-emerald-700 border border-emerald-200 animate-pulse"
-                        : "bg-gray-100 border border-gray-200 text-gray-600"
+                        ? "border border-emerald-300/60 bg-emerald-500/20 text-emerald-100"
+                        : "border border-white/10 bg-white/5 text-white/60"
                     }`}
                   >
                     {n}
                   </span>
-                  {i < nodes.length - 1 && <span className="text-gray-300">→</span>}
+                  {i < nodes.length - 1 && <span className="text-white/20">→</span>}
                 </React.Fragment>
               ))}
             </div>
@@ -754,13 +796,19 @@ const FlowHUD = () => {
         </div>
 
         <div>
-          <div className="text-xs text-gray-500 uppercase font-medium mb-2">Functions</div>
+          <div className="mb-2 text-xs font-medium uppercase tracking-wide text-white/40">Functions</div>
           {!funcs.length ? (
-            <div className="text-gray-400 text-center py-4 text-sm">No functions registered</div>
+            <div className="rounded-2xl border border-white/5 bg-white/5 py-4 text-center text-xs text-white/40">
+              No functions registered
+            </div>
           ) : (
             <div className="flex flex-wrap gap-2">
               {funcs.map((f, idx) => (
-                <span key={f} className="text-xs px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 animate-in fade-in duration-200" style={{ animationDelay: `${idx * 50}ms` }}>
+                <span
+                  key={f}
+                  className="rounded-full border border-emerald-400/40 bg-emerald-500/20 px-3 py-1 text-xs text-emerald-100"
+                  style={{ animationDelay: `${idx * 50}ms` }}
+                >
                   {f}
                 </span>
               ))}
@@ -799,7 +847,7 @@ const GenericPanelBody = ({ panel }) => {
         {!rows.length ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-              <ShoppingCart size={24} className="text-gray-400" />
+              <Gift size={24} className="text-gray-400" />
             </div>
             <p className="text-gray-500">No results found</p>
           </div>
@@ -905,22 +953,22 @@ const GenericPanelBody = ({ panel }) => {
 };
 
 /* ================= DYNAMIC PANELS RENDERER ================= */
-const PanelTabs = ({ entries }) => {
+const PanelTabs = ({ entries, className = "" }) => {
   if (!entries.length) return null;
   const activeIdx = Math.max(0, entries.findIndex(([id]) => id === activePanelId));
   const [aId, aPanel] = entries[activeIdx] || entries[0];
 
   return (
-    <div className="fixed left-1/2 -translate-x-1/2 top-32 z-30 w-[600px] max-h-[70vh] bg-white/95 backdrop-blur-md text-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50 animate-in slide-in-from-top-5 duration-300">
-      <div className="flex items-center overflow-x-auto gap-1 p-3 bg-gradient-to-r from-gray-50 to-gray-100/50 border-b border-gray-200/50">
+    <div className={`flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 text-white shadow-xl shadow-black/30 backdrop-blur-xl ${className}`}>
+      <div className="flex items-center gap-2 overflow-x-auto border-b border-white/5 px-4 py-3">
         {entries.map(([id, p], idx) => (
           <button
             key={id}
             onClick={() => setActivePanelId(id)}
-            className={`px-4 py-2.5 text-sm rounded-xl whitespace-nowrap transition-all duration-200 font-medium animate-in fade-in ${
+            className={`whitespace-nowrap rounded-2xl px-4 py-2 text-xs font-medium uppercase tracking-wide transition-all duration-200 ${
               id === aId 
-                ? "bg-emerald-500 text-white shadow-lg scale-105" 
-                : "text-gray-600 hover:bg-white hover:text-gray-800 hover:shadow-sm"
+                ? "bg-emerald-500/30 text-emerald-100 shadow-inner shadow-emerald-500/30"
+                : "text-white/50 hover:bg-white/10 hover:text-white"
             }`}
             style={{ animationDelay: `${idx * 50}ms` }}
             title={p.title}
@@ -928,182 +976,211 @@ const PanelTabs = ({ entries }) => {
             {p.title}
           </button>
         ))}
-        <button
-          onClick={() => {
-            setPanels({});
-            setActivePanelId(null);
-          }}
-          className="ml-auto p-2 rounded-xl hover:bg-white text-gray-500 hover:text-gray-700 transition-all duration-200 hover:shadow-sm"
-          title="Close all"
-        >
-          <X size={16} />
-        </button>
+        {entries.length > 1 && (
+          <button
+            onClick={() => {
+              setPanels({});
+              setActivePanelId(null);
+            }}
+            className="ml-auto flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/50 transition-all hover:border-white/30 hover:text-white"
+            title="Close all"
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
-      <div className="p-5 overflow-auto max-h-[58vh]">
+      <div className="flex-1 overflow-auto p-5">
         <GenericPanelBody panel={aPanel} />
       </div>
     </div>
   );
 };
 /* ---------------------------  MAIN RENDER  ----------------------- */
-return (
-  <div className="min-h-screen relative overflow-hidden bg-green-100">
-    {/* FLOATING CONTROLS */}
-    <div
-      className="
-        flex flex-wrap items-center justify-center
-        gap-2 sm:gap-4
-        bg-green/95 backdrop-blur-md rounded-2xl
-        px-3 sm:px-6 py-3
-        shadow-2xl border border-gray-200/50
-        animate-in slide-in-from-top-5 duration-500
-        w-[calc(100vw-1.5rem)] sm:w-fit
-        mx-auto
-      "
-    >
-      <AssistantPicker />
-      
-      <label className="flex items-center gap-2 text-gray-700 text-sm select-none cursor-pointer">
-        <div className="relative">
-          <input
-            type="checkbox"
-            checked={flowEnabled}
-            onChange={(e) => setFlowEnabled(e.target.checked)}
-            className="sr-only"
-          />
-          <div className={`w-10 h-6 rounded-full transition-colors duration-200 ${flowEnabled ? 'bg-emerald-500' : 'bg-gray-300'}`}>
-            <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200 mt-1 ${flowEnabled ? 'translate-x-5' : 'translate-x-1'}`}></div>
-          </div>
-        </div>
-        <span className="font-medium">Flow Mode</span>
-      </label>
-
-      <button
-        onClick={isWsConnected ? disconnectWebSocket : connectWebSocket}
-        className={`flex items-center space-x-3 rounded-2xl px-6 py-3 font-medium transition-all duration-300 hover:scale-105 active:scale-95 ${
-          isWsConnected
-            ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-200"
-            : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-        }`}
-        disabled={loadingAssistant || !assistantId || !sessionId || isConnecting}
-        title={!sessionId ? "Resolving session..." : ""}
-      >
-        {isConnecting && (
-          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-        )}
-        <div className={`w-2 h-2 rounded-full ${isWsConnected ? 'bg-white animate-pulse' : 'bg-gray-400'}`}></div>
-        <span>
-          {isConnecting ? "Connecting..." : isWsConnected ? "Connected" : "Connect"}
-        </span>
-      </button>
-
-      <button
-        onClick={toggleRec}
-        className={`flex items-center space-x-3 rounded-2xl px-6 py-3 font-medium transition-all duration-300 hover:scale-105 active:scale-95 ${
-          isRec 
-            ? "bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-200 animate-pulse" 
-            : "bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-200/50"
-        }`}
-      >
-        <Mic2 size={18} className={isRec ? "animate-bounce" : ""} />
-        <span>{isRec ? "Stop Talking" : "Start Talking"}</span>
-      </button>
-    </div>
-
-    {/* PANELS */}
-    {menu.length > 0 && <MenuPanel />}
-    {offers.length > 0 && <OffersPanel />}
-    <CartPanel />
-
-    {/* Flow HUD */}
-    <FlowHUD />
-
-    {/* Dynamic panels */}
-    <PanelTabs entries={Object.entries(panels).sort((a, b) => a[1].ts - b[1].ts)} />
-
-    {/* OVERLAYS */}
-    {thankYou && <ThankYouCard />}
-    {complaintOk && <ComplaintToast />}
-
-    {/* Enhanced toasts */}
-    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col gap-3 items-center max-w-md">
-      {toasts.map((t, idx) => {
-        const isError = t.isError;
-        return (
-          <div
-            key={t.id}
-            className={`w-full px-6 py-3 rounded-2xl flex items-center shadow-2xl border animate-in slide-in-from-bottom-5 duration-300 ${
-              isError
-                ? "bg-red-500/95 backdrop-blur-md text-white border-red-400/30"
-                : "bg-emerald-500/95 backdrop-blur-md text-white border-emerald-400/30"
-            }`}
-            style={{ animationDelay: `${idx * 100}ms` }}
-          >
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
-              isError 
-                ? "bg-white/20" 
-                : "bg-white/20"
-            }`}>
-              {isError ? (
-                <AlertCircle size={16} />
-              ) : (
-                <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
-              )}
-            </div>
-            <span className="font-medium text-sm">{t.text}</span>
-          </div>
-        );
-      })}
-    </div>
-
-    {/* STATUS */}
-    <div className="fixed bottom-6 right-6 text-xs text-gray-600 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-2xl z-20 border border-gray-200/50 shadow-lg">
-      <div className="flex items-center gap-2">
-        <div className={`w-2 h-2 rounded-full ${isWsConnected ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`}></div>
-        <span>
-          {status}
-          {assistantId ? ` · ${assistantId.slice(0, 8)}…` : ""}
-          {isWsConnected ? " · Connected" : " · Offline"}
-          {` · ${currentMode || (flowEnabled ? "flow" : "direct")}`}
-        </span>
-      </div>
-    </div>
-
-    {/* MAIN CONTENT AREA */}
-    <div className="relative z-10 pt-32 pb-16 text-center">
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-gray-900 via-emerald-800 to-gray-900 bg-clip-text text-transparent">
-            AI Voice Agent
-          </h1>
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Experience seamless voice interactions with our advanced AI assistant. 
-            Connect, speak, and get things done effortlessly.
-          </p>
-        </div>
-        
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mt-16">
-          {[
-            { icon: "🤖", text: "Select Assistant", delay: "0ms" },
-            { icon: "🔗", text: "Connect to Agent", delay: "200ms" },
-            { icon: "🎤", text: "Start Speaking", delay: "400ms" }
-          ].map((step, idx) => (
-            <div key={idx} className="flex items-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: step.delay }}>
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center text-xl shadow-lg">
-                {step.icon}
+  return (
+    <div className="min-h-screen h-screen bg-[#141A21] text-white">
+      <div className="relative flex h-full flex-col overflow-hidden">
+        <div className="flex h-full flex-col">
+          <main className="flex h-full flex-1 flex-col overflow-hidden">
+            <div className="flex flex-1 min-h-0 flex-col gap-5 overflow-hidden lg:flex-row lg:items-stretch lg:gap-[24px]">
+              <div className="flex min-h-0 w-full flex-shrink-0 flex-col lg:h-full lg:max-w-sm xl:max-w-[360px]">
+                <AssistantList className="flex-1" />
               </div>
-              <span className="text-gray-700 font-medium">{step.text}</span>
-              {idx < 2 && <div className="hidden sm:block w-8 h-0.5 bg-gradient-to-r from-emerald-300 to-gray-300 rounded ml-4"></div>}
-            </div>
-          ))}
-        </div>
 
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-emerald-100/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-blue-100/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }}></div>
-        <div className="absolute bottom-1/4 left-1/3 w-32 h-32 bg-purple-100/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }}></div>
+              <div className="flex min-h-0 flex-1 flex-col gap-4 lg:h-full">
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl shadow-black/30 backdrop-blur-xl">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 px-6 py-5">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-3xl border border-emerald-400/30 bg-emerald-500/10 text-emerald-200">
+                        <Mic2 size={22} />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold text-white">AI Assistance</h2>
+                        <p className="text-xs text-white/50">
+                          Connect, monitor, and collaborate with your live voice agent.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-end gap-3">
+                      <label className="flex cursor-pointer items-center gap-3 text-sm text-white/70">
+                        <div className="relative">
+                          <input
+                            type="checkbox"
+                            checked={flowEnabled}
+                            onChange={(e) => setFlowEnabled(e.target.checked)}
+                            className="peer sr-only"
+                          />
+                          <div
+                            className={`flex h-7 w-12 items-center rounded-full transition-colors duration-200 ${
+                              flowEnabled ? "bg-emerald-500/80" : "bg-white/20"
+                            }`}
+                          >
+                            <div
+                              className={`ml-1 h-5 w-5 rounded-full bg-white transition-transform duration-200 ${
+                                flowEnabled ? "translate-x-5" : ""
+                              }`}
+                            />
+                          </div>
+                        </div>
+                        <span className="font-semibold text-white">Flow Mode</span>
+                      </label>
+                      <div className="hidden sm:flex items-center gap-2 text-[11px] uppercase tracking-wide text-white/40">
+                        <span
+                          className={`h-2 w-2 rounded-full ${
+                            isWsConnected ? "bg-emerald-400 animate-pulse" : "bg-white/30"
+                          }`}
+                        />
+                        <span>{status}</span>
+                        {assistantId ? <span>· {assistantId.slice(0, 8)}…</span> : <span>· No assistant</span>}
+                        <span>· {currentMode || (flowEnabled ? "flow" : "direct")}</span>
+                      </div>
+                      <button
+                        onClick={isWsConnected ? disconnectWebSocket : connectWebSocket}
+                        className={`flex items-center gap-3 rounded-2xl px-5 py-3 text-sm font-semibold transition-transform duration-200 ${
+                          isWsConnected
+                            ? "bg-emerald-500/80 text-white shadow-lg shadow-emerald-500/30 hover:bg-emerald-500"
+                            : "bg-white/10 text-white/80 hover:bg-white/20"
+                        }`}
+                        disabled={loadingAssistant || !assistantId || !sessionId || isConnecting}
+                        title={!sessionId ? "Resolving session..." : ""}
+                      >
+                        {isConnecting && (
+                          <div className="h-4 w-4 rounded-full border-2 border-white/60 border-t-transparent animate-spin" />
+                        )}
+                        <span>{isConnecting ? "Connecting…" : isWsConnected ? "Disconnect" : "Connect"}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 overflow-hidden px-6 py-6">
+                    {panelEntries.length ? (
+                      <PanelTabs entries={panelEntries} className="h-full" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center px-6 py-10">
+                        <div className="relative flex max-w-lg flex-col items-center gap-6 text-center">
+                          <div className="absolute -top-24 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-emerald-500/15 blur-3xl" />
+                          <div className="absolute -bottom-20 right-1/2 h-40 w-40 translate-x-1/2 rounded-full bg-blue-400/10 blur-3xl" />
+                          <div className="relative flex h-32 w-32 items-center justify-center rounded-full border border-emerald-400/30 bg-gradient-to-br from-emerald-400/30 via-emerald-500/10 to-emerald-300/20 shadow-[0_0_40px_rgba(16,185,129,0.35)]">
+                      <div className="flex h-24 w-24 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-md">
+                        <div className="h-12 w-12 rounded-full border border-emerald-200/40 bg-emerald-400/20" />
+                            </div>
+                          </div>
+                          <div className="relative flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 px-10 py-8 shadow-xl shadow-black/30 backdrop-blur-xl">
+                      <h2 className="text-3xl font-semibold text-white">Voice Agent</h2>
+                      <p className="text-sm leading-relaxed text-white/70">
+                        Pick an assistant on the left, connect, then push-to-talk to begin.
+                      </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <FlowHUD className="mt-5 hidden lg:block" />
+                  </div>
+
+                  <div className="border-t border-white/5 px-6 py-5">
+                    <div className="flex flex-col items-center gap-5 text-center">
+                      <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-white/50">
+                        <span>{isWsConnected ? "Connected to voice channel" : "Connect to start streaming audio"}</span>
+                        <span className="hidden sm:inline text-white/30">•</span>
+                        <span>{isRec ? "Recording live" : "Push to talk"}</span>
+                      </div>
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="flex items-center gap-4">
+                          <button
+                            type="button"
+                            className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white/70 transition-colors hover:border-white/30 hover:text-white"
+                          >
+                            <span className="text-sm font-semibold">Play</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={toggleRec}
+                            className={`relative flex h-28 w-28 items-center justify-center rounded-full border-[6px] transition-all duration-300 ${
+                              isRec
+                                ? "border-red-400/80 bg-red-500/30 shadow-2xl shadow-red-500/40"
+                                : "border-emerald-400/60 bg-emerald-500/20 hover:border-emerald-300 hover:bg-emerald-400/20"
+                            }`}
+                          >
+                            <div
+                              className={`flex h-20 w-20 items-center justify-center rounded-full ${
+                                isRec ? "bg-red-500/70" : "bg-emerald-500/30"
+                              }`}
+                            >
+                              <Mic2 size={30} className={isRec ? "animate-pulse" : ""} />
+                            </div>
+                          </button>
+                          <button
+                            type="button"
+                            className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white/70 transition-colors hover:border-white/30 hover:text-white"
+                          >
+                            <span className="text-sm font-semibold">Send</span>
+                          </button>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-white/40">
+                          <span>Push to talk</span>
+                          <span className="h-1 w-1 rounded-full bg-white/30" />
+                          <span>{isRec ? "Listening…" : "Muted"}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex w-full flex-shrink-0 flex-col gap-4 xl:w-72">
+                  {menu.length > 0 && <MenuPanel />}
+                  {offers.length > 0 && <OffersPanel />}
+                  <FlowHUD className="lg:hidden" />
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+
+      {thankYou && <ThankYouCard />}
+      {complaintOk && <ComplaintToast />}
+
+      <div className="fixed bottom-8 left-1/2 z-40 flex w-full max-w-md -translate-x-1/2 flex-col items-center gap-3 px-4">
+        {toasts.map((t, idx) => {
+          const isError = t.isError;
+          return (
+            <div
+              key={t.id}
+              className={`flex w-full items-center gap-3 rounded-2xl border px-5 py-3 text-sm font-medium shadow-2xl ${
+                isError
+                  ? "border-red-400/40 bg-red-500/80 text-white"
+                  : "border-emerald-400/40 bg-emerald-500/80 text-white"
+              }`}
+              style={{ animationDelay: `${idx * 100}ms` }}
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
+                {isError ? <AlertCircle size={18} /> : <div className="h-2 w-2 rounded-full bg-white" />}
+              </div>
+              <span>{t.text}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
-  </div>
-);
+  );
 };

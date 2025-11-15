@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect } from 'react';
 import Link from 'next/link';
-// Remove this line: import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar';
 import HeroSection from '../components/Herosection';
 
 export default function Home() {
@@ -13,7 +13,7 @@ export default function Home() {
   }, [])
   return (
     <div>
-      {/* Remove this line: <Navbar /> */}
+      <Navbar />
       <HeroSection />
       <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

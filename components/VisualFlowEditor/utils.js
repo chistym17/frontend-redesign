@@ -44,8 +44,8 @@ export function convertToReactFlow(currentFlow, savedPositions = {}) {
     const position = savedPos 
       ? { x: savedPos.x, y: savedPos.y }
       : {
-          x: 100 + (index % 3) * 250,
-          y: 100 + Math.floor(index / 3) * 200,
+          x: 30 + (index % 3) * 160,
+          y: 30 + Math.floor(index / 3) * 130,
         };
 
     const reactFlowNode = {

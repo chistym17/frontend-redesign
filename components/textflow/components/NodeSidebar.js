@@ -21,8 +21,8 @@ export default function NodeSidebar() {
   const addNode = (type) => {
     const id = `${type}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
     const existingNodes = tf.flow.nodes.length;
-    const x = 100 + (existingNodes % 3) * 280;
-    const y = 100 + Math.floor(existingNodes / 3) * 160;
+    const x = 20 + (existingNodes % 4) * 150;
+    const y = 50 + Math.floor(existingNodes / 4) * 120;
     
     const node = {
       id,
@@ -49,13 +49,21 @@ export default function NodeSidebar() {
   };
 
   return (
-    <div className="h-full bg-gradient-to-br from-gray-900 to-slate-900 border-r border-gray-700/50 p-4 flex flex-col">
+    <div
+      className="h-full p-4 flex flex-col border-r"
+      style={{
+        background: 'rgba(255, 255, 255, 0.06)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderRightColor: 'rgba(255, 255, 255, 0.12)'
+      }}
+    >
       <div className="mb-6">
-        <h2 className="text-lg font-bold text-gray-100 mb-1 flex items-center gap-2">
-          <Layers className="w-5 h-5 text-indigo-400" />
+        <h2 className="text-sm font-bold text-gray-100 mb-1 flex items-center gap-2">
+          <Layers className="w-5 h-5 text-emerald-400" />
           Components
         </h2>
-        <p className="text-xs text-gray-400">Click to add nodes to canvas</p>
+        <p className="text-[11px] text-gray-400">Click to add nodes to canvas</p>
       </div>
 
       <div className="flex-1 overflow-auto space-y-2 pb-4">
@@ -92,9 +100,9 @@ export default function NodeSidebar() {
           <span className="font-semibold text-gray-100">{tf.flow.edges.length}</span>
         </div>
         {tf.selection && (
-          <div className="mt-3 p-2 bg-indigo-950 rounded-lg border border-indigo-800/50">
-            <div className="text-xs text-indigo-400 font-medium">Selected</div>
-            <div className="text-xs text-indigo-200 font-mono truncate mt-0.5">{tf.selection.slice(0, 20)}...</div>
+          <div className="mt-3 p-2 bg-emerald-950/30 rounded-lg border border-emerald-700/40">
+            <div className="text-xs text-emerald-400 font-medium">Selected</div>
+            <div className="text-xs text-emerald-200 font-mono truncate mt-0.5">{tf.selection.slice(0, 20)}...</div>
           </div>
         )}
       </div>

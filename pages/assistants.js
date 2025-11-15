@@ -53,15 +53,15 @@ const AssistantsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-green-100">
+    <div className="min-h-screen bg-[#141A21]">
       <div className="container mx-auto px-4 py-8">
-        {showForm ? (
-          <AssistantProfileForm
-            assistant={editingAssistant || viewingAssistant}
-            onSave={handleSave}
-            onCancel={handleCancel}
-          />
-        ) : showQaForm ? (
+        <AssistantProfileForm
+          assistant={editingAssistant || viewingAssistant}
+          isOpen={showForm}
+          onSave={handleSave}
+          onCancel={handleCancel}
+        />
+        {showQaForm ? (
           <QnAEditor
             assistantId={selectedAssistant?.id}
             qa={editingQa}
@@ -113,7 +113,7 @@ const AssistantsPage = () => {
           <AssistantList
             onEdit={handleEdit}
             onView={handleView}
-            onDelete={() => {}} 
+            onDelete={() => { }}
           />
         )}
       </div>

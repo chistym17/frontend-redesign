@@ -2,7 +2,7 @@
 import "../styles/globals.css";
 import { AuthProvider } from "../lib/authContext";
 import { AssistantProvider } from "../lib/assistantContext";
-import Navbar from "../components/Navbar"; // Add this import
+import { SidebarProvider } from "../lib/sidebarContext";
 import * as React from "react";
 
 // Wrap global fetch in the browser to auto-attach Authorization
@@ -12,7 +12,7 @@ function FetchAuthWrapper() {
     if (typeof window === "undefined") return;
 
     const originalFetch = window.fetch;
-    const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://salvatore-liny-claretha.ngrok-free.dev/api";
+    const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://176.9.16.194:5403/api";
     const apiOrigin = new URL(API_BASE).origin;
 
     window.fetch = async (input, init = {}) => {
@@ -43,12 +43,13 @@ function FetchAuthWrapper() {
 
 export default function App({ Component, pageProps }) {
   return (
-    <AuthProvider>
-      <AssistantProvider>
-        <FetchAuthWrapper />
-        <Navbar /> {/* Add this line */}
-        <Component {...pageProps} />
-      </AssistantProvider>
-    </AuthProvider>
+    <SidebarProvider>
+      <AuthProvider>
+        <AssistantProvider>
+          <FetchAuthWrapper />
+          <Component {...pageProps} />
+        </AssistantProvider>
+      </AuthProvider>
+    </SidebarProvider>
   );
 }

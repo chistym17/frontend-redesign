@@ -22,3 +22,35 @@
 .rec-pulse {
   animation: rec-pulse 1s infinite;
 }
+
+/* — Global Dark Theme — */
+html, body, #__next {
+  height: 100%;
+}
+:root {
+  color-scheme: dark;
+}
+body {
+  background-color: #141A21;
+  color: #FFFFFF;
+}
+
+/* Remove blue focus borders from config panel inputs */
+.config-panel input:focus,
+.config-panel input:focus-visible,
+.config-panel input:active,
+.config-panel textarea:focus,
+.config-panel textarea:focus-visible,
+.config-panel textarea:active,
+.config-panel select:focus,
+.config-panel select:focus-visible,
+.config-panel select:active {
+  outline: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-shadow: 0 0 #0000 !important;
+  --tw-shadow-colored: 0 0 #0000 !important;
+}

@@ -1,5 +1,5 @@
 // components/textflow/api/textflowApi.js (UPDATED)
-const BASE = process.env.NEXT_PUBLIC_API_BASE || "";
+const BASE = process.env.NEXT_PUBLIC_API_BASE || "https://176.9.16.194:5403/api";
 
 // ============================================================================
 // FLOW DEFINITION API
@@ -8,17 +8,31 @@ const BASE = process.env.NEXT_PUBLIC_API_BASE || "";
 export async function getTextFlow(assistantId) {
   const r = await fetch(`${BASE}/textflow/text-flows/${assistantId}`);
   if (!r.ok) throw new Error(await r.text());
-  return r.json();
+  const data = await r.json();
+  console.log('📥 GET response:', JSON.stringify(data, null, 2));
+  return data;
 }
 
 export async function saveTextFlow(assistantId, flowData) {
+  const { name, ...flowDataWithoutName } = flowData;
+  const payload = { flow_data: flowDataWithoutName };
+  if (name) {
+    payload.name = name;
+  }
+  console.log('💾 Saving flow with payload:', JSON.stringify(payload, null, 2));
   const r = await fetch(`${BASE}/textflow/text-flows/${assistantId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ flow_data: flowData }),
+    body: JSON.stringify(payload),
   });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
+  if (!r.ok) {
+    const errorText = await r.text();
+    console.error('❌ Save failed:', errorText);
+    throw new Error(errorText);
+  }
+  const response = await r.json();
+  console.log('✅ Save response:', response);
+  return response;
 }
 
 export async function deleteTextFlow(assistantId) {

@@ -55,13 +55,26 @@ export default function TriggerLogsPanel({ assistantId }) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-gray-900 to-slate-900 rounded-xl border border-gray-700/50 overflow-hidden">
+    <div 
+      className="h-full flex flex-col rounded-xl overflow-hidden"
+      style={{
+        background: 'rgba(255, 255, 255, 0.04)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: '1px solid rgba(255, 255, 255, 0.12)'
+      }}
+    >
       {/* Header */}
-      <div className="px-4 py-3 bg-gray-800/50 border-b border-gray-700/50 flex items-center justify-between backdrop-blur-sm">
+      <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Activity className="w-4 h-4 text-emerald-400" />
-          <span className="text-sm font-semibold text-gray-100">Trigger Logs</span>
-          <span className="text-xs text-gray-400 bg-gray-700/50 px-2 py-0.5 rounded-full">
+          <span className="text-sm font-semibold text-white">Trigger Logs</span>
+          <span 
+            className="text-xs text-gray-300 px-2 py-0.5 rounded-full"
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)'
+            }}
+          >
             {logs.length}
           </span>
         </div>
@@ -71,14 +84,17 @@ export default function TriggerLogsPanel({ assistantId }) {
               type="checkbox"
               checked={autoRefresh}
               onChange={(e) => setAutoRefresh(e.target.checked)}
-              className="rounded text-indigo-500 focus:ring-indigo-500"
+              className="rounded text-emerald-500 focus:ring-emerald-500"
             />
             Auto
           </label>
           <button
             onClick={loadLogs}
             disabled={loading}
-            className="p-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all disabled:opacity-50"
+            className="p-1.5 text-white rounded-lg transition-all disabled:opacity-50"
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)'
+            }}
             title="Refresh logs"
           >
             <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
@@ -160,7 +176,12 @@ export default function TriggerLogsPanel({ assistantId }) {
                 {log.run_id && (
                   <div className="mb-2 flex items-center gap-2 text-xs">
                     <span className="text-gray-500">Run:</span>
-                    <code className="font-mono text-gray-300 bg-gray-800/50 px-2 py-0.5 rounded">
+                    <code 
+                      className="font-mono text-gray-300 px-2 py-0.5 rounded"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.08)'
+                      }}
+                    >
                       {log.run_id.slice(0, 12)}...
                     </code>
                   </div>
@@ -176,16 +197,21 @@ export default function TriggerLogsPanel({ assistantId }) {
 
                 {/* Payload Preview */}
                 {log.payload_preview && (
-                  <div className="mb-2 p-2 bg-gray-800/50 rounded">
-                    <div className="text-[10px] text-gray-500 mb-1">Payload:</div>
-                    <div className="text-xs font-mono text-gray-400 truncate">
+                  <div 
+                    className="mb-2 p-2 rounded"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.08)'
+                    }}
+                  >
+                    <div className="text-[10px] text-gray-400 mb-1">Payload:</div>
+                    <div className="text-xs font-mono text-gray-300 truncate">
                       {log.payload_preview}
                     </div>
                   </div>
                 )}
 
                 {/* Source Info */}
-                <div className="flex items-center gap-3 text-[10px] text-gray-600 pt-2 border-t border-gray-700/30">
+                <div className="flex items-center gap-3 text-[10px] text-gray-400 pt-2 border-t border-white/10">
                   {log.source_ip && (
                     <div className="flex items-center gap-1">
                       <span>IP:</span>

@@ -1,6 +1,6 @@
 // Flow API endpoints for the flows editor.
-// Uses NEXT_PUBLIC_API_BASE (e.g., http://localhost:8000/api).
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://esapdev.xyz:7000/agentbuilder/api";
+// Uses NEXT_PUBLIC_API_BASE (e.g., https://176.9.16.194:5403/api).
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://176.9.16.194:5403/api";
 
 export const FLOW_ENDPOINTS = {
   list: (assistantId) => `${API_BASE}/flows/${assistantId}`,
