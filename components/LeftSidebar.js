@@ -1,150 +1,161 @@
-import React from 'react';
-import { useRouter } from 'next/router';
-import { useSidebar } from '../lib/sidebarContext';
-import {
-    Home,
-    Building2,
-    MessageSquare,
-    AudioLines,
-    LogOut,
-    ChevronLeft,
-    ChevronRight
-} from 'lucide-react';
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link"; // Changed from router.push to Link for consistency with target design
+import { usePathname } from "next/navigation"; // Changed from useRouter to usePathname for simplicity
+import Image from "next/image";
+import { useSidebar } from "../lib/sidebarContext"; // Keeping this, but adapting collapse logic
+// Assuming you add the CSS below to a file named LeftSidebar.css
 
 const LeftSidebar = () => {
-    const router = useRouter();
-    const { isCollapsed, setIsCollapsed } = useSidebar();
-    const [activeRoute, setActiveRoute] = React.useState(router.pathname);
+  const pathname = usePathname(); // Changed from router.pathname
+  const { isCollapsed, setIsCollapsed } = useSidebar();
+  const [activeRoute, setActiveRoute] = useState(pathname);
 
-    React.useEffect(() => {
-        setActiveRoute(router.pathname);
-    }, [router.pathname]);
+  const glowRightRef = useRef(null);
+  const glowLeftRef = useRef(null);
 
-    const handleNavigation = (path) => {
-        router.push(path);
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Load collapse state from localStorage (matching target)
+  useEffect(() => {
+    const saved = localStorage.getItem("sidebar-collapsed");
+    if (saved === "true") setIsCollapsed(true);
+  }, [setIsCollapsed]);
+
+  // Save collapse state on change
+  useEffect(() => {
+    localStorage.setItem("sidebar-collapsed", String(isCollapsed));
+  }, [isCollapsed]);
+
+  useEffect(() => setActiveRoute(pathname), [pathname]);
+
+  // Helper: determine active class
+  const getClass = (path, baseClass = "menu-subitem") =>
+    activeRoute === path ? `${baseClass} active` : baseClass;
+
+  // Helper: get active/inactive icon (matching target)
+  const getIcon = (base, isActive) => {
+    if (!isActive) return base;
+    const parts = base.split(".");
+    return `${parts[0]}g.${parts[1]}`; // e.g. /voice.svg → /voiceg.svg (assuming you have active versions)
+  };
+
+  // Update glow position (matching target)
+  useEffect(() => {
+    const moveGlow = () => {
+      const activeItem = document.querySelector(".menu-item.active, .menu-subitem.active");
+      if (!activeItem) return;
+      const sidebar = activeItem.closest(".sidebar");
+      if (!sidebar) return;
+
+      const rect = activeItem.getBoundingClientRect();
+      const sidebarRect = sidebar.getBoundingClientRect();
+
+      if (glowRightRef.current) glowRightRef.current.style.top = rect.top - sidebarRect.top + "px";
+      if (glowLeftRef.current) glowLeftRef.current.style.top = rect.top - sidebarRect.top + "px";
     };
+    moveGlow();
+  }, [activeRoute]);
 
-    const navItems = [
-        { icon: Home, label: 'Home', path: '/' },
-        { icon: Building2, label: 'Assistants', path: '/assistants' },
-        { icon: MessageSquare, label: 'Chat', path: '/chatbot' },
-        { icon: AudioLines, label: 'Voice', path: '/voice' },
-    ];
+  // Toggle collapse (matching target)
+  const toggleCollapse = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    localStorage.setItem("sidebar-collapsed", String(newState));
+  };
 
-    const bottomItems = [
+  // Handle navigation (adapted for Link)
+  const handleNavigation = (path, onClick) => {
+    if (onClick) onClick();
+    // Using Link instead of router.push
+  };
+
+  // Menu groups with labels (matching target structure)
+  const menuBlocks = [
+    {
+      label: "Menu",
+      items: [
+        { image: "/images/voice.svg", label: "Home", path: "/" },
+        { image: "/images/chat.svg", label: "Assistants", path: "/assistants" },
+        { image: "/images/voice.svg", label: "Voice Agent", path: "/voice" },
+        { image: "/images/chatbot.svg", label: "Chat Agent", path: "/chatbot" },
+      ],
+    },
+    {
+      label: "Settings",
+      items: [
+        { image: "/images/bill.svg", label: "Notification", path: "/notification" },
+        { image: "/images/setting.svg", label: "Setting", path: "/setting" },
         {
-            icon: LogOut, label: 'Logout', path: '/login', onClick: () => {
-                localStorage.removeItem('access_token');
-                router.push('/login');
-            }
+          image: "/images/logout.svg",
+          label: "Logout",
+          path: "/login",
+          onClick: () => {
+            localStorage.removeItem("access_token");
+          },
         },
-    ];
+      ],
+    },
+  ];
 
-    const isActive = (path) => {
-        if (path === '/') {
-            return activeRoute === '/' || activeRoute === '/index';
-        }
-        return activeRoute.startsWith(path);
-    };
+  // Don't render on mobile unless open (assuming isMobileOpen prop or similar; for now, keeping simple)
+  // Note: Target has mobile logic, but original doesn't. Adding basic mobile check.
+  if (isMobile) return null; // Or handle mobile overlay if needed
 
-    return (
-        <div className={`fixed left-0 top-0 h-full bg-white/[0.05] backdrop-blur-xl border-r border-white/10 transition-all duration-300 flex flex-col ${isCollapsed ? 'w-16' : 'w-48'
-            }`}>
-            {/* Top Section */}
-            <div className="flex-1 flex flex-col py-4">
-                {/* Logo/Home Button */}
-                <div className={isCollapsed ? 'px-2' : 'px-4 mb-6'}>
-                    <button
-                        onClick={() => handleNavigation('/')}
-                        className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg transition-colors ${isActive('/')
-                                ? 'bg-emerald-500/20 border border-emerald-400/40'
-                                : 'hover:bg-white/5'
-                            }`}
-                    >
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${isActive('/') ? 'bg-emerald-400/30' : 'bg-white/5'
-                            }`}>
-                            <Home size={18} className={isActive('/') ? 'text-emerald-300' : 'text-white/70'} />
-                        </div>
-                        {!isCollapsed && (
-                            <span className={`text-sm font-medium ${isActive('/') ? 'text-emerald-300' : 'text-white/70'
-                                }`}>
-                                Home
-                            </span>
-                        )}
-                    </button>
-                </div>
+  return (
+    <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
+      
+      {/* Collapse button (matching target) */}
+      <button className={`collapse-btn ${isCollapsed ? "collapsed" : ""}`} onClick={toggleCollapse}>
+        <img
+          src={isCollapsed ? "/images/ic-eva_arrow-ios-forward-fill.svg" : "/images/ic-eva_arrow-ios-back-fill.svg"}
+          alt="Toggle sidebar"
+        />
+      </button>
 
-                {/* Navigation Items */}
-                <div className={`flex-1 ${isCollapsed ? 'px-2' : 'px-4'} space-y-2`}>
-                    {navItems.slice(1).map((item) => {
-                        const Icon = item.icon;
-                        const active = isActive(item.path);
+      <nav className="menu">
+        {menuBlocks.map((block) => (
+          <div key={block.label} className="menu-block">
+            <div className="menu-label">{block.label}</div>
+            {block.items.map((item) => {
+              // Updated active check: Exact match for root "/", startsWith for others (handles sub-routes like /assistants/id)
+              const active = item.path === "/" 
+                ? activeRoute === item.path 
+                : activeRoute.startsWith(item.path);
+              return (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className={`menu-subitem ${active ? 'active' : ''}`}  // Fixed: Use the 'active' variable for class (instead of getClass)
+                  onClick={() => handleNavigation(item.path, item.onClick)}
+                >
+                  <Image
+                    src={getIcon(item.image, active)}
+                    alt={item.label}
+                    width={24}
+                    height={24}
+                  />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        ))}
+      </nav>
 
-                        return (
-                            <button
-                                key={item.path}
-                                onClick={() => handleNavigation(item.path)}
-                                className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg transition-colors ${active
-                                        ? 'bg-emerald-500/20 border border-emerald-400/40'
-                                        : 'hover:bg-white/5'
-                                    }`}
-                                title={isCollapsed ? item.label : ''}
-                            >
-                                <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${active ? 'bg-emerald-400/30' : 'bg-white/5'
-                                    }`}>
-                                    <Icon size={18} className={active ? 'text-emerald-300' : 'text-white/70'} />
-                                </div>
-                                {!isCollapsed && (
-                                    <span className={`text-sm font-medium ${active ? 'text-emerald-300' : 'text-white/70'
-                                        }`}>
-                                        {item.label}
-                                    </span>
-                                )}
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
-
-            {/* Bottom Section */}
-            <div className={`${isCollapsed ? 'px-2' : 'px-4'} py-4 border-t border-white/10 space-y-2`}>
-                {bottomItems.map((item, index) => {
-                    const Icon = item.icon;
-
-                    return (
-                        <button
-                            key={index}
-                            onClick={item.onClick || (() => handleNavigation(item.path))}
-                            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-3 py-2 rounded-lg transition-colors hover:bg-white/5 text-white/70 hover:text-white`}
-                            title={isCollapsed ? item.label : ''}
-                        >
-                            <div className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-white/5">
-                                <Icon size={18} />
-                            </div>
-                            {!isCollapsed && (
-                                <span className="text-sm font-medium">{item.label}</span>
-                            )}
-                        </button>
-                    );
-                })}
-            </div>
-
-            {/* Collapse Toggle - Floating in Middle */}
-            <button
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-white/[0.08] backdrop-blur-xl border border-white/20 hover:bg-white/12 transition-all duration-200 text-white/70 hover:text-white shadow-lg z-50"
-                style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    backdropFilter: 'blur(16px)',
-                    WebkitBackdropFilter: 'blur(16px)'
-                }}
-                aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            >
-                {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-            </button>
-        </div>
-    );
+      {/* Glow effects (matching target) */}
+      <div className="sidebar-glow" ref={glowRightRef}></div>
+      <div className="sidebar-glow-left" ref={glowLeftRef}></div>
+    </aside>
+  );
 };
 
 export default LeftSidebar;
-

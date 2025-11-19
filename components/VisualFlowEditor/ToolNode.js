@@ -11,26 +11,24 @@ export default function ToolNode({ data, selected }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Main Card - Compact Size */}
-      <div 
-        className={`relative rounded-xl min-w-[150px] max-w-[150px] overflow-hidden ${selected ? 'border-2' : 'border-0'}`}
-        style={{
-          background: 'rgba(255, 255, 255, 0.04)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderColor: selected ? '#13F584' : 'transparent',
-          boxShadow: selected 
-            ? '0 25px 50px -12px rgba(19, 245, 132, 0.3)'
-            : '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-        }}
-      >
+      <div
+            className={`relative min-w-[150px] max-w-[150px] overflow ${selected ? '' : ''}`}
+            style={{
+              background: 'linear-gradient(59.16deg, rgba(19, 245, 132, 0) 71.78%, rgba(19, 245, 132, 0.2) 124.92%), linear-gradient(246.02deg, rgba(19, 245, 132, 0) 91.9%, rgba(19, 245, 132, 0.2) 114.38%), rgba(255, 255, 255, 0.03)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              borderColor: selected ? '#13F584' : 'rgba(255, 255, 255, 0.12)',
+              borderWidth: selected ? '1px' : '1px',  // control border thickness
+              borderStyle: 'solid',
+              borderRadius: '8px'  // desired border radius
+            }}
+          >
           {/* Light Green Gradient Effect - Top Right */}
           <div 
             className="absolute top-0 right-0 w-6 h-6 pointer-events-none"
-            style={{
-              background: 'radial-gradient(circle at top right, rgba(19, 245, 132, 0.2) 0%, rgba(19, 245, 132, 0) 70%)',
-            }}
+       
           />
-          
+             
           {/* Top Handle */}
           <Handle
             type="target"
@@ -51,11 +49,11 @@ export default function ToolNode({ data, selected }) {
             </div>
             {/* Fast Badge */}
             <div 
-              className="px-0.5 py-0.5 rounded border text-[7px] font-bold flex-shrink-0"
+              className="px-0.5 py-0.5 rounded text-[7px] font-bold flex-shrink-0"
               style={{
                 background: 'rgba(19, 245, 132, 0.16)',
                 color: '#9EFBCD',
-                borderColor: 'rgba(19, 245, 132, 0.3)'
+                
               }}
             >
               {data.respond_immediately ? 'Fast' : 'Wait'}
@@ -122,21 +120,20 @@ export default function ToolNode({ data, selected }) {
           {/* Footer - Compact */}
           <div className="px-2.5 py-1.5 flex items-center justify-between gap-0.5">
             <div 
-              className="px-0.5 py-0.5 rounded border text-[7px] font-bold truncate"
+              className="px-0.5 py-0.5 rounded  text-[7px] font-bold truncate"
               style={{
-                background: 'rgba(19, 245, 132, 0.16)',
-                color: '#9EFBCD',
-                borderColor: 'rgba(19, 245, 132, 0.3)'
+                background: 'rgba(255, 86, 48, 0.16)',
+                color: '#FFAC82',
+            
               }}
             >
               {data.respond_immediately ? 'Immediate' : 'Wait'}
             </div>
             <div 
-              className="px-0.5 py-0.5 rounded border text-[7px] font-bold font-mono truncate max-w-[50px]"
+              className="px-0.5 py-0.5 rounded  text-[7px] font-bold font-mono truncate max-w-[50px]"
               style={{
-                background: 'rgba(19, 245, 132, 0.16)',
-                color: '#9EFBCD',
-                borderColor: 'rgba(19, 245, 132, 0.3)'
+                background: 'rgba(145, 158, 171, 0.16)',
+                color: '#919EAB',
               }}
             >
               {data.id || 'Node_002'}
@@ -153,6 +150,7 @@ export default function ToolNode({ data, selected }) {
               transform: selected || isHovered ? 'scale(1.2)' : 'scale(1)'
             }}
           />
+          
         </div>
     </div>
   );

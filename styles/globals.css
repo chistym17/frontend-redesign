@@ -54,3 +54,298 @@ body {
   --tw-shadow: 0 0 #0000 !important;
   --tw-shadow-colored: 0 0 #0000 !important;
 }
+
+/* ===============================
+   SIDEBAR BASE STYLES
+=============================== */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center child blocks horizontally */
+  padding: 16px;
+  gap: 5px;
+  position: fixed;
+  top: 10px;                  /* 10px gap from top */
+  left: 5px;                 /* 10px gap from left */
+  width: 220px;
+  height: calc(100vh - 20px); /* leaves 10px top + 10px bottom gap */
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(80, 80, 80, 0.24);
+  /* Card/nav */
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(75px);
+  /* Note: backdrop-filter has minimal browser support */
+  border-radius: 16px;
+  overflow: hidden;
+  z-index: 1000; /* High z-index for overlay */
+  transition: transform 0.3s ease;
+}
+
+/* ===============================
+   COLLAPSE BUTTON (Floating Edge Style)
+=============================== */
+.collapse-btn {
+  position: absolute;
+  top: -5px; /* small top gap */
+  right: -12px; /* sticks slightly outside sidebar */
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px; 
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: flex-start; /* horizontal left */
+  align-items: flex-end;       /* vertical bottom */
+  padding-left: 2px;           /* reduce left padding to move arrow left */
+  padding-bottom: 6px;         /* bottom padding remains */
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  z-index: 1100;
+}
+
+.collapse-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.05);
+}
+
+.collapse-btn img {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.25s ease;
+  margin-left: 0;       /* reset margin-left if any */
+}
+
+/* ===============================
+   MENU STRUCTURE
+=============================== */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width:180px;
+  margin-top: 25px; /* Added top margin to push menu items down */
+}
+
+.menu-block {
+  display: flex;
+  flex-direction: column;
+  width: 180px;
+  gap: 5px;
+}
+
+.menu-label {
+  padding: 0 8px;
+  font-family: 'Public Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #777;
+}
+
+.menu-item,
+.menu-subitem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  padding-left: 10px;
+  border-radius: 8px;
+  color: #888;
+  font-family: 'Public Sans', sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  text-decoration: none;
+  width: 100%;
+  transition: all 0.25s ease;
+}
+
+.menu-item:hover,
+.menu-subitem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.menu-item.active,
+.menu-subitem.active {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.16);
+  color: #00A76F;
+  transform: scale(1.1); /* Increased scale for bigger selected tab box */
+}
+
+/* ===============================
+   GLOW EFFECTS
+=============================== */
+/* Glow oval (only left side, perfectly centered vertically) */
+.menu-item.active::before,
+.menu-subitem.active::before {
+  content: "";
+  position: absolute;
+  width: 39px;
+  height: 16px;
+
+  /* center it vertically inside the 48px button */
+  top: 50%;
+  left: -12px;
+  transform: translateY(-50%) rotate(90deg);
+
+  background: #00A76F;
+  opacity: 0.4;
+  filter: blur(7px);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* left glow */
+.menu-item.active::before,
+.menu-subitem.active::before {
+  left: -11.5px;
+}
+
+/* Traveling glow */
+.sidebar-glow {
+  position: absolute;
+  width: 131px;
+  height: 42px;
+  right: -40px;
+  background: #00A76F;
+  opacity: 1;
+  filter: blur(65px);
+  border-radius: 50%;
+  transition: top 0.3s ease;
+  z-index: 0;
+}
+
+.sidebar-glow-left {
+  position: absolute;
+  width: 39px;
+  height: 60px;
+  left: -40px;          /* position on the left */
+  top: 0;                /* will be updated dynamically */
+  background: #00A76F;
+  opacity: 0.68;
+  filter: blur(42px);
+  border-radius: 50%;
+  transition: top 0.3s ease;
+  z-index: 2;
+}
+
+/* ===============================
+   COLLAPSED STATE
+=============================== */
+.sidebar.collapsed {
+  width: 70px;
+  padding: 8px;
+  align-items: center;
+}
+
+.sidebar.collapsed .menu-label,
+.sidebar.collapsed span:not(.unread-badge) {
+  display: none;
+}
+
+/* COLLAPSED MENU ITEMS */
+.sidebar.collapsed .menu-item,
+.sidebar.collapsed .menu-subitem {
+  width: 45px;             /* Slightly larger for better touch */
+  height: 45px;            /* Slightly larger for better touch */
+  border-radius: 12.5px;
+  padding: 12.5px;            /* Increase padding for better centering */
+  margin: 0 auto;          /* Center the button itself */
+  transition: transform 0.25s ease, background 0.25s ease;
+  display: flex;           /* Ensure flex for centering */
+}
+
+/* Hover / Active animation (collapsed only) */
+.sidebar.collapsed .menu-item:hover,
+.sidebar.collapsed .menu-subitem:hover {
+  transform: scale(1.15);
+}
+
+.sidebar.collapsed .menu-item.active,
+.sidebar.collapsed .menu-subitem.active {
+  transform: scale(1.15);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.16);
+  color: #00A76F;
+}
+
+/* Keep active state visual until collapse toggled */
+.sidebar.collapsed .menu-item:not(.active),
+.sidebar.collapsed .menu-subitem:not(.active) {
+  transform: none;
+}
+
+/* GLOW ALIGNMENT (COLLAPSED) */
+/* Glow oval (only left side, perfectly centered vertically) */
+.sidebar.collapsed .menu-item.active::before,
+.sidebar.collapsed .menu-subitem.active::before {
+  content: "";
+  position: absolute;
+  width: 39px;
+  height: 16px;
+
+  /* center it vertically inside the 48px button */
+  top: 50%;
+  left: -12px;
+  transform: translateY(-50%) rotate(90deg);
+
+  background: #00A76F;
+  opacity: 0.4;
+  filter: blur(7px);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* ===============================
+   ICON SCALE IN COLLAPSED MODE
+=============================== */
+.sidebar.collapsed .menu-icon img {
+  transition: transform 0.25s ease;
+}
+
+.sidebar.collapsed .menu-item:hover .menu-icon img,
+.sidebar.collapsed .menu-subitem:hover .menu-icon img {
+  transform: scale(1.25);
+}
+
+.sidebar.collapsed .menu-item.active .menu-icon img,
+.sidebar.collapsed .menu-subitem.active .menu-icon img {
+  transform: scale(1.45); /* Bigger active icon */
+}
+
+/* left glow */
+.sidebar.collapsed .menu-item.active::before,
+.sidebar.collapsed .menu-subitem.active::before {
+  left: -11.5px;
+}
+
+/* Traveling glow */
+.sidebar.collapsed .sidebar-glow {
+  position: absolute;
+  width: 60px;
+  height: 45px;
+  right:-15px;
+  background: #00A76F;
+  opacity: 0.69;
+  filter: blur(72px);
+  border-radius: 50%;
+  transition: top 0.3s ease;
+  z-index: 0;
+}
+
+.sidebar.collapsed .sidebar-glow-left {
+  position: absolute;
+  width: 39px;
+  height: 60px;
+  left: -40px;          /* position on the left */
+  top: 0;                /* will be updated dynamically */
+  background: #00A76F;
+  opacity: 0.68;
+  filter: blur(42px);
+  border-radius: 50%;
+  transition: top 0.3s ease;
+  z-index: 2;
+}

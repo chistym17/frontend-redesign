@@ -1,7 +1,7 @@
 // components/flows/VoiceFlowChatbotPanel.jsx - FIXED INFINITE LOOP
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Bot, Send, Loader, Minimize2, Maximize2, Trash2, Download, AlertCircle, CheckCircle, Sparkles, X, Replace } from 'lucide-react';
-
+import Image from 'next/image';
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://176.9.16.194:5403/api';
 
 export default function VoiceFlowChatbotPanel({
@@ -183,47 +183,40 @@ export default function VoiceFlowChatbotPanel({
     URL.revokeObjectURL(url);
   };
 
-  // Minimized view - chat bubble icon
+  // Minimized view - removed chat bubble icon
   if (isMinimized) {
-    return (
-      <button
-        onClick={onToggleMinimize}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-200 hover:scale-110"
-        style={{
-          boxShadow: '0 8px 32px 0 rgba(19, 245, 132, 0.3)'
-        }}
-      >
-        <Bot className="w-6 h-6" />
-        {loading && (
-          <div className="absolute -top-1 -right-1 w-4 h-4">
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        )}
-      </button>
-    );
+    return null;
   }
 
   return (
-    <div 
-      className="h-full rounded-2xl shadow-2xl flex flex-col overflow-hidden"
-      style={{
-        background: 'rgba(255, 255, 255, 0.04)',
-        backdropFilter: 'blur(60px)',
-        WebkitBackdropFilter: 'blur(60px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
-      }}
-    >
+   <div 
+  className="h-[89vh] rounded-2xl shadow-2xl flex flex-col overflow-y-auto"
+  style={{
+    background: 'rgba(255, 255, 255, 0.04)',
+    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(10px)',
+    border: '1px solid rgba(255, 255, 255, 0.12)',
+    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+  }}
+>
+
       {/* Header */}
       <div 
         className="px-4 py-2.5 flex items-center justify-between"
         style={{
-          background: 'rgba(19, 245, 132, 0.4)'
+          background: 'rgba(19, 245, 132, 0.24)'
         }}
       >
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 flex items-center justify-center">
-            <Bot className="w-10 h-10 text-white" />
+            <Image 
+              src="/images/ai2.svg"
+              alt="Chatbot"
+              width={40}
+              height={40}
+              className="rounded-lg"
+            />
+
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white" style={{ fontFamily: 'Public Sans' }}>AI Asistance</h3>
@@ -231,20 +224,27 @@ export default function VoiceFlowChatbotPanel({
         </div>
         <button
           onClick={onToggleMinimize}
-          className="w-10 h-10 flex items-center justify-center rounded-full transition-colors hover:bg-white/10"
+          className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors hover:bg-white/10"
           style={{
             background: 'rgba(19, 245, 132, 0.08)'
           }}
           title="Close"
         >
-          <X className="w-5 h-5 text-white" />
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.0202 11.4336H3.98021C3.18688 11.4336 2.54688 10.7936 2.54688 10.0002C2.54688 9.20689 3.18688 8.56689 3.98021 8.56689H16.0202C16.8135 8.56689 17.4535 9.20689 17.4535 10.0002C17.4535 10.7936 16.8135 11.4336 16.0202 11.4336Z" fill="white"/>
+          </svg>
+
         </button>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2.5">
         {messages.map((msg, idx) => (
-          <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end pl-10' : 'justify-start pr-10'}`}>
+          <div 
+            key={idx} 
+            className={` flex flex-col ${msg.role === 'user' ? 'items-end pl-10' : 'items-start pr-10'}`}
+          >
+            {/* Message bubble */}
             <div className={`max-w-[85%] ${
               msg.role === 'user' 
                 ? 'rounded-tl-2xl rounded-tr-none rounded-br-2xl rounded-bl-2xl p-3'
@@ -261,7 +261,7 @@ export default function VoiceFlowChatbotPanel({
                 }
               : msg.role !== 'system' && !msg.isError
                 ? {
-                    background: 'rgba(40, 40, 40, 0.6)',
+                    background: 'rgba(63, 67, 70, 0.3)',
                     border: '1px solid rgba(255, 255, 255, 0.1)'
                   }
                 : {}
@@ -275,7 +275,9 @@ export default function VoiceFlowChatbotPanel({
                     ? { color: 'rgba(255, 255, 255, 0.72)' }
                     : {}
                 }
-              >{msg.content}</div>
+              >
+                {msg.content}
+              </div>
 
               {/* Warnings */}
               {msg.warnings && msg.warnings.length > 0 && (
@@ -358,14 +360,17 @@ export default function VoiceFlowChatbotPanel({
                   </div>
                 </div>
               )}
+            </div>
 
-              <div 
-                className="text-xs mt-2 flex items-center gap-1.5"
-                style={{ color: 'rgba(255, 255, 255, 0.32)' }}
-              >
-                {msg.role === 'user' && <span style={{ color: 'rgba(255, 255, 255, 0.48)' }}>You</span>}
-                <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-              </div>
+            {/* Role and Timestamp under the bubble, aligned to side */}
+            <div 
+              className={`text-xs flex items-center gap-1.5 max-w-[85%] ${
+                msg.role === 'user' ? 'justify-end' : 'justify-start'
+              }`}
+              style={{ color: 'rgba(255, 255, 255, 0.32)', marginTop: '0.25rem' }}
+            >
+              {msg.role === 'user' && <span style={{ color: 'rgba(255, 255, 255, 0.48)' }}>You</span>}
+              <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
           </div>
         ))}
@@ -384,6 +389,7 @@ export default function VoiceFlowChatbotPanel({
         <div ref={messagesEndRef} />
       </div>
 
+
       {/* Error display */}
       {error && (
         <div className="px-4 py-2 bg-red-600/20 border-y border-red-600/30 flex items-center gap-2">
@@ -401,10 +407,10 @@ export default function VoiceFlowChatbotPanel({
       {/* Input */}
       <div className="px-3 pb-3 pt-0">
         <div 
-          className="flex items-center justify-between gap-6 px-3 py-1 rounded-full"
+          className="flex items-center justify-between gap-4 px-1 py-1 rounded-xl"
           style={{
-            background: 'rgba(30, 30, 30, 0.6)',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
+            background: 'rgba(255, 255, 255, 0.04)',
+       
           }}
         >
           <input
@@ -414,7 +420,7 @@ export default function VoiceFlowChatbotPanel({
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Ask a anything"
-            className="flex-1 bg-transparent text-sm text-white placeholder-gray-400 focus:outline-none"
+            className="flex-1 bg-transparent text-sm text-white placeholder-gray-400 focus:outline-none px-4"
             style={{ color: '#919EAB' }}
             disabled={loading}
           />
@@ -422,14 +428,15 @@ export default function VoiceFlowChatbotPanel({
             onClick={handleSend}
             disabled={!input.trim() || loading}
             className="w-10 h-10 flex items-center justify-center rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              background: 'rgba(19, 245, 132, 0.08)'
-            }}
+         
           >
             {loading ? (
               <Loader className="w-5 h-5 text-white animate-spin" />
             ) : (
-              <Send className="w-5 h-5 text-white" />
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="40" height="40" rx="8" fill="#13F584" fill-opacity="0.08"/>
+              <path d="M27.6528 18.9101L12.9949 11.76C12.8689 11.6985 12.7305 11.6665 12.5902 11.6665C12.0803 11.6665 11.667 12.0798 11.667 12.5897V12.6163C11.667 12.7402 11.6822 12.8636 11.7122 12.9838L13.1183 18.6079C13.1567 18.7616 13.2866 18.8751 13.4439 18.8926L19.6239 19.5792C19.8382 19.603 20.0003 19.7842 20.0003 19.9998C20.0003 20.2155 19.8382 20.3967 19.6239 20.4204L13.4439 21.1071C13.2866 21.1246 13.1567 21.2381 13.1183 21.3917L11.7122 27.0158C11.6822 27.1361 11.667 27.2595 11.667 27.3833V27.41C11.667 27.9198 12.0803 28.3332 12.5902 28.3332C12.7305 28.3332 12.8689 28.3012 12.9949 28.2397L27.6528 21.0895C28.0693 20.8864 28.3337 20.4634 28.3337 19.9998C28.3337 19.5363 28.0693 19.1133 27.6528 18.9101Z" fill="#13F584"/>
+              </svg>
             )}
           </button>
         </div>

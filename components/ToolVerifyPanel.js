@@ -9,8 +9,20 @@ const INPUT_STYLES =
 const INPUT_STYLE_OBJ = {
   background: 'rgba(255, 255, 255, 0.04)',
   backdropFilter: 'blur(10px)',
-  WebkitBackdropFilter: 'blur(10px)'
+  WebkitBackdropFilter: 'blur(10px)',
 };
+
+const INPUT_STYLE_RED_OBJ = {
+  ...INPUT_STYLE_OBJ,
+  color: 'rgb(255, 86, 48)', // Tailwind red-400
+};
+
+const INPUT_STYLE_Orange_OBJ = {
+  ...INPUT_STYLE_OBJ,
+  color: 'rgba(255, 171, 0, 0.48)', // Tailwind red-400
+};
+
+
 
 const SectionLabel = ({ title }) => (
   <div className="w-full md:w-[150px] shrink-0 text-white/70">
@@ -129,12 +141,12 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
           <div className="space-y-2">
             <FieldLabel>Body (JSON)</FieldLabel>
             <textarea
-              className={`${INPUT_STYLES} font-mono text-xs resize-none`}
+              className={`${INPUT_STYLES} font-mono text-xs resize-none placeholder-orange-custom`}
               rows={4}
               value={body}
               onChange={e => setBody(e.target.value)}
               placeholder='{"key": "value"}'
-              style={INPUT_STYLE_OBJ}
+              style={INPUT_STYLE_Orange_OBJ} // this keeps typed text orange too
             />
           </div>
 
@@ -142,7 +154,7 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
             <button
               disabled={running}
               onClick={runTest}
-              className="px-4 py-2 rounded-xl border border-emerald-300/40 bg-emerald-400/20 text-emerald-200 hover:bg-emerald-400/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-semibold"
+              className="px-6 py-2.5 text-emerald-200 bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors rounded-lg"
             >
               {running ? (
                 <>
@@ -151,7 +163,7 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
                 </>
               ) : (
                 <>
-                  <Play size={14} />
+              
                   Run
                 </>
               )}
@@ -192,22 +204,22 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
           <div className="space-y-2">
             <FieldLabel>Checks</FieldLabel>
             <textarea
-              className={`${INPUT_STYLES} font-mono text-xs resize-none`}
+              className={`${INPUT_STYLES} font-mono text-xs resize-none text-red-400`}
               rows={6}
               value={verificationChecksText}
               readOnly
-              style={INPUT_STYLE_OBJ}
+              style={INPUT_STYLE_RED_OBJ}
             />
           </div>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-end items-center pt-4 border-t border-white/10">
+      <div className="flex justify-end items-center pt-4  border-white/10">
         <button
           onClick={saveVerification}
           disabled={saving}
-          className="px-4 py-2 rounded-xl border border-emerald-300/40 bg-emerald-400/20 text-emerald-200 hover:bg-emerald-400/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-semibold"
+          className="px-6 py-2.5 text-emerald-200 bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors rounded-lg"
         >
           {saving ? (
             <>

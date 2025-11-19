@@ -1,40 +1,6 @@
 // NodeEditor.js - Production-grade minimal design
-import React, { useState, useEffect, useMemo } from 'react';
-import { toolsService } from '../../lib/toolsService';
-
-const STATIC_FUNCTIONS = [
-  {
-    id: 'static-recall_memory',
-    rawName: 'recall_memory',
-    displayName: 'Recall Memory',
-    description: 'Access stored contextual memory for the active customer or session.',
-    category: 'Memory',
-    source: 'System',
-    isStatic: true,
-  },
-];
-
-const normalizeFunctions = (rows = []) => {
-  const normalizedDynamic = (rows || []).map((tool, index) => {
-    const rawName = tool?.name || tool?.id || `tool-${index}`;
-    return {
-      id: tool?.id || rawName || `tool-${index}`,
-      rawName,
-      displayName: tool?.display_name || tool?.title || rawName || 'Untitled Function',
-      description: tool?.description || tool?.summary || 'No description provided.',
-      category: tool?.category || tool?.type || tool?.provider || 'Custom',
-      updatedAt: tool?.updated_at || tool?.last_updated || tool?.created_at || null,
-      source: tool?.provider || 'Custom',
-      isStatic: false,
-    };
-  });
-
-  const map = new Map();
-  STATIC_FUNCTIONS.forEach((fn) => map.set(fn.rawName, fn));
-  normalizedDynamic.forEach((fn) => map.set(fn.rawName, fn));
-
-  return Array.from(map.values()).sort((a, b) => a.displayName.localeCompare(b.displayName));
-};
+import React, { useState, useEffect } from 'react';
+import FunctionMultiSelect from '../FunctionMultiSelect';
 
 export default function NodeEditor({ node, assistantId, onUpdate, toolsRefreshTrigger = 0 }) {
   const [formData, setFormData] = useState({
@@ -45,8 +11,6 @@ export default function NodeEditor({ node, assistantId, onUpdate, toolsRefreshTr
     respond_immediately: true,
   });
   const [activeTab, setActiveTab] = useState('general');
-  const [availableFunctions, setAvailableFunctions] = useState([]);
-  const [functionsLoading, setFunctionsLoading] = useState(false);
 
   useEffect(() => {
     if (node?.data) {
@@ -60,43 +24,11 @@ export default function NodeEditor({ node, assistantId, onUpdate, toolsRefreshTr
     }
   }, [node]);
 
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        setFunctionsLoading(true);
-        const rows = assistantId ? await toolsService.listTools(assistantId) : [];
-        if (!mounted) return;
-        setAvailableFunctions(normalizeFunctions(rows));
-      } catch (error) {
-        console.error('Failed to load tools for assistant', error);
-        if (mounted) {
-          setAvailableFunctions(normalizeFunctions([]));
-        }
-      } finally {
-        if (mounted) setFunctionsLoading(false);
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, [assistantId, toolsRefreshTrigger]);
-
   const handleChange = (field, value) => {
     const newData = { ...formData, [field]: value };
     setFormData(newData);
     onUpdate(newData);
   };
-
-  const toggleFunctionSelection = (rawName) => {
-    const exists = formData.functions.includes(rawName);
-    const next = exists
-      ? formData.functions.filter((name) => name !== rawName)
-      : [...formData.functions, rawName];
-    handleChange('functions', next);
-  };
-
-  const filteredFunctions = useMemo(() => availableFunctions, [availableFunctions]);
 
   if (!node) {
     return (
@@ -128,11 +60,7 @@ export default function NodeEditor({ node, assistantId, onUpdate, toolsRefreshTr
       <div className="px-3 py-1.5">
         <div 
           className="rounded-2xl p-1"
-          style={{
-            background: 'rgba(255, 255, 255, 0.04)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)'
-          }}
+   
         >
           <div className="flex items-center justify-between gap-4">
             {tabs.map((tab) => (
@@ -174,7 +102,7 @@ export default function NodeEditor({ node, assistantId, onUpdate, toolsRefreshTr
                 onChange={(e) => handleChange('id', e.target.value)}
                 className="w-full px-2.5 py-1.5 text-xs bg-white/4 border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-[#13F584] focus:outline-none focus:ring-1 focus:ring-[#13F584]/50 transition-all"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: 'rgba(255, 255, 255, 0.00)',
                   backdropFilter: 'blur(10px)',
                   WebkitBackdropFilter: 'blur(10px)'
                 }}
@@ -192,7 +120,7 @@ export default function NodeEditor({ node, assistantId, onUpdate, toolsRefreshTr
                 onChange={(e) => handleChange('title', e.target.value)}
                 className="w-full px-2.5 py-1.5 text-xs bg-white/4 border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-[#13F584] focus:outline-none focus:ring-1 focus:ring-[#13F584]/50 transition-all"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.04)',
+                  background: 'rgba(255, 255, 255, 0.00)',
                   backdropFilter: 'blur(10px)',
                   WebkitBackdropFilter: 'blur(10px)'
                 }}
@@ -219,7 +147,7 @@ export default function NodeEditor({ node, assistantId, onUpdate, toolsRefreshTr
               rows={16}
               className="w-full px-2.5 py-2 bg-white/4 border border-white/20 rounded-lg text-xs text-white placeholder-white/50 focus:border-[#13F584] focus:outline-none focus:ring-1 focus:ring-[#13F584]/50 transition-all font-mono leading-relaxed resize-none"
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
+                background: 'rgba(255, 255, 255, 0.00)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)'
               }}
@@ -240,51 +168,32 @@ export default function NodeEditor({ node, assistantId, onUpdate, toolsRefreshTr
 
         {/* Functions Tab */}
         {activeTab === 'functions' && (
-          <div
-            className="rounded-3xl overflow-hidden"
-            style={{
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-            }}
-          >
-            <div className="flex items-center justify-between px-4 py-2 text-[10px] uppercase tracking-wide text-white/40 border-b border-white/10">
-              <span className="pl-7 text-[11px] font-semibold text-white/70">Function Name</span>
-              <span>{formData.functions.length} selected</span>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="block text-[10px] font-semibold text-white/60 uppercase">
+                Available Functions
+              </label>
+              <span className="text-[10px] text-white/60">
+                {formData.functions.length} selected
+              </span>
+            </div>
+            
+          
+              <div className="flex justify-center">
+              <FunctionMultiSelect
+                assistantId={assistantId}
+                value={formData.functions}
+                onChange={(functions) => handleChange('functions', functions)}
+                className="!bg-transparent !border-0"
+                refreshTrigger={toolsRefreshTrigger}
+              />
             </div>
 
-            <div className="max-h-72 overflow-auto divide-y divide-white/10">
-              {functionsLoading ? (
-                <div className="flex items-center justify-center py-8 text-xs text-white/60">
-                  Loading functions…
-                </div>
-              ) : filteredFunctions.length ? (
-                filteredFunctions.map((fn) => {
-                  const selected = formData.functions.includes(fn.rawName);
-                  return (
-                    <label
-                      key={fn.rawName}
-                      className={`flex items-center gap-3 px-4 py-3 text-xs cursor-pointer transition-colors ${
-                        selected ? 'bg-white/10' : 'hover:bg-white/5'
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selected}
-                        onChange={() => toggleFunctionSelection(fn.rawName)}
-                        className="h-4 w-4 rounded border-white/30 text-[#13F584]"
-                      />
-                      <span className="font-semibold text-white truncate min-w-0">{fn.displayName}</span>
-                    </label>
-                  );
-                })
-              ) : (
-                <div className="flex flex-col items-center justify-center gap-1 py-8 text-center text-xs text-white/50">
-                  <span>No functions available</span>
-                  <p>Add tools to this assistant to see them here.</p>
-                </div>
-              )}
+            <div className="flex items-start gap-1.5 p-2 bg-white/4 border border-white/20 rounded-lg text-[10px] text-white/60">
+              <svg className="w-3 h-3 text-[#13F584] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p>Functions enable the AI to perform actions and retrieve data during conversations</p>
             </div>
           </div>
         )}

@@ -117,33 +117,45 @@ const AuthSystem = ({ initialMode = 'login' }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#141A21] flex items-center justify-center p-4">
+   
+     
+      <div
+      className="min-h-screen flex items-center justify-center"
+      style={{
+        backgroundImage: "url('/images/wave.png')",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "bottom center",
+        backgroundSize: "100% 65%", // 75% of container height
+        backgroundColor: "#141A21",   // top 25% shows this color
+      }}
+    >
+
       <div className="w-full max-w-md">
         <div
           className="rounded-3xl shadow-2xl overflow-hidden border"
           style={{
-            background: 'rgba(255, 255, 255, 0.06)',
+            background: 'rgba(255, 255, 255, 0.04)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             borderColor: 'rgba(255, 255, 255, 0.12)'
           }}
         >
-          <div className="px-6 pt-6 pb-4 text-center">
-            <div
-              className="w-14 h-14 rounded-2xl mx-auto mb-3 flex items-center justify-center border"
-              style={{
-                background: 'rgba(19, 245, 132, 0.12)',
-                borderColor: 'rgba(19, 245, 132, 0.3)'
-              }}
-            >
-              <User className="w-7 h-7" style={{ color: '#9EFBCD' }} />
-            </div>
+          <div className="px-6 pt-6 pb-4 text-left">
+     
             <h2 className="text-xl font-bold text-white mb-1">
-              {mode === 'login' ? 'Welcome Back' : 'Create Account'}
+              {mode === 'login' ? 'Welcome Back' : 'Join us and start your journey today'}
             </h2>
-            <p className="text-white/70 text-xs">
-              {mode === 'login' ? 'Sign in to continue' : 'Join and start your journey'}
-            </p>
+              <p className="text-[13px] text-[#919EAB]">
+                {mode === 'login' ? "Don't have an account?" : "Already have an account?"}
+                <button
+                  type="button"
+                  onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+                  className="ml-2 font-semibold hover:underline"
+                  style={{ color: '#13F584' }}
+                >
+                  {mode === 'login' ? 'Sign up' : 'Sign in'}
+                </button>
+              </p>
           </div>
 
           {message.text && (
@@ -164,16 +176,16 @@ const AuthSystem = ({ initialMode = 'login' }) => {
             <div className="space-y-3">
               {mode === 'register' && (
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-semibold text-white/70">Full Name</label>
+                  <label className="text-[11px] font-semibold text-[#919EAB]">Full Name</label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+                   
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      className={`w-full pl-10 pr-3 py-2.5 rounded-lg text-sm text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-emerald-400/40 border`}
+                      className={`w-full pl-2 pr-3 py-2.5 rounded-lg text-sm text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-emerald-400/40 border`}
                       style={{
-                        background: 'rgba(255, 255, 255, 0.06)',
+                        background: 'rgba(255, 255, 255, 0.00)',
                         borderColor: errors.name ? 'rgba(255, 86, 48, 0.3)' : 'rgba(255, 255, 255, 0.18)'
                       }}
                       placeholder="Enter your full name"
@@ -184,16 +196,16 @@ const AuthSystem = ({ initialMode = 'login' }) => {
               )}
 
               <div className="space-y-1.5">
-                <label className="text-[11px] font-semibold text-white/70">Email Address</label>
+                <label className="text-[11px] font-semibold text-[#919EAB]">Email Address</label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+               
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 rounded-lg text-sm text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-emerald-400/40 border"
+                    className="w-full pl-2 pr-3 py-2.5 rounded-lg text-sm text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-emerald-400/40 border"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.06)',
+                      background: 'rgba(255, 255, 255, 0.00)',
                       borderColor: errors.email ? 'rgba(255, 86, 48, 0.3)' : 'rgba(255, 255, 255, 0.18)'
                     }}
                     placeholder="Enter your email"
@@ -203,22 +215,32 @@ const AuthSystem = ({ initialMode = 'login' }) => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[11px] font-semibold text-white/70">Password</label>
+                <label className="text-[11px] font-semibold text-[#919EAB]">Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+   
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
-                    className="w-full pl-10 pr-10 py-2.5 rounded-lg text-sm text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-emerald-400/40 border"
+                    className="w-full pl-2 pr-10 py-2.5 rounded-lg text-sm text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-emerald-400/40 border"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.06)',
+                      background: 'rgba(255, 255, 255, 0.00)',
                       borderColor: errors.password ? 'rgba(255, 86, 48, 0.3)' : 'rgba(255, 255, 255, 0.18)'
                     }}
                     placeholder="Enter your password"
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white">
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? <svg width="24" height="24" viewBox="-1 -1 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 3L21 21" stroke="#919EAB" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M10.58 10.58C10.2147 10.9453 10.0037 11.4471 10 11.97C10 13.07 10.9 13.97 12 13.97C12.523 13.9663 13.0247 13.7553 13.39 13.39" stroke="#919EAB" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M6.7 6.7C4.8 7.9 3.4 9.7 2.7 12C3.46 14.58 5.32 16.73 7.78 18C8.88922 18.5616 10.1077 18.8952 11.36 18.98C14.18 18.82 16.65 17.5 18.3 15.3" stroke="#919EAB" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M12 6C12.7063 5.99715 13.4013 6.16207 14.03 6.48" stroke="#919EAB" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    : <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.75 12C9.75 11.4033 9.98705 10.831 10.409 10.409C10.831 9.98705 11.4033 9.75 12 9.75C12.5967 9.75 13.169 9.98705 13.591 10.409C14.0129 10.831 14.25 11.4033 14.25 12C14.25 12.5967 14.0129 13.169 13.591 13.591C13.169 14.0129 12.5967 14.25 12 14.25C11.4033 14.25 10.831 14.0129 10.409 13.591C9.98705 13.169 9.75 12.5967 9.75 12Z" fill="#919EAB"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 13.64 2.425 14.191 3.275 15.296C4.972 17.5 7.818 20 12 20C16.182 20 19.028 17.5 20.725 15.296C21.575 14.192 22 13.639 22 12C22 10.36 21.575 9.809 20.725 8.704C19.028 6.5 16.182 4 12 4C7.818 4 4.972 6.5 3.275 8.704C2.425 9.81 2 10.361 2 12ZM12 8.25C11.0054 8.25 10.0516 8.64509 9.34835 9.34835C8.64509 10.0516 8.25 11.0054 8.25 12C8.25 12.9946 8.64509 13.9484 9.34835 14.6517C10.0516 15.3549 11.0054 15.75 12 15.75C12.9946 15.75 13.9484 15.3549 14.6517 14.6517C15.3549 13.9484 15.75 12.9946 15.75 12C15.75 11.0054 15.3549 10.0516 14.6517 9.34835C13.9484 8.64509 12.9946 8.25 12 8.25Z" fill="#919EAB"/>
+                    </svg>
+                    }
                   </button>
                   {errors.password && <p className="text-[11px] mt-1" style={{ color: '#FFAC82' }}><span className="inline-flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.password}</span></p>}
                 </div>
@@ -226,22 +248,32 @@ const AuthSystem = ({ initialMode = 'login' }) => {
 
               {mode === 'register' && (
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-semibold text-white/70">Confirm Password</label>
+                  <label className="text-[11px] font-semibold text-[#919EAB]">Confirm Password</label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+                  
                     <input
                       type={showConfirmPassword ? 'text' : 'password'}
                       value={formData.confirmPassword}
                       onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                      className="w-full pl-10 pr-10 py-2.5 rounded-lg text-sm text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-emerald-400/40 border"
+                      className="w-full pl-2 pr-10 py-2.5 rounded-lg text-sm text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-emerald-400/40 border"
                       style={{
-                        background: 'rgba(255, 255, 255, 0.06)',
+                        background: 'rgba(255, 255, 255, 0.00)',
                         borderColor: errors.confirmPassword ? 'rgba(255, 86, 48, 0.3)' : 'rgba(255, 255, 255, 0.18)'
                       }}
                       placeholder="Confirm your password"
                     />
                     <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white">
-                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showConfirmPassword ? <svg width="24" height="24" viewBox="-1 -1 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 3L21 21" stroke="#919EAB" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M10.58 10.58C10.2147 10.9453 10.0037 11.4471 10 11.97C10 13.07 10.9 13.97 12 13.97C12.523 13.9663 13.0247 13.7553 13.39 13.39" stroke="#919EAB" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6.7 6.7C4.8 7.9 3.4 9.7 2.7 12C3.46 14.58 5.32 16.73 7.78 18C8.88922 18.5616 10.1077 18.8952 11.36 18.98C14.18 18.82 16.65 17.5 18.3 15.3" stroke="#919EAB" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 6C12.7063 5.99715 13.4013 6.16207 14.03 6.48" stroke="#919EAB" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                      : <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9.75 12C9.75 11.4033 9.98705 10.831 10.409 10.409C10.831 9.98705 11.4033 9.75 12 9.75C12.5967 9.75 13.169 9.98705 13.591 10.409C14.0129 10.831 14.25 11.4033 14.25 12C14.25 12.5967 14.0129 13.169 13.591 13.591C13.169 14.0129 12.5967 14.25 12 14.25C11.4033 14.25 10.831 14.0129 10.409 13.591C9.98705 13.169 9.75 12.5967 9.75 12Z" fill="#919EAB"/>
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 13.64 2.425 14.191 3.275 15.296C4.972 17.5 7.818 20 12 20C16.182 20 19.028 17.5 20.725 15.296C21.575 14.192 22 13.639 22 12C22 10.36 21.575 9.809 20.725 8.704C19.028 6.5 16.182 4 12 4C7.818 4 4.972 6.5 3.275 8.704C2.425 9.81 2 10.361 2 12ZM12 8.25C11.0054 8.25 10.0516 8.64509 9.34835 9.34835C8.64509 10.0516 8.25 11.0054 8.25 12C8.25 12.9946 8.64509 13.9484 9.34835 14.6517C10.0516 15.3549 11.0054 15.75 12 15.75C12.9946 15.75 13.9484 15.3549 14.6517 14.6517C15.3549 13.9484 15.75 12.9946 15.75 12C15.75 11.0054 15.3549 10.0516 14.6517 9.34835C13.9484 8.64509 12.9946 8.25 12 8.25Z" fill="#919EAB"/>
+                      </svg>
+                      }
                     </button>
                     {errors.confirmPassword && <p className="text-[11px] mt-1" style={{ color: '#FFAC82' }}><span className="inline-flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.confirmPassword}</span></p>}
                   </div>
@@ -252,29 +284,66 @@ const AuthSystem = ({ initialMode = 'login' }) => {
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 disabled:opacity-50 border"
+                className="w-full text-white py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
                 style={{
-                  background: 'rgba(19, 245, 132, 0.16)',
-                  borderColor: 'rgba(19, 245, 132, 0.3)',
-                  color: '#9EFBCD'
+                  background:
+                    mode === "login"
+                      ? "rgba(145, 158, 171, 0.32)" // login color
+                      : "rgba(19, 245, 132, 0.16)", // sign up color
+                  borderColor:
+                    mode === "login"
+                      ? "rgba(145, 158, 171, 0.45)"
+                      : "rgba(19, 245, 132, 0.3)",
+                  color:
+                    mode === "login"
+                      ? "#CED4DA"
+                      : "#9EFBCD"
                 }}
               >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (<><span>{mode === 'login' ? 'Sign In' : 'Create Account'}</span><ArrowRight className="w-4 h-4" /></>)}
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <span>{mode === "login" ? "Sign In" : "Create Account"}</span>
+                )}
               </button>
+
             </div>
 
-            <div className="my-5 flex items-center">
-              <div className="flex-1 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}></div>
-              <span className="px-3 text-xs text-white/70">or</span>
-              <div className="flex-1 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}></div>
+          <div className="my-5 flex items-center">
+              <div
+                className="flex-1 border-t border-dashed"
+                style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}
+              ></div>
+              <span
+              className="uppercase"
+              style={{
+                width: '40px',
+                height: '18px',
+                fontFamily: 'Public Sans, sans-serif',
+                fontWeight: 700,
+                fontSize: '12px',
+                lineHeight: '18px',
+                textAlign: 'center',
+                color: '#919EAB',
+                
+              }}
+            >
+              OR
+            </span>
+
+              <div
+                className="flex-1 border-t border-dashed"
+                style={{ borderColor: 'rgba(255, 255, 255, 0.12)' }}
+              ></div>
             </div>
+
 
             <button
               type="button"
               onClick={handleGoogleLogin}
               className="w-full py-2.5 rounded-lg font-semibold flex items-center justify-center gap-2 border text-white/90 hover:text-white transition-colors"
               style={{
-                background: 'rgba(255, 255, 255, 0.06)',
+        
                 borderColor: 'rgba(255, 255, 255, 0.18)'
               }}
             >
@@ -287,27 +356,25 @@ const AuthSystem = ({ initialMode = 'login' }) => {
               Continue with Google
             </button>
 
-            <div className="mt-5 text-center">
-              <p className="text-[13px] text-white/70">
-                {mode === 'login' ? "Don't have an account?" : "Already have an account?"}
-                <button
-                  type="button"
-                  onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-                  className="ml-2 font-semibold hover:underline"
-                  style={{ color: '#9EFBCD' }}
-                >
-                  {mode === 'login' ? 'Sign up' : 'Sign in'}
-                </button>
-              </p>
-            </div>
+                {mode === 'register' && (
+                <div className="text-center mt-5">
+                  <p className="text-[11px] text-[#919EAB]">
+                    By signing up, I agree to{" "}
+                    <span className="underline cursor-pointer hover:text-white" style={{ color: '#13F584' }}>
+                      terms of use
+                    </span>{" "}
+                    and{" "}
+                    <span className="underline cursor-pointer hover:text-white" style={{ color: '#13F584' }}>
+                      privacy policy
+                    </span>.
+                  </p>
+                </div>
+    )}
+
           </div>
         </div>
 
-        <div className="text-center mt-5">
-          <p className="text-[11px] text-white/50">
-            By continuing, you agree to our Terms of Service and Privacy Policy
-          </p>
-        </div>
+    
       </div>
     </div>
   );

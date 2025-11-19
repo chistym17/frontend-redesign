@@ -16,6 +16,9 @@ const nodeTypes = {
   toolNode: ToolNode,
 };
 
+
+
+
 const defaultEdgeOptions = {
   type: 'smoothstep',
   markerEnd: {
@@ -43,31 +46,70 @@ const connectionLineStyle = {
 
 // -------------------- Condition Builder (inline, no visual restyle) --------------------
 function ConditionRow({ row, onChange, onRemove }) {
+  const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
+  const typeOptions = [
+    { value: "user.contains", label: "User.contains" },
+    { value: "user.regex", label: "User.regex" },
+    { value: "intent_is", label: "Intent_is" },
+    { value: "tool.ok", label: "Tool.ok" },
+    { value: "parameters.has", label: "Parameters.has" },
+    { value: "parameters.equals", label: "Parameters.equals" },
+    { value: "tool.field_equals", label: "Tool.field_equals" },
+  ];
   const type = row.when || 'user.contains';
   return (
     <div className="flex items-center gap-4">
-      {/* Condition Type Select */}
-      <div className="flex flex-col gap-2.5" style={{ width: '199px' }}>
-        <select
-          value={type}
-          onChange={(e) => onChange({ ...row, when: e.target.value })}
-          className="h-10 px-3.5 py-0 flex items-center rounded-lg text-sm text-white focus:border-[#13F584] focus:outline-none"
-          style={{
-            background: 'rgba(255, 255, 255, 0.04)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            border: '1px solid rgba(145, 158, 171, 0.2)'
-          }}
+      {/* Condition Type Select (Custom Dropdown) */}
+      <div className="relative w-[199px]">
+        {/* Dropdown header */}
+        <div
+          onClick={() => setTypeDropdownOpen(!typeDropdownOpen)}
+          className="flex justify-between items-center h-10 px-3.5 bg-white/0 rounded-lg text-white text-sm cursor-pointer backdrop-blur-md transition hover:bg-white/20 "
         >
-          <option value="user.contains" className="bg-[#141A21]">User.contains</option>
-          <option value="user.regex" className="bg-[#141A21]">User.regex</option>
-          <option value="intent_is" className="bg-[#141A21]">Intent_is</option>
-          <option value="tool.ok" className="bg-[#141A21]">Tool.ok</option>
-          <option value="parameters.has" className="bg-[#141A21]">Parameters.has</option>
-          <option value="parameters.equals" className="bg-[#141A21]">Parameters.equals</option>
-          <option value="tool.field_equals" className="bg-[#141A21]">Tool.field_equals</option>
-        </select>
+          {type
+            ? typeOptions.find((opt) => opt.value === type)?.label
+            : "Select Type"}
+
+          <span className="ml-2 text-xs opacity-70">▼</span>
+        </div>
+
+        {/* Dropdown menu */}
+        {typeDropdownOpen && (
+          <div className="absolute top-full left-0 w-full mt-1 bg-black/80 rounded-lg backdrop-blur-2xl shadow-[0_0_15px_rgba(0,0,0,0.4)] z-50 max-h-48 overflow-y-scroll">
+            <style>{`
+              div::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
+
+            {/* Reset */}
+            <div
+              onClick={() => {
+                onChange({ ...row, when: "" });
+                setTypeDropdownOpen(false);
+              }}
+              className="p-2 text-white text-sm hover:bg-white/20 cursor-pointer"
+            >
+              Select Type
+            </div>
+
+            {/* Options */}
+            {typeOptions.map((option) => (
+              <div
+                key={option.value}
+                onClick={() => {
+                  onChange({ ...row, when: option.value });
+                  setTypeDropdownOpen(false);
+                }}
+                className="p-2 text-white text-sm hover:bg-white/20 cursor-pointer"
+              >
+                {option.label}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
 
       {/* Fields by type */}
       {type === 'user.contains' && (
@@ -78,10 +120,10 @@ function ConditionRow({ row, onChange, onRemove }) {
             onChange={(e) => onChange({ ...row, value: e.target.value })}
             className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
             style={{
-              background: 'rgba(255, 255, 255, 0.04)',
+              background: 'rgba(255, 255, 255, 0.00)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
-              border: '1px solid rgba(145, 158, 171, 0.2)'
+         
             }}
           />
         </div>
@@ -95,10 +137,10 @@ function ConditionRow({ row, onChange, onRemove }) {
             onChange={(e) => onChange({ ...row, value: e.target.value })}
             className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
             style={{
-              background: 'rgba(255, 255, 255, 0.04)',
+              background: 'rgba(255, 255, 255, 0.00)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
-              border: '1px solid rgba(145, 158, 171, 0.2)'
+         
             }}
           />
         </div>
@@ -112,10 +154,10 @@ function ConditionRow({ row, onChange, onRemove }) {
             onChange={(e) => onChange({ ...row, value: e.target.value })}
             className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
             style={{
-              background: 'rgba(255, 255, 255, 0.04)',
+              background: 'rgba(255, 255, 255, 0.00)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
-              border: '1px solid rgba(145, 158, 171, 0.2)'
+             
             }}
           />
         </div>
@@ -137,10 +179,10 @@ function ConditionRow({ row, onChange, onRemove }) {
             onChange={(e) => onChange({ ...row, key: e.target.value })}
             className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
             style={{
-              background: 'rgba(255, 255, 255, 0.04)',
+              background: 'rgba(255, 255, 255, 0.00)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
-              border: '1px solid rgba(145, 158, 171, 0.2)'
+        
             }}
           />
         </div>
@@ -155,10 +197,10 @@ function ConditionRow({ row, onChange, onRemove }) {
               onChange={(e) => onChange({ ...row, key: e.target.value })}
               className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
+                background: 'rgba(255, 255, 255, 0.00)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(145, 158, 171, 0.2)'
+           
               }}
             />
           </div>
@@ -172,7 +214,7 @@ function ConditionRow({ row, onChange, onRemove }) {
                 background: 'rgba(255, 255, 255, 0.04)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(145, 158, 171, 0.2)'
+            
               }}
             />
           </div>
@@ -188,10 +230,10 @@ function ConditionRow({ row, onChange, onRemove }) {
               onChange={(e) => onChange({ ...row, path: e.target.value })}
               className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
+                background: 'rgba(255, 255, 255, 0.00)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(145, 158, 171, 0.2)'
+
               }}
             />
           </div>
@@ -202,10 +244,10 @@ function ConditionRow({ row, onChange, onRemove }) {
               onChange={(e) => onChange({ ...row, value: e.target.value })}
               className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
+                background: 'rgba(255, 255, 255, 0.00)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(145, 158, 171, 0.2)'
+        
               }}
             />
           </div>
@@ -215,22 +257,32 @@ function ConditionRow({ row, onChange, onRemove }) {
       {/* Delete Button */}
       <button
         onClick={onRemove}
-        className="w-12 h-12 flex items-center justify-center rounded border transition-colors"
+        className="w-12 h-12 flex items-center justify-center rounded-lg transition-colors"
         style={{
           background: 'rgba(255, 86, 48, 0.08)',
-          borderColor: 'rgba(255, 86, 48, 0.3)'
+        
         }}
         title="Remove condition"
       >
-        <svg className="w-5 h-5 text-[#FF5630]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4.42969 7.85938L5.46754 20.3881C5.54191 21.2916 6.31152 22 7.21848 22H16.7812C17.6881 22 18.4577 21.2916 18.5321 20.3881L19.5699 7.85938H4.42969ZM9.06957 19.6562C8.76285 19.6562 8.5048 19.4177 8.48535 19.1069L7.89941 9.65379C7.87937 9.33051 8.12484 9.05242 8.44758 9.03238C8.7823 9.00891 9.0484 9.25727 9.06898 9.58055L9.65492 19.0337C9.67566 19.3684 9.41078 19.6562 9.06957 19.6562ZM12.5857 19.0703C12.5857 19.3942 12.3237 19.6562 11.9998 19.6562C11.6759 19.6562 11.4139 19.3942 11.4139 19.0703V9.61719C11.4139 9.29332 11.6759 9.03125 11.9998 9.03125C12.3237 9.03125 12.5857 9.29332 12.5857 9.61719V19.0703ZM16.1002 9.65383L15.5143 19.107C15.495 19.4145 15.2386 19.6709 14.8929 19.6551C14.5701 19.6351 14.3246 19.357 14.3447 19.0337L14.9306 9.58059C14.9507 9.2573 15.2339 9.02211 15.552 9.03242C15.8748 9.05246 16.1202 9.33055 16.1002 9.65383Z" fill="#FF5630"/>
+        <path d="M19.6172 4.34375H16.1016V3.75781C16.1016 2.78852 15.313 2 14.3438 2H9.65625C8.68695 2 7.89844 2.78852 7.89844 3.75781V4.34375H4.38281C3.73559 4.34375 3.21094 4.8684 3.21094 5.51562C3.21094 6.16277 3.73559 6.6875 4.38281 6.6875C9.77211 6.6875 14.2281 6.6875 19.6172 6.6875C20.2644 6.6875 20.7891 6.16277 20.7891 5.51562C20.7891 4.8684 20.2644 4.34375 19.6172 4.34375ZM14.9297 4.34375H9.07031V3.75781C9.07031 3.43453 9.33297 3.17188 9.65625 3.17188H14.3438C14.667 3.17188 14.9297 3.43453 14.9297 3.75781V4.34375Z" fill="#FF5630"/>
         </svg>
+
       </button>
     </div>
   );
 }
 
 function ConditionModal({ edge, onSave, onClose, onDeleteEdge }) {
+  const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
+  const modeOptions = [
+    { value: "single", label: "Single" },
+    { value: "any", label: "ANY (or)" },
+    { value: "all", label: "ALL (and)" },
+    { value: "not", label: "NOT" },
+  ];
+
   const [mode, setMode] = useState(() => {
     const c = edge?.data?.condition;
     if (!c) return 'single';
@@ -311,14 +363,11 @@ function ConditionModal({ edge, onSave, onClose, onDeleteEdge }) {
               <h2 className="text-xl font-bold text-white">Edge Condition</h2>
             </div>
             <button
-              onClick={onClose}
-              className="w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-colors"
-              title="Close"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            onClick={onClose}
+            className="absolute top-4 right-4 w-6 h-6 flex items-center justify-center rounded-full bg-white text-black font-bold text-xs hover:bg-gray-200 transition"
+          >
+            ×
+          </button>
           </div>
 
           {/* Connection Section */}
@@ -335,7 +384,7 @@ function ConditionModal({ edge, onSave, onClose, onDeleteEdge }) {
                     <div 
                       className="h-[53px] px-3 py-0 flex items-center rounded-lg"
                       style={{
-                        background: 'rgba(255, 255, 255, 0.04)',
+                        background: 'rgba(255, 255, 255, 0.00)',
                         backdropFilter: 'blur(10px)',
                         WebkitBackdropFilter: 'blur(10px)'
                       }}
@@ -352,7 +401,7 @@ function ConditionModal({ edge, onSave, onClose, onDeleteEdge }) {
                     <div 
                       className="h-[53px] px-3 py-0 flex items-center rounded-lg"
                       style={{
-                        background: 'rgba(255, 255, 255, 0.04)',
+                        background: 'rgba(255, 255, 255, 0.00)',
                         backdropFilter: 'blur(10px)',
                         WebkitBackdropFilter: 'blur(10px)'
                       }}
@@ -376,39 +425,53 @@ function ConditionModal({ edge, onSave, onClose, onDeleteEdge }) {
                 {/* Mode Selector */}
                 <div className="flex items-center gap-4">
                   <label className="text-xs font-semibold text-[#919EAB]">Mode</label>
-                  <div className="relative">
-                    <select
-                      value={mode}
-                      onChange={(e) => setMode(e.target.value)}
-                      className="h-9 pl-3 pr-8 rounded-lg border text-sm font-semibold text-white transition-colors appearance-none cursor-pointer"
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.04)',
-                        backdropFilter: 'blur(10px)',
-                        WebkitBackdropFilter: 'blur(10px)',
-                        borderColor: 'rgba(255, 255, 255, 0.1)',
-                        color: '#FFFFFF'
-                      }}
+
+                  <div className="relative w-[160px]">
+                    {/* Dropdown header */}
+                    <div
+                      onClick={() => setModeDropdownOpen(!modeDropdownOpen)}
+                      className="flex justify-between items-center h-9 px-3 bg-white/0 rounded-lg 
+                                text-white text-sm font-semibold cursor-pointer backdrop-blur-md 
+                                transition hover:bg-white/20 "
                     >
-                      <option value="single">Single</option>
-                      <option value="any">ANY (or)</option>
-                      <option value="all">ALL (and)</option>
-                      <option value="not">NOT</option>
-                    </select>
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
-                      <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
+                      {modeOptions.find((opt) => opt.value === mode)?.label}
+                      <span className="ml-2 text-xs opacity-70">▼</span>
                     </div>
+
+                    {/* Dropdown menu */}
+                    {modeDropdownOpen && (
+                      <div className="absolute top-full left-0 w-full mt-1 bg-black/80 rounded-lg 
+                                      backdrop-blur-2xl shadow-[0_0_15px_rgba(0,0,0,0.4)] z-50 
+                                      max-h-48 overflow-y-scroll">
+                        <style>{`
+                          div::-webkit-scrollbar { display: none; }
+                        `}</style>
+
+                        {modeOptions.map((option) => (
+                          <div
+                            key={option.value}
+                            onClick={() => {
+                              setMode(option.value);
+                              setModeDropdownOpen(false);
+                            }}
+                            className="p-2 text-white text-sm hover:bg-white/20 cursor-pointer"
+                          >
+                            {option.label}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
+
                 
                 <div className="flex justify-end">
                   <button
                     onClick={addRow}
-                    className="h-9 px-3 flex items-center gap-2 rounded border text-sm font-bold text-[#9EFBCD] transition-colors"
+                    className="h-9 px-3 flex items-center gap-2 rounded-lg text-sm font-bold text-[#9EFBCD] transition-colors"
                     style={{
                       background: 'rgba(19, 245, 132, 0.08)',
-                      borderColor: 'rgba(19, 245, 132, 0.3)'
+                    
                     }}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -437,34 +500,32 @@ function ConditionModal({ edge, onSave, onClose, onDeleteEdge }) {
           <div className="flex items-center justify-between gap-2.5 pt-4">
             <button
               onClick={onDeleteEdge}
-              className="h-9 px-3 flex items-center gap-2 rounded border text-sm font-bold text-[#FFAC82] transition-colors"
+              className="h-9 px-3 flex items-center gap-2 rounded-lg  text-sm font-bold text-[#FFAC82] transition-colors"
               style={{
                 background: 'rgba(255, 86, 48, 0.08)',
-                borderColor: 'rgba(255, 86, 48, 0.3)'
+               
               }}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
+          
               Delete edge
             </button>
             <div className="flex gap-2.5">
               <button
                 onClick={onClose}
-                className="h-9 px-3 flex items-center gap-2 rounded border text-sm font-bold text-white transition-colors"
+                className="h-9 px-3 flex items-center gap-2 rounded-lg text-sm font-bold text-white transition-colors"
                 style={{
                   background: 'rgba(145, 158, 171, 0.08)',
-                  borderColor: 'rgba(145, 158, 171, 0.2)'
+                
                 }}
               >
                 Cancel
               </button>
               <button
                 onClick={() => onSave(buildCondition())}
-                className="h-9 px-3 flex items-center gap-2 rounded border text-sm font-bold text-[#9EFBCD] transition-colors"
+                className="h-9 px-3 flex items-center gap-2 rounded-lg text-sm font-bold text-[#9EFBCD] transition-colors"
                 style={{
                   background: 'rgba(19, 245, 132, 0.08)',
-                  borderColor: 'rgba(19, 245, 132, 0.3)'
+             
                 }}
               >
                 Save

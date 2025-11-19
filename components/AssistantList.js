@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Edit, Trash2, Eye, Building2, Calendar, MapPin, Clock, MoreHorizontal, Zap, Activity, Search, Settings } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Edit, Trash2, Eye, Building2, Calendar,MoreVertical, MapPin, Clock, MoreHorizontal, Zap, Activity, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { API_ENDPOINTS } from '../config/api';
 import { useRouter } from 'next/router';
 import { useAssistant } from '../lib/assistantContext';
 import { useSidebar } from '../lib/sidebarContext';
 import LeftSidebar from './LeftSidebar';
+import Image from "next/image";
 
 const AssistantList = ({ onEdit, onDelete, onView }) => {
   const [assistants, setAssistants] = useState([]);
@@ -14,25 +15,11 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
   const [showActions, setShowActions] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [hoveredMenuItem, setHoveredMenuItem] = useState(null);
-  const [deleteModal, setDeleteModal] = useState({ open: false, assistantId: null, assistantName: '' });
-  const dropdownRefs = useRef({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; // 6 items per page (3x2 grid)
   const router = useRouter();
   const { assistantId, setAssistant } = useAssistant();
   const { isCollapsed } = useSidebar();
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      Object.keys(dropdownRefs.current).forEach((id) => {
-        if (dropdownRefs.current[id] && !dropdownRefs.current[id].contains(event.target)) {
-          setShowActions(null);
-        }
-      });
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   useEffect(() => {
     fetchAssistants();
@@ -56,22 +43,13 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
   };
 
   const handleDelete = async (assistantIdToDelete) => {
-    const assistant = assistants.find(a => a.id === assistantIdToDelete);
-    if (assistant) {
-      setDeleteModal({
-        open: true,
-        assistantId: assistantIdToDelete,
-        assistantName: assistant.name
-      });
+    if (!confirm('Are you sure you want to delete this assistant?')) {
+      return;
     }
-  };
-
-  const confirmDelete = async () => {
-    if (!deleteModal.assistantId) return;
 
     try {
-      setDeletingId(deleteModal.assistantId);
-      const response = await fetch(API_ENDPOINTS.ASSISTANT(deleteModal.assistantId), {
+      setDeletingId(assistantIdToDelete);
+      const response = await fetch(API_ENDPOINTS.ASSISTANT(assistantIdToDelete), {
         method: 'DELETE',
       });
 
@@ -80,15 +58,13 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
       }
 
       setTimeout(() => {
-        setAssistants(prev => prev.filter(assistant => assistant.id !== deleteModal.assistantId));
+        setAssistants(prev => prev.filter(assistant => assistant.id !== assistantIdToDelete));
         setDeletingId(null);
-        setDeleteModal({ open: false, assistantId: null, assistantName: '' });
       }, 300);
     } catch (error) {
       console.error('Error deleting assistant:', error);
       alert('Failed to delete assistant. Please try again.');
       setDeletingId(null);
-      setDeleteModal({ open: false, assistantId: null, assistantName: '' });
     }
   };
 
@@ -141,6 +117,32 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
     );
   });
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAssistants.length / itemsPerPage);
+  const paginatedAssistants = filteredAssistants.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Reset to page 1 on search
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const goToPrevious = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const goToNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
   if (loading) {
     return (
       <div className="fixed inset-0 bg-[#141A21] flex items-center justify-center">
@@ -183,11 +185,20 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
               <h1 className="text-2xl font-bold text-white">Agent List</h1>
               <button
                 onClick={() => onEdit(null)}
-                className="group inline-flex items-center gap-2 px-4 py-2 border border-emerald-400/50 text-emerald-300 rounded-lg hover:bg-emerald-400/10 transition-colors"
+                className="group inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
+                style={{
+                  color: "#13F584",
+                  border: "1px solid #13F584"
+                }}
               >
-                <Plus size={18} className="group-hover:rotate-90 transition-transform duration-300" />
-                Add Agent
+                <Plus
+                  size={18}
+                  className="group-hover:rotate-90 transition-transform duration-300"
+                  style={{ color: "#13F584" }}
+                />
+                Create Assistance
               </button>
+
             </div>
 
             {/* Search Input */}
@@ -206,7 +217,7 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
           </div>
 
           {/* Content */}
-          {filteredAssistants.length === 0 && assistants.length > 0 ? (
+          {paginatedAssistants.length === 0 && filteredAssistants.length > 0 ? (
             <div className="text-center py-20 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               <div className="relative mb-8">
                 <div className="w-32 h-32 bg-white/5 rounded-full flex items-center justify-center mx-auto">
@@ -224,7 +235,7 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
                 Clear Search
               </button>
             </div>
-          ) : filteredAssistants.length === 0 ? (
+          ) : paginatedAssistants.length === 0 ? (
             <div className="text-center py-20 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
               <div className="relative mb-8">
                 <div className="w-32 h-32 bg-white/5 rounded-full flex items-center justify-center mx-auto animate-pulse">
@@ -247,44 +258,46 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredAssistants.map((assistant, index) => (
-                <div
-                  key={assistant.id}
-                  className={`group relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-500 overflow-hidden animate-fade-in-up ${deletingId === assistant.id ? 'animate-scale-out opacity-50' : ''
-                    }`}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                  onMouseEnter={() => setHoveredCard(assistant.id)}
-                  onMouseLeave={() => {
-                    setHoveredCard(null);
-                    setShowActions(null);
-                  }}
-                >
-                  {/* Top-right area reserved (no extra pencil button) */}
-                  <div className="absolute top-4 right-4"></div>
+            <>
+              {/* Grid of Assistants */}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                {paginatedAssistants.map((assistant, index) => (
+                  <div
+                    key={assistant.id}
+                    className={`group relative bg-white/5 backdrop-blur-[10px] rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-500 overflow-hidden animate-fade-in-up ${deletingId === assistant.id ? 'animate-scale-out opacity-50' : ''
+                      }`}
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    onMouseEnter={() => setHoveredCard(assistant.id)}
+                    onMouseLeave={() => {
+                      setHoveredCard(null);
+                      setShowActions(null);
+                    }}
+                  >
+                    {/* Top-right area reserved (no extra pencil button) */}
+                    <div className="absolute top-4 right-4"></div>
 
-                  {/* Top Divider (neutral) */}
-                  <div className="h-px bg-white/10"></div>
+                    {/* Top Divider (neutral) */}
+                    <div className="h-px bg-white/10"></div>
 
-                  {/* Card Header */}
-                  <div className="p-6 pb-4">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-4">
-                        <div className={`relative w-14 h-14 bg-gradient-to-br ${getIndustryGradient(assistant.business_meta?.industry_type)} rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300 ring-1 ring-white/20`}>
-                          {getIndustryIcon(assistant.business_meta?.industry_type)}
-                          <div className="absolute inset-0 bg-white/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    {/* Card Header */}
+                    <div className="p-6 pb-4">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center space-x-4">
+                          <div className={`relative w-14 h-14 bg-gradient-to-br ${getIndustryGradient(assistant.business_meta?.industry_type)} rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300 ring-1 ring-white/20`}>
+                            {getIndustryIcon(assistant.business_meta?.industry_type)}
+                            <div className="absolute inset-0 bg-white/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-emerald-300 transition-colors duration-300">
+                              {assistant.name}
+                            </h3>
+                            <span className="inline-flex items-center h-6 bg-white/10 px-2 rounded-md text-[12px] font-bold text-white/70 capitalize ">
+                              {assistant.business_meta?.industry_type || 'General'}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-emerald-300 transition-colors duration-300 truncate" title={assistant.name}>
-                            {assistant.name}
-                          </h3>
-                          <span className="inline-flex items-center h-6 bg-white/10 px-2 rounded-md text-[12px] font-bold text-white/70 capitalize border border-white/15 truncate max-w-full" title={assistant.business_meta?.industry_type || 'General'}>
-                            {assistant.business_meta?.industry_type || 'General'}
-                          </span>
-                        </div>
-                      </div>
 
-                      {/* Actions Menu */}
+                       {/* Actions Menu */}
                       <div className="relative">
                         <button
                           onClick={(e) => {
@@ -294,246 +307,207 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
                           className="p-2 rounded-lg hover:bg-white/10 transition-colors duration-200"
                           aria-label="More options"
                         >
-                          <MoreHorizontal size={16} className="text-white/70" />
+                          <MoreVertical size={16} className="text-white/70" />
+
                         </button>
 
-                        {showActions === assistant.id && (
+                       {showActions === assistant.id && (
                           <div
-                            ref={(el) => (dropdownRefs.current[assistant.id] = el)}
-                            className="absolute right-0 mt-2 w-40 rounded-xl z-10 animate-scale-in"
-                            style={{
-                              background: 'rgba(17, 22, 28, 0.95)',
-                              backdropFilter: 'blur(128px)',
-                              WebkitBackdropFilter: 'blur(128px)',
-                              border: '1px solid rgba(255, 255, 255, 0.15)',
-                              padding: '4px',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: '4px',
-                              boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.5)'
-                            }}
+                            className="
+                             absolute right-0 mt-[-23px]
+                              w-[160px] h-[125px]
+                              rounded-xl
+                              border border-white/10
+                              bg-black/70                     <!-- base black -->
+                              before:absolute before:inset-0  <!-- frosted overlay -->
+                              before:bg-white/5               <!-- rgba(255,255,255,0.04) ≈ /5 -->
+                              before:backdrop-blur-[64px]
+                              before:rounded-xl
+                              before:z-[-1]
+                              shadow-lg z-10
+                              flex flex-col p-1 gap-1
+                              overflow-hidden
+
+                            "
                           >
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                router.push(`/assistants/${assistant.id}`);
-                                setShowActions(null);
-                              }}
-                              onMouseEnter={() => setHoveredMenuItem(`${assistant.id}-configure`)}
-                              onMouseLeave={() => setHoveredMenuItem(null)}
-                              className="w-full px-2 py-1.5 text-left flex items-center gap-2 text-sm font-medium transition-colors duration-200 rounded-md"
-                              style={{
-                                background: hoveredMenuItem === `${assistant.id}-configure` 
-                                  ? 'rgba(19, 245, 132, 0.2)' 
-                                  : 'rgba(255, 255, 255, 0.05)',
-                                color: hoveredMenuItem === `${assistant.id}-configure` 
-                                  ? '#13F584' 
-                                  : '#FFFFFF'
-                              }}
-                            >
-                              <Settings size={20} />
-                              <span>Configure</span>
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onEdit(assistant);
-                                setShowActions(null);
-                              }}
-                              onMouseEnter={() => setHoveredMenuItem(`${assistant.id}-edit`)}
-                              onMouseLeave={() => setHoveredMenuItem(null)}
-                              className="w-full px-2 py-1.5 text-left flex items-center gap-2 text-sm font-medium transition-colors duration-200 rounded-md"
-                              style={{
-                                background: hoveredMenuItem === `${assistant.id}-edit` 
-                                  ? 'rgba(19, 245, 132, 0.2)' 
-                                  : 'rgba(255, 255, 255, 0.05)',
-                                color: hoveredMenuItem === `${assistant.id}-edit` 
-                                  ? '#13F584' 
-                                  : '#FFFFFF'
-                              }}
-                            >
-                              <Edit size={20} />
-                              <span>Edit Assistant</span>
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(assistant.id);
-                                setShowActions(null);
-                              }}
-                              onMouseEnter={() => setHoveredMenuItem(`${assistant.id}-delete`)}
-                              onMouseLeave={() => setHoveredMenuItem(null)}
-                              className="w-full px-2 py-1.5 text-left flex items-center gap-2 text-sm font-medium transition-colors duration-200 rounded-md"
-                              style={{
-                                background: hoveredMenuItem === `${assistant.id}-delete` 
-                                  ? 'rgba(19, 245, 132, 0.2)' 
-                                  : 'rgba(255, 255, 255, 0.05)',
-                                color: hoveredMenuItem === `${assistant.id}-delete` 
-                                  ? '#13F584' 
-                                  : '#FFFFFF'
-                              }}
-                            >
-                              <Trash2 size={20} />
-                              <span>Delete</span>
-                            </button>
+
+                            {/* Blur effects BEHIND content */}
+                            <div className="absolute w-[80px] h-[80px] left-[-16px] bottom-[-16px] 
+                                            bg-red-500/10 blur-[40px] rounded-full pointer-events-none z-0"></div>
+
+                            <div className="absolute w-[80px] h-[80px] right-[-16px] top-[-16px] 
+                                            bg-cyan-400/10 blur-[40px] rounded-full pointer-events-none z-0"></div>
+
+                            {/* Menu Items - ABOVE blur */}
+                            <div className="relative z-10 flex flex-col gap-1">
+                              
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  router.push(`/assistants/${assistant.id}`);
+                                  setShowActions(null);
+                                }}
+                                className="flex items-center gap-1 px-3 py-2 text-sm text-white rounded-lg
+                                          transition-all duration-200 hover:bg-green-600/20 hover:text-[#13F584]"
+                              >
+                                <img src="/images/setting1.svg" className="w-[20px] h-[20px]" />
+                                Configure
+                              </button>
+
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onEdit(assistant);
+                                  setShowActions(null);
+                                }}
+                                className="flex items-center gap-1 px-3 py-2 text-sm text-white rounded-lg
+                                          transition-all duration-200 hover:bg-green-600/20 hover:text-[#13F584]"
+                              >
+                                <img src="/images/draft.svg" className="w-[20px] h-[20px]" />
+                                Edit Assistance
+                              </button>
+
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(assistant.id);
+                                  setShowActions(null);
+                                }}
+                                className="flex items-center gap-1 px-3 py-2 text-sm text-white rounded-lg
+                                          transition-all duration-200 hover:bg-green-600/20 hover:text-[#13F584]"
+                              >
+                                <img src="/images/tash.svg" className="w-[20px] h-[20px]" />
+                                Delete
+                              </button>
+
+                            </div>
+
                           </div>
                         )}
+
                       </div>
-                    </div>
 
-                    {/* Overview */}
-                    <div className="mb-4">
-                      <div className="text-xs text-white/60 mb-1">Overview</div>
-                      <p className="text-white/70 text-sm leading-relaxed line-clamp-2 overflow-hidden" title={assistant.description}>
-                        {assistant.description || 'No description provided'}
-                      </p>
-                    </div>
+                      </div>
 
-                    {/* Info Box: Hours + Location */}
-                    <div className="mb-6 bg-white/[0.04] border border-white/15 rounded-lg p-3">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {assistant.business_meta?.operating_hours && (
-                          <div className="min-w-0">
-                            <div className="text-xs text-white/60 mb-0.5">Hours</div>
-                            <div className="text-sm text-white/90 flex items-center min-w-0">
-                              <Clock size={12} className="mr-2 text-white/60 flex-shrink-0" />
-                              <span className="truncate" title={assistant.business_meta.operating_hours}>
+                      {/* Overview */}
+                      <div className="mb-4">
+                        <div className="text-xs text-white/60 mb-1">Overview</div>
+                        <p className="text-white/70 text-sm leading-relaxed line-clamp-2">
+                          {assistant.description}
+                        </p>
+                      </div>
+
+                     {/* Info Box: Hours + Location */}
+                      <div className="mb-6 bg-white/[0.04] border border-white/15 rounded-lg p-3">
+                        <div className="flex flex-col gap-3">
+
+                          {assistant.business_meta?.operating_hours && (
+                            <div className="flex flex-row gap-1">
+                              <div className="text-xs text-[#919EAB]  ">Hours:</div>
+                              <div className="text-sm text-white flex items-center">
+                          
                                 {assistant.business_meta.operating_hours}
-                              </span>
+                              </div>
                             </div>
-                          </div>
-                        )}
-                        {assistant.business_meta?.address && (
-                          <div className="min-w-0">
-                            <div className="text-xs text-white/60 mb-0.5">Location</div>
-                            <div className="text-sm text-white/90 flex items-center min-w-0">
-                              <MapPin size={12} className="mr-2 text-white/60 flex-shrink-0" />
-                              <span className="truncate" title={assistant.business_meta.address}>
-                                {assistant.business_meta.address}
-                              </span>
+                          )}
+                          
+                          {assistant.business_meta?.address && (
+                            <div className="flex flex-row gap-1">
+                              <div className="text-xs text-[#919EAB] ">Location:</div>
+                              <div className="text-sm text-white flex items-center">
+                              
+                                <span className="truncate">{assistant.business_meta.address}</span>
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                          )}
 
-                  {/* Card Footer */}
-                  <div className="px-6 pb-6">
-                    <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                      <div className="flex items-center text-xs text-white/50">
-                        <Calendar size={12} className="mr-2" />
-                        <span>
-                          Created {new Date(assistant.created_at).toLocaleDateString()}
-                        </span>
+                        
+
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-3">
-                        <button
-                          type="button"
-                          aria-pressed={assistantId === assistant.id}
-                          aria-label={assistantId === assistant.id ? 'Active' : 'Inactive'}
-                          onClick={() => activate(assistant)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full border transition-colors ${assistantId === assistant.id
-                              ? 'bg-emerald-400/30 border-emerald-400/40'
-                              : 'bg-white/10 border-white/15 hover:bg-white/15'
-                            }`}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full transition ${assistantId === assistant.id ? 'translate-x-6 bg-emerald-300' : 'translate-x-1 bg-white/60'
+
+                    </div>
+
+                    {/* Card Footer */}
+                    <div className="px-6 pb-6">
+                      <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                        <div className="flex items-center text-xs text-white/50">
+                         
+                          <span>
+                            Created {new Date(assistant.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <button
+                            type="button"
+                            aria-pressed={assistantId === assistant.id}
+                            aria-label={assistantId === assistant.id ? 'Active' : 'Inactive'}
+                            onClick={() => activate(assistant)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full border transition-colors ${assistantId === assistant.id
+                                ? 'bg-[#13F584] border-white/5'
+                                : 'bg-white/10 border-white/5 hover:bg-white/15'
                               }`}
-                          />
-                        </button>
-                        <span className={`text-sm ${assistantId === assistant.id ? 'text-emerald-300' : 'text-white/70'}`}>
-                          {assistantId === assistant.id ? 'Active' : 'Inactive'}
-                        </span>
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full transition ${assistantId === assistant.id ? 'translate-x-6 bg-white' : 'translate-x-1 bg-white'
+                                }`}
+                            />
+                          </button>
+                                                    <span className={`text-sm ${assistantId === assistant.id ? 'text-emerald-300' : 'text-white/70'}`}>
+                            {assistantId === assistant.id ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"></div>
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"></div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center space-x-2 mt-8">
+                <button
+                  onClick={goToPrevious}
+                  disabled={currentPage === 1}
+                  className="text-white/70 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => goToPage(page)}
+                    className={`
+                      px-2 py-1 transition
+                      ${currentPage === page
+                        ? "w-9 h-9 flex items-center justify-center rounded-full bg-white text-black font-semibold"
+                        : "text-white/60 hover:text-white"
+                      }
+                    `}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+
+                <button
+                  onClick={goToNext}
+                  disabled={currentPage === totalPages}
+                  className="text-white/70 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  <ChevronRight size={18} />
+                </button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>
-
-      {/* Delete Confirmation Modal */}
-      {deleteModal.open && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
-            onClick={() => setDeleteModal({ open: false, assistantId: null, assistantName: '' })} 
-          />
-          
-          {/* Modal */}
-          <div 
-            className="relative rounded-3xl max-w-md w-full shadow-2xl"
-            style={{
-              background: 'rgba(255, 255, 255, 0.04)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.12)'
-            }}
-          >
-            <div className="p-6 space-y-4">
-              {/* Header */}
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">Delete Assistant</h3>
-                  <p className="text-xs text-gray-400">This action cannot be undone</p>
-                </div>
-              </div>
-
-              {/* Message */}
-              <div className="space-y-2">
-                <p className="text-sm text-gray-300">
-                  Are you sure you want to delete this assistant?
-                </p>
-                {deleteModal.assistantName && (
-                  <div className="p-3 rounded-lg" style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
-                    <p className="text-xs text-gray-400 mb-1">Assistant Name:</p>
-                    <p className="text-sm text-white font-medium">"{deleteModal.assistantName}"</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Actions */}
-              <div className="flex justify-end items-center gap-2.5 pt-4">
-                <button
-                  onClick={() => setDeleteModal({ open: false, assistantId: null, assistantName: '' })}
-                  className="px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2"
-                  style={{
-                    background: 'rgba(255, 86, 48, 0.08)',
-                    color: '#FFAC82',
-                    height: '36px'
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmDelete}
-                  className="px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2"
-                  style={{
-                    background: 'rgba(255, 86, 48, 0.2)',
-                    color: '#FF6B6B',
-                    border: '1px solid rgba(255, 86, 48, 0.3)',
-                    height: '36px'
-                  }}
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Custom Styles */}
       <style jsx>{`
