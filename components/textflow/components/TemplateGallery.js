@@ -567,6 +567,20 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow 
         )}
       </div>
 
+      {/* Backdrop overlay to blur parent modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-[50] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-md transition-all duration-200" 
+            onClick={() => {
+              setShowCreateModal(false);
+              setError("");
+            }}
+            style={{ pointerEvents: 'auto' }}
+          />
+        </div>
+      )}
+
       {/* Create Template Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
@@ -583,20 +597,22 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow 
           <div 
             className="relative rounded-3xl max-w-md w-full shadow-2xl p-6 space-y-4"
             style={{
-              background: 'rgba(255, 255, 255, 0.04)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.12)'
+              background: 'rgba(20, 25, 35, 0.65)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              border: '1.5px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
             }}
           >
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-white">Save as Template</h3>
+            <div className="flex items-center justify-between sticky top-0 pb-4 border-b" style={{ background: 'rgba(20, 25, 35, 0.65)', borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+              <h3 className="text-xl font-bold" style={{ color: 'rgba(255, 255, 255, 1)', fontWeight: 700 }}>Save as Template</h3>
               <button
                 onClick={() => {
                   setShowCreateModal(false);
                   setError("");
                 }}
-                className="w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+                className="w-7 h-7 flex items-center justify-center transition-colors rounded-lg hover:bg-white/10"
+                style={{ color: 'rgba(255, 255, 255, 0.9)' }}
               >
                 <X className="w-6 h-6" />
               </button>
@@ -604,7 +620,7 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow 
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-medium text-gray-400 block mb-1.5">
+                <label className="text-sm block mb-2" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>
                   Template Name *
                 </label>
                 <input
@@ -612,16 +628,18 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow 
                   value={newTemplate.name}
                   onChange={(e) => setNewTemplate({...newTemplate, name: e.target.value})}
                   placeholder="My Awesome Flow"
-                  className="w-full px-3 py-2 rounded-lg text-white text-sm transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg text-sm transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)'
+                    background: 'rgba(255, 255, 255, 0.12)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    color: 'rgba(255, 255, 255, 1)',
+                    fontWeight: 500
                   }}
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-gray-400 block mb-1.5">
+                <label className="text-sm block mb-2" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>
                   Description
                 </label>
                 <textarea
@@ -629,25 +647,29 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow 
                   onChange={(e) => setNewTemplate({...newTemplate, description: e.target.value})}
                   placeholder="What does this template do?"
                   rows={3}
-                  className="w-full px-3 py-2 rounded-lg text-white text-sm transition-colors resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg text-sm transition-colors resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)'
+                    background: 'rgba(255, 255, 255, 0.12)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    color: 'rgba(255, 255, 255, 1)',
+                    fontWeight: 500
                   }}
                 />
               </div>
 
               <div ref={categoryRef} className="relative">
-                <label className="text-xs font-medium text-gray-400 block mb-1.5">
+                <label className="text-sm block mb-2" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>
                   Category
                 </label>
                 <button
                   type="button"
                   onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
-                  className="w-full px-3 py-2 rounded-lg text-white text-sm transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-left flex items-center justify-between"
+                  className="w-full px-3 py-2.5 rounded-lg text-sm transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-left flex items-center justify-between"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)'
+                    background: 'rgba(255, 255, 255, 0.12)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    color: 'rgba(255, 255, 255, 1)',
+                    fontWeight: 500
                   }}
                 >
                   <span>{categories.find(c => c.value === newTemplate.category)?.label || 'General'}</span>
@@ -659,8 +681,8 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow 
                   <div
                     className="absolute z-50 w-full mt-1 rounded-lg shadow-lg overflow-hidden"
                     style={{
-                      background: '#2D3748',
-                      border: '1px solid rgba(255, 255, 255, 0.12)'
+                      background: '#1A1F2E',
+                      border: '1px solid rgba(255, 255, 255, 0.2)'
                     }}
                   >
                     {categories.map((category) => (
@@ -687,7 +709,7 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow 
               </div>
 
               <div>
-                <label className="text-xs font-medium text-gray-400 block mb-1.5">
+                <label className="text-sm block mb-2" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>
                   Tags (comma-separated)
                 </label>
                 <input
@@ -695,10 +717,12 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow 
                   value={newTemplate.tags}
                   onChange={(e) => setNewTemplate({...newTemplate, tags: e.target.value})}
                   placeholder="api, automation, webhook"
-                  className="w-full px-3 py-2 rounded-lg text-white text-sm transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="w-full px-3 py-2.5 rounded-lg text-sm transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)'
+                    background: 'rgba(255, 255, 255, 0.12)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    color: 'rgba(255, 255, 255, 1)',
+                    fontWeight: 500
                   }}
                 />
               </div>
@@ -713,11 +737,11 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow 
                     className="rounded mt-0.5"
                   />
                   <div className="flex-1">
-                    <span className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                    <span className="text-sm font-semibold flex items-center gap-2" style={{ color: 'rgba(255, 255, 255, 0.95)' }}>
                       <Shield className="w-4 h-4" />
                       Make public (share with community)
                     </span>
-                    <p className="text-xs text-yellow-400 mt-1">
+                    <p className="text-xs mt-1" style={{ color: 'rgba(253, 224, 71, 1)', fontWeight: 500 }}>
                       ⚠️ Security: All credential IDs and sensitive data will be automatically removed from public templates
                     </p>
                   </div>
@@ -725,15 +749,18 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow 
               </div>
             </div>
 
-            <div className="flex gap-2 pt-4 border-t border-white/10">
+            <div className="flex gap-3 pt-4 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>
               <button
                 onClick={() => {
                   setShowCreateModal(false);
                   setError("");
                 }}
-                className="flex-1 px-4 py-2 text-white rounded-lg text-sm font-medium transition-all"
+                className="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)'
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  color: 'rgba(255, 255, 255, 1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  fontWeight: 600
                 }}
               >
                 Cancel
@@ -741,7 +768,12 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow 
               <button
                 onClick={handleCreateTemplate}
                 disabled={!newTemplate.name.trim()}
-                className="flex-1 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 rounded-lg text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                style={{
+                  color: 'rgba(255, 255, 255, 1)',
+                  fontWeight: 600,
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+                }}
               >
                 Save Template
               </button>

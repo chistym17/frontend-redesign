@@ -5,15 +5,28 @@ import { toolsService } from '../lib/toolsService';
 const StatusBadge = ({ is_verified }) => {
   if (is_verified) {
     return (
-      <span className="px-1.5 py-0.5 text-emerald-300 bg-emerald-500/20 hover:bg-emerald-500/20 transition-colors rounded-lg">
-        
-        Verified
+      <span
+      className="flex justify-center items-center gap-[6px] w-[59px] min-w-[24px] h-[24px] rounded-[4px] transition-colors"
+      style={{ backgroundColor: "rgba(19, 245, 132, 0.16)" }}
+    >
+      <span
+        className="w-[47px] h-[20px] text-[12px] font-bold leading-[20px] text-center text-[#9EFBCD]"
+      >
+       Verified
       </span>
+    </span>
     );
   }
   return (
-    <span className="px-1.5 py-0.5 text-yellow-300 bg-yellow-500/20 hover:bg-yellow-500/20 transition-colors rounded-lg">
-      Pending
+    <span
+      className="flex justify-center items-center gap-[6px] w-[59px] min-w-[24px] h-[24px] rounded-[4px] transition-colors"
+      style={{ backgroundColor: "rgba(255, 171, 0, 0.16)" }}
+    >
+      <span
+        className="w-[47px] h-[20px] text-[12px] font-bold leading-[20px] text-center text-[#FFD666]"
+      >
+        Pending 
+      </span>
     </span>
   );
 };
@@ -140,7 +153,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
       ) : (
         <>
           {/* Search Input */}
-          <div className="relative mb-4">
+          <div className="relative mb-4 ">
             <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
               <Search size={18} className="text-white/50" />
             </div>
@@ -149,7 +162,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
               placeholder="Search tools..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full max-w-md pl-10 pr-4 py-2 bg-white/[0.04] border border-white/15 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/20 transition-colors"
+              className="w-350 max-w-md pl-10 pr-4 py-2 bg-white/[0.04] border border-white/15 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/20 transition-colors"
             />
           </div>
 
@@ -172,7 +185,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
               </button>
             </div>
           ) : (
-            <div className="bg-white/[0.04] backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden">
+            <div className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
               {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -249,24 +262,37 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                         </td>
 
                         {/* State Column */}
-                        <td className="px-4 py-4">
-                          <button
-                            onClick={() => handleToggle(tool)}
-                            disabled={!tool.is_verified || togglingToolId === tool.id}
-                            className="flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <div className={`relative inline-flex h-[38px] w-[33px] items-center rounded-full transition-colors ${tool.is_enabled
-                                ? 'bg-emerald-500'
-                                : 'bg-white/8'
-                              }`}>
-                              <span className={`inline-block h-[14px] w-[14px] transform rounded-full bg-white transition-transform ${tool.is_enabled ? 'translate-x-[19px]' : 'translate-x-[3px]'
-                                }`} />
-                            </div>
-                            <span className="text-sm text-white">{tool.is_enabled ? 'Enable' : 'Disable'}</span>
+                        <td className=" py-4">
+                         <div className="flex  space-x-2">
+                            <button
+                              type="button"
+                              aria-pressed={tool.is_enabled}
+                              aria-label={tool.is_enabled ? 'Enabled' : 'Disabled'}
+                              onClick={() => handleToggle(tool)}
+                              disabled={!tool.is_verified || togglingToolId === tool.id}
+                              className={`relative inline-flex h-6 w-11 items-center rounded-full border transition-colors ${
+                                tool.is_enabled
+                                  ? 'bg-emerald-500/30 border-emerald-400/50'
+                                  : 'bg-white/5 border-white/15'
+                              } disabled:opacity-50 disabled:cursor-not-allowed`}
+                            >
+                              <span
+                                className={`inline-block h-4 w-4 transform rounded-full transition ${
+                                  tool.is_enabled ? 'translate-x-6 bg-white' : 'translate-x-1 bg-white'
+                                }`}
+                              />
+                            </button>
+                            <span
+                              className={`text-sm ${
+                                tool.is_enabled ? 'text-emerald-300' : 'text-white/70'
+                              }`}
+                            >
+                              {tool.is_enabled ? 'Enable' : 'Disable'}
+                            </span>
                             {togglingToolId === tool.id && (
-                              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin ml-2"></div>
+                              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
                             )}
-                          </button>
+                          </div>
                         </td>
 
                         {/* Actions Column */}
@@ -274,16 +300,23 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => onEdit(tool)}
-                              className="px-1.5 py-0.5 text-emerald-300 bg-emerald-500/20 hover:bg-emerald-500/20 transition-colors rounded-lg"
+                              style={{ backgroundColor: "rgba(19, 245, 132, 0.16)" }}
+                              className="flex justify-center items-center px-[6px] py-0 gap-[6px] w-[50px] min-w-[24px] h-[24px] rounded-[4px] transition-colors"
                             >
-                              Config
+                              <span className="w-[38px] h-[20px] text-[12px] font-bold leading-[20px] text-center text-[#9EFBCD]">
+                                Config
+                              </span>
                             </button>
                             <button
                               onClick={() => handleDelete(tool.id)}
-                              className="px-1.5 py-0.5 text-red-300 bg-red-500/20 hover:bg-red-500/20 transition-colors rounded-lg"
+                              style={{ backgroundColor: "rgba(255, 86, 48, 0.16)" }}
+                              className="flex justify-center items-center px-[6px] py-0 gap-[6px] w-[50px] min-w-[24px] h-[24px] rounded-[4px] transition-colors"
                             >
-                              Delete
+                              <span className="w-[38px] h-[20px] text-[12px] font-bold leading-[20px] text-center text-[#FFAC82]">
+                                Delete
+                              </span>
                             </button>
+
                           </div>
                         </td>
                       </tr>

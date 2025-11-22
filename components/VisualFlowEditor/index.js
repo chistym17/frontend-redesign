@@ -470,35 +470,31 @@ useEffect(() => {
             </div>
           </div>
           
-          {/* Center: Active Toggle */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5">
-            <label className="text-xs text-white/60">Active</label>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={true}
-                readOnly
-                className="sr-only peer"
-              />
-              <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#13F584]"></div>
-            </label>
-          </div>
+      {/* Center: Active Toggle */}
+      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
+        <p className={`text-xs ${activating ? 'text-emerald-300' : 'text-white/60'}`}>
+          {activating ? 'Active' : 'Disabled'}
+        </p>
+        <button
+          type="button"
+          className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
+            activating ? 'bg-emerald-500/30 border-emerald-400/50' : 'bg-white/5 border-white/15'
+          }`}
+          onClick={() => setActivating(prev => !prev)}
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              activating ? 'translate-x-6' : 'translate-x-1'
+            }`}
+          />
+        </button>
+      </div>
+
+
           
           {/* Right: Action Buttons */}
           <div className="flex items-center gap-1">
-              {/* Save Button */}
-              <button
-                onClick={saveFlow}
-                disabled={saving}
-                className="px-2 py-1 text-xs font-bold text-[#13F584] border border-[#13F584] rounded-lg bg-transparent hover:bg-[#13F584]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16.0154 5.01013L14.9899 3.98464C14.5733 3.56736 14.0083 3.3335 13.4188 3.3335H4.86106C4.01715 3.3335 3.33325 4.0174 3.33325 4.86131V15.139C3.33325 15.9829 4.01715 16.6668 4.86106 16.6668H15.1388C15.9827 16.6668 16.6666 15.9829 16.6666 15.139V6.58128C16.6666 5.99178 16.4327 5.4268 16.0154 5.01013ZM5.55544 6.80568V5.41683C5.55544 5.18683 5.74211 5.00016 5.97211 5.00016H11.8054C12.0354 5.00016 12.2221 5.18683 12.2221 5.41683V6.80568C12.2221 7.03569 12.0354 7.22235 11.8054 7.22235H5.97211C5.74211 7.22235 5.55544 7.03569 5.55544 6.80568ZM9.99992 14.4446C8.6194 14.4446 7.49992 13.3252 7.49992 11.9446C7.49992 10.564 8.6194 9.44464 9.99992 9.44464C11.3804 9.44464 12.4999 10.564 12.4999 11.9446C12.4999 13.3252 11.3804 14.4446 9.99992 14.4446Z" fill="#13F584"/>
-                </svg>
-
-                {saving ? 'Saving...' : 'Save'}
-              </button>
-              
+      
               {/* Run/Activate Button */}
               <button
                 onClick={() => router.push('/voice')}
@@ -552,6 +548,20 @@ useEffect(() => {
 
                 Export
               </button>
+
+               {/* Save Button */}
+              <button
+                onClick={saveFlow}
+                disabled={saving}
+                className="px-2 py-1 text-xs font-bold text-[#13F584] border border-[#13F584] rounded-lg bg-transparent hover:bg-[#13F584]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.0154 5.01013L14.9899 3.98464C14.5733 3.56736 14.0083 3.3335 13.4188 3.3335H4.86106C4.01715 3.3335 3.33325 4.0174 3.33325 4.86131V15.139C3.33325 15.9829 4.01715 16.6668 4.86106 16.6668H15.1388C15.9827 16.6668 16.6666 15.9829 16.6666 15.139V6.58128C16.6666 5.99178 16.4327 5.4268 16.0154 5.01013ZM5.55544 6.80568V5.41683C5.55544 5.18683 5.74211 5.00016 5.97211 5.00016H11.8054C12.0354 5.00016 12.2221 5.18683 12.2221 5.41683V6.80568C12.2221 7.03569 12.0354 7.22235 11.8054 7.22235H5.97211C5.74211 7.22235 5.55544 7.03569 5.55544 6.80568ZM9.99992 14.4446C8.6194 14.4446 7.49992 13.3252 7.49992 11.9446C7.49992 10.564 8.6194 9.44464 9.99992 9.44464C11.3804 9.44464 12.4999 10.564 12.4999 11.9446C12.4999 13.3252 11.3804 14.4446 9.99992 14.4446Z" fill="#13F584"/>
+                </svg>
+
+                {saving ? 'Saving...' : 'Save'}
+              </button>
+              
           </div>
         </div>
       </div>

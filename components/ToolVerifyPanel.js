@@ -154,8 +154,9 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
             <button
               disabled={running}
               onClick={runTest}
-              className="px-6 py-2.5 text-emerald-200 bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors rounded-lg"
-            >
+               className="w-[65px] h-[36px] px-3 py-0 flex items-center justify-center gap-2 
+                                    text-[#9EFBCD] bg-[rgba(19,245,132,0.08)] rounded-lg font-bold text-sm"
+                  >
               {running ? (
                 <>
                   <div className="h-4 w-4 border-2 border-emerald-200 border-t-transparent rounded-full animate-spin" />
@@ -219,8 +220,9 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
         <button
           onClick={saveVerification}
           disabled={saving}
-          className="px-6 py-2.5 text-emerald-200 bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors rounded-lg"
-        >
+           className="w-[185px] h-[36px] px-3 py-0 flex items-center justify-center gap-2 
+                                    text-[#9EFBCD] bg-[rgba(19,245,132,0.08)] rounded-lg font-bold text-sm"
+                  >
           {saving ? (
             <>
               <div className="h-4 w-4 border-2 border-emerald-200 border-t-transparent rounded-full animate-spin" />

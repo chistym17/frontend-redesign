@@ -229,7 +229,7 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
 
       {/* Modal */}
       <div
-          className="relative w-full max-w-[1200px] max-h-[95vh] flex flex-col p-4 gap-4 isolate rounded-3xl overflow-y-auto overflow-x-hidden custom-scrollbar"
+          className="relative w-full max-w-[900px] max-h-[95vh] flex flex-col p-4 gap-4 isolate rounded-3xl overflow-y-auto overflow-x-hidden custom-scrollbar"
           style={{
           background: "rgba(255, 255, 255, 0.04)",
           backdropFilter: "blur(10px)",
@@ -390,7 +390,8 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                       {/* Dropdown header */}
                       <div
                         onClick={() => setMethodDropdownOpen(!methodDropdownOpen)}
-                        className="flex justify-between items-center p-2 bg-white/0 rounded-lg text-white text-sm cursor-pointer backdrop-blur-md transition hover:bg-white/20"
+                        className="flex px-3.5 py-2.5 justify-between items-center p-2 bg-white/0 rounded-lg text-white text-sm cursor-pointer backdrop-blur-md transition hover:bg-white/20"
+                        
                       >
                         {form.method || "Select Method"}
                         <span className="ml-2 text-xs opacity-70">▼</span>
@@ -477,8 +478,9 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                       <button
                         type="button"
                         onClick={addHeader}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 min-w-[100px] text-emerald-200 bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors rounded-lg"
-                      >
+                        className="w-[132px] h-[36px] px-3 py-0 flex items-center justify-center gap-2 
+                                    text-[#9EFBCD] bg-[rgba(19,245,132,0.08)] rounded-lg font-bold text-sm"
+                  >
                         <Plus size={14} />
                         Add Header
                       </button>
@@ -564,23 +566,26 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                 <button
                   type="button"
                   disabled
-                  className="px-5 py-2.5 rounded-lg  text-white/40 bg-white/5 cursor-not-allowed text-sm font-semibold tracking-wide"
-                
+                  className="flex justify-center items-center px-[12px] py-0 gap-[8px] w-[103px] min-w-[64px] h-[36px] rounded-[8px] text-[14px] font-bold leading-[24px] text-center text-[rgba(145,158,171,0.8)] cursor-not-allowed"
+                  style={{ backgroundColor: "rgba(145, 158, 171, 0.2)" }}
                 >
                   Go to Verify
                 </button>
+
                 <div className="flex gap-2.5">
                   <button
                     type="button"
                     onClick={onCancel}
-                    className="px-6 py-2.5 text-red-200 bg-red-500/10 hover:bg-red-500/20 transition-colors rounded-lg"
+                     className="w-[71px] h-[36px] px-3 py-0 flex items-center justify-center gap-2 
+                                    text-[#FFAC82] bg-[rgba(255,86,48,0.08)] rounded-lg font-bold text-sm"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-6 py-2.5 text-emerald-200 bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors rounded-lg"
+                     className="w-[100px] h-[36px] px-3 py-0 flex items-center justify-center gap-2 
+                                    text-[#9EFBCD] bg-[rgba(19,245,132,0.08)] rounded-lg font-bold text-sm"
                   >
                     {saving ? (
                       <>
@@ -611,7 +616,6 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
           )}
         </div>
       </div>
-
       {/* Custom Scrollbar */}
         <style jsx>{`
           .custom-scrollbar::-webkit-scrollbar {

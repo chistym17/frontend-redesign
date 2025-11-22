@@ -63,7 +63,7 @@ function FlowContent({ assistantId }) {
   const [showConnectorPanel, setShowConnectorPanel] = useState(false);
   const [showComponentModal, setShowComponentModal] = useState(false);
   const [componentSearch, setComponentSearch] = useState("");
-  const [flowActive, setFlowActive] = useState(true);
+  const [flowActive, setFlowActive] = useState(false);
   const [selectedNodeType, setSelectedNodeType] = useState(null);
   const [notification, setNotification] = useState(null);
   
@@ -82,6 +82,7 @@ function FlowContent({ assistantId }) {
   const resizeStartHeight = useRef(0);
 
   const componentDropdownOffset = consoleCollapsed ? 140 : Math.min(consoleHeight + 160, 520);
+  const chatbotBottomOffset = consoleCollapsed ? 24 : consoleHeight + 24;
   const filteredComponents = useMemo(() => {
     const query = componentSearch.trim().toLowerCase();
     if (!query) return COMPONENT_OPTIONS;
@@ -621,12 +622,17 @@ function FlowContent({ assistantId }) {
 
         {/* Top Bar */}
       <div
-        className="h-16 px-6 flex items-center justify-between shadow-2xl relative"
+        className="relative px-4 py-0 h-12 flex items-center justify-between"
         style={{
-          background: '#141A21',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.12)'
+          background: 'rgba(255, 255, 255, 0.12)',
+          backdropFilter: 'blur(4px)',
+          WebkitBackdropFilter: 'blur(4px)'
         }}
       >
+        {/* Background shape overlay */}
+        <div className="absolute inset-0 pointer-events-none"/>
+        
+        <div className="relative z-10 flex items-center justify-between w-full">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -677,12 +683,12 @@ function FlowContent({ assistantId }) {
                     setFlowName(originalName);
                   }
                 }}
-                className="text-base font-bold text-white bg-transparent border-b border-white/30 focus:outline-none focus:border-white px-1 py-0.5 max-w-[160px]"
+                className="text-sm font-semibold text-white bg-transparent border-b border-white/30 focus:outline-none focus:border-white px-1 py-0.5 max-w-[160px]"
                 autoFocus
               />
             ) : (
               <h1
-              className="text-lg font-extrabold text-white cursor-pointer tracking-wide"
+              className="text-sm font-semibold text-white cursor-pointer"
                 onClick={() => setIsEditingName(true)}
                 title="Click to edit workflow name"
               >
@@ -690,10 +696,10 @@ function FlowContent({ assistantId }) {
               </h1>
             )}
             <span
-              className={`text-[12px] font-bold uppercase tracking-[0.25em] px-3 py-0.5 rounded-md border ${
+              className={`text-[9px] font-medium uppercase tracking-[0.25em] px-2 py-0.5 rounded-md ${
                 isConnected()
-                  ? "border-emerald-400/50 bg-emerald-500/10 text-emerald-200"
-                  : "border-white/20 bg-white/5 text-white/70"
+                  ? "bg-emerald-500/10 text-emerald-200"
+                  : "bg-white/5 text-white/70"
               }`}
             >
               {isConnected() ? "Connected" : "Disconnected"}
@@ -701,50 +707,30 @@ function FlowContent({ assistantId }) {
           </div>
         </div>
 
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
-          <label
-            className="cursor-pointer"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "flex-start",
-              padding: 0,
-              width: "33px",
-              height: "38px",
-            }}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
+          <p className={`text-xs ${flowActive ? 'text-emerald-300' : 'text-white/60'}`}>
+            {flowActive ? 'Active' : 'Disabled'}
+          </p>
+          <button
+            type="button"
+            className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
+              flowActive ? 'bg-emerald-500/30 border-emerald-400/50' : 'bg-white/5 border-white/15'
+            }`}
+            onClick={() => setFlowActive((prev) => !prev)}
           >
-            <input
-              type="checkbox"
-              className="sr-only peer"
-              checked={flowActive}
-              onChange={() => setFlowActive((prev) => !prev)}
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                flowActive ? 'translate-x-6' : 'translate-x-1'
+              }`}
             />
-            <div className="relative w-9 h-5 bg-white/10 peer-checked:bg-emerald-400/80 rounded-full transition-colors duration-200 after:content-[''] after:absolute after:h-4 after:w-4 after:bg-white after:rounded-full after:top-0.5 after:left-[2px] after:transition-all peer-checked:after:translate-x-4 shadow-inner" />
-          </label>
-          <span className="ml-3 text-sm font-bold text-white uppercase tracking-[0.2em]">
-            Active
-          </span>
+          </button>
         </div>
 
-        <div className="flex items-center gap-5">
-          <div
-            className="flex h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 my-1"
-          >
-            <input
-              type="text"
-              value={testInput}
-              onChange={(e) => setTestInput(e.target.value)}
-              placeholder="Test input…"
-              className="w-56 bg-transparent text-base font-semibold text-white placeholder-white/40 focus:outline-none"
-            />
-          </div>
-
-          <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1">
             <button
               onClick={handleSave}
               disabled={loading}
-              className="flex h-10 min-w-[95px] items-center justify-center gap-2 rounded-lg border border-[rgba(19,245,132,0.48)] px-5 text-[12px] font-bold uppercase tracking-wide text-[#13F584] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-2 py-1 text-xs font-bold text-[#13F584] border border-[#13F584] rounded-lg bg-transparent hover:bg-[#13F584]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
             >
               <Save className="w-4 h-4 text-[#13F584]" />
               <span>{saveStatus || "Save"}</span>
@@ -752,28 +738,37 @@ function FlowContent({ assistantId }) {
             <button
               onClick={handleRun}
               disabled={!nodes.length || !isConnected()}
-              className="flex h-10 items-center gap-2 rounded-lg border border-white/20 px-6 text-[12px] font-bold uppercase tracking-wide text-white hover:border-white/60 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-2 py-1 text-xs font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{
+                border: "2px solid rgba(145, 158, 171, 0.32)",
+              }}
             >
               <Play className="w-4 h-4" />
               Run
             </button>
             <button
               onClick={handleImport}
-              className="flex h-10 items-center gap-2 rounded-lg border border-white/15 px-4 text-[12px] font-bold uppercase tracking-wide text-white hover:border-white/50"
+              className="px-2 py-1 text-xs font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+              style={{
+                border: "2px solid rgba(145, 158, 171, 0.32)",
+              }}
               title="Import flow"
             >
-              <Upload className="w-4.5 h-4.5" />
+              <Upload className="w-4 h-4" />
               <span>Import</span>
             </button>
             <button
               onClick={handleExport}
-              className="flex h-10 items-center gap-2 rounded-lg border border-white/15 px-4 text-[12px] font-bold uppercase tracking-wide text-white hover:border-white/50"
+              className="px-2 py-1 text-xs font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+              style={{
+                border: "2px solid rgba(145, 158, 171, 0.32)",
+              }}
               title="Export flow"
             >
-              <Download className="w-4.5 h-4.5" />
+              <Download className="w-4 h-4" />
               <span>Export</span>
             </button>
-          </div>
+        </div>
         </div>
       </div>
 
@@ -861,15 +856,27 @@ function FlowContent({ assistantId }) {
 
         {/* AI Chatbot Panel - Right Side */}
         {showChatbot && !chatbotMinimized && (
-          <div className="absolute right-0 top-0 bottom-0 w-[420px] flex-shrink-0 p-4 pl-0 z-10">
-            <FlowChatbotPanel
-              currentFlow={{ nodes, edges }}
-              onApplyFlow={handleApplyChatbotFlow}
-              onPreviewFlow={handlePreviewChatbotFlow}
-              sessionId={chatSessionId}
-              isMinimized={chatbotMinimized}
-              onToggleMinimize={() => setChatbotMinimized(!chatbotMinimized)}
-            />
+          <div
+            className="absolute right-0 top-0 w-[420px] flex-shrink-0 p-4 pl-0 z-20 pointer-events-none"
+            style={{ bottom: `${chatbotBottomOffset}px` }}
+          >
+            <div className="relative h-full">
+              <div className="absolute inset-0 rounded-[32px] bg-[#0C1118] opacity-95 shadow-[0_0_40px_rgba(0,0,0,0.45)]"></div>
+              <div className="relative h-full pointer-events-auto">
+                <FlowChatbotPanel
+                  currentFlow={{ nodes, edges }}
+                  onApplyFlow={handleApplyChatbotFlow}
+                  onPreviewFlow={handlePreviewChatbotFlow}
+                  sessionId={chatSessionId}
+                  isMinimized={chatbotMinimized}
+                  onToggleMinimize={() => setChatbotMinimized(!chatbotMinimized)}
+                  onCloseChatbot={() => {
+                    setShowChatbot(false);
+                    setChatbotMinimized(false);
+                  }}
+                />
+              </div>
+            </div>
           </div>
         )}
 
@@ -882,6 +889,10 @@ function FlowContent({ assistantId }) {
             sessionId={chatSessionId}
             isMinimized={chatbotMinimized}
             onToggleMinimize={() => setChatbotMinimized(!chatbotMinimized)}
+            onCloseChatbot={() => {
+              setShowChatbot(false);
+              setChatbotMinimized(false);
+            }}
           />
         )}
 

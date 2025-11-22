@@ -3,7 +3,7 @@ import { Save, X, Building2 } from "lucide-react";
 import { API_ENDPOINTS } from "../config/api";
 
 const INPUT_BASE_CLASSES =
-  'w-full rounded-lg  bg-white/0 px-3.5 py-2.5 text-white placeholder-white/40 focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/30 transition-all backdrop-blur';
+  'w-full  rounded-lg  bg-white/0 px-3.5 py-2.5 text-white placeholder-white/40 focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/30 transition-all backdrop-blur';
 
 const FieldBlock = ({ label, isRequired = false, children }) => (
   <label className="block space-y-2 text-white/80 text-sm">
@@ -113,7 +113,7 @@ const AssistantProfileForm = ({ assistant = null, isOpen, onSave, onCancel }) =>
 
         {/* Modal */}
       <div
-          className="relative w-full max-w-[1200px] max-h-[95vh] flex flex-col p-4 gap-4 isolate rounded-3xl  overflow-y-auto overflow-x-hidden custom-scrollbar"
+          className="relative w-full max-w-[900px] max-h-[95vh] flex flex-col p-4 gap-4 isolate rounded-3xl  overflow-y-auto overflow-x-hidden custom-scrollbar"
           style={{
           background: "rgba(255, 255, 255, 0.04)",
           backdropFilter: "blur(10px)",
@@ -145,17 +145,17 @@ const AssistantProfileForm = ({ assistant = null, isOpen, onSave, onCancel }) =>
             ×
           </button>
         </div>
-
-        <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-6 max-h-[70vh]">
+ <form onSubmit={handleSubmit}className="flex-1 p-0.5 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
+        <div className="flex flex-col md:flex-row gap-6 max-h-[70vh]">
       {/* Left Column: Labels */}
-      <div className="hidden md:flex w-full md:w-48 flex-col gap-80 text-white/80 text-lg font-semibold">
+      <div className="hidden md:flex w-full md:w-40 flex-col gap-80 text-white/80 text-lg font-semibold">
       <div>Basic Information</div>
       <div>Business Details</div>
     </div>
 
 
   {/* Right Column: Inputs */}
-  <div className="flex-1 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
+  <div className="flex-1 p-0.5 flex flex-col gap-6 overflow-y-auto pr-1.5 custom-scrollbar">
     {/* Basic Info Inputs */}
     <div className="grid grid-cols-1 gap-6">
       <div className="md:hidden text-white/80 text-lg font-semibold mb-2">Basic Information</div>
@@ -261,31 +261,35 @@ const AssistantProfileForm = ({ assistant = null, isOpen, onSave, onCancel }) =>
                 />
               </FieldBlock>
             </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col md:flex-row justify-end gap-4 pt-4">
-              <button
-                type="button"
-                onClick={onCancel}
-                className="px-6 py-2.5 text-red-200 bg-red-500/10 hover:bg-red-500/20 transition-colors rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-6 py-2.5 text-emerald-200 bg-emerald-500/10 hover:bg-emerald-500/20 transition-colors rounded-lg"
-              >
-                {loading
-                  ? "Saving..."
-                  : assistant
-                  ? "Update Assistant"
-                  : "Create Assistant"}
-              </button>
-            </div>
           </div>
-        </form>
-
+        </div>
+         {/* Action Buttons */}
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-0.5  border-white/10">
+               
+                <div className="flex gap-2.5">
+                  <button
+                    type="button"
+                    onClick={onCancel}
+                    className="w-[71px] h-[36px] px-3 py-0 flex items-center justify-center gap-2 
+                                    text-[#FFAC82] bg-[rgba(255,86,48,0.08)] rounded-lg font-bold text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                     className="w-[64px] h-[36px] px-3 py-0 flex items-center justify-center gap-2 
+                                    text-[#9EFBCD] bg-[rgba(19,245,132,0.08)] rounded-lg font-bold text-sm"
+                  >
+                     {loading
+                      ? "Saving..."
+                      : assistant
+                      ? "Update"
+                      : "Create"}
+                  </button>
+                </div>
+              </div>
+   </form>
 
         {/* Custom Scrollbar */}
         <style jsx>{`

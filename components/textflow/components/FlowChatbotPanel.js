@@ -1,8 +1,9 @@
 // components/textflow/components/FlowChatbotPanel.js
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { 
-  MessageSquare, Send, Sparkles, Bot, User, AlertCircle, 
-  CheckCircle, Trash2, Eye, Code, Lightbulb, X, Minimize2, Maximize2
+  AlertCircle, Bot,
+  CheckCircle, Trash2, Eye, Code, Lightbulb, X, Minimize2, Loader
 } from "lucide-react";
 
 const BASE = process.env.NEXT_PUBLIC_API_BASE || "https://176.9.16.194:5403/api";
@@ -13,7 +14,8 @@ export default function FlowChatbotPanel({
   onPreviewFlow,
   sessionId,
   isMinimized = false,
-  onToggleMinimize
+  onToggleMinimize,
+  onCloseChatbot = null
 }) {
   const [messages, setMessages] = useState([
     {
@@ -64,7 +66,19 @@ export default function FlowChatbotPanel({
       });
 
       if (!response.ok) {
-        throw new Error(await response.text());
+        const responseText = await response.text();
+        const isHTML = responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html');
+        
+        if (isHTML) {
+          throw new Error('SERVICE_UNAVAILABLE');
+        } else {
+          try {
+            const errorData = JSON.parse(responseText);
+            throw new Error(errorData.message || errorData.error || 'SERVICE_UNAVAILABLE');
+          } catch {
+            throw new Error('SERVICE_UNAVAILABLE');
+          }
+        }
       }
 
       const data = await response.json();
@@ -91,14 +105,14 @@ export default function FlowChatbotPanel({
 
     } catch (error) {
       console.error("Chatbot error:", error);
+
       setMessages(prev => [
         ...prev,
         {
           role: "assistant",
-          content: `Sorry, I encountered an error: ${error.message}`,
-          timestamp: Date.now(),
-          error: error.message,
-          success: false
+          content: "Service not available now",
+        timestamp: Date.now(),
+        success: false
         }
       ]);
     } finally {
@@ -157,9 +171,15 @@ export default function FlowChatbotPanel({
       <div className="fixed bottom-4 right-4 z-50">
         <button
           onClick={onToggleMinimize}
-          className="w-14 h-14 rounded-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 shadow-2xl flex items-center justify-center transition-all hover:scale-110 group"
+          className="w-16 h-16 rounded-full bg-white/5 border border-white/10 shadow-2xl flex items-center justify-center transition-all hover:scale-110"
+          style={{ backdropFilter: "blur(8px)" }}
         >
-          <Bot className="w-6 h-6 text-white group-hover:animate-pulse" />
+          <div className="relative w-11 h-11 flex items-center justify-center">
+            <div className="absolute inset-0 rounded-2xl bg-[#13F584] opacity-40 blur-md" />
+            <div className="relative w-11 h-11 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center">
+              <Image src="/images/ai2.svg" alt="AI Assistant" width={28} height={28} priority />
+            </div>
+          </div>
           {messages.length > 1 && (
             <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white">
               {messages.length - 1}
@@ -181,28 +201,51 @@ export default function FlowChatbotPanel({
       }}
     >
       {/* Header */}
-      <div className="px-5 py-4 bg-gradient-to-r from-green-600 to-emerald-600 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
-            <Bot className="w-5 h-5 text-white" />
+      <div
+        className="px-4 py-3 flex items-center justify-between"
+        style={{ background: "rgba(19, 245, 132, 0.24)" }}
+      >
+        <div className="flex items-center gap-4">
+          <div className="relative w-11 h-11 flex items-center justify-center">
+            <div className="absolute inset-0 rounded-2xl bg-[#13F584] opacity-30 blur-md" />
+            <div className="relative w-11 h-11 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center">
+              <Image src="/images/ai2.svg" alt="AI Assistant" width={32} height={32} priority />
+            </div>
           </div>
           <div>
-            <h3 className="text-white font-bold text-base">Flow Builder AI</h3>
+            <h3
+              className="text-white font-semibold text-lg"
+              style={{ fontFamily: "Public Sans, sans-serif" }}
+            >
+              AI Asistance
+            </h3>
             <p className="text-white/80 text-xs">Chat to create workflows</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={handleClearChat}
-            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-            title="Clear chat"
+            onClick={async () => {
+              await handleClearChat();
+              if (onCloseChatbot) {
+                onCloseChatbot();
+              }
+            }}
+            className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors hover:bg-white/15 border border-white/10"
+            style={{ background: "rgba(19, 245, 132, 0.08)" }}
+            title="Clear & Close"
           >
-            <Trash2 className="w-4 h-4 text-white" />
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M16.0202 11.4336H3.98021C3.18688 11.4336 2.54688 10.7936 2.54688 10.0002C2.54688 9.20689 3.18688 8.56689 3.98021 8.56689H16.0202C16.8135 8.56689 17.4535 9.20689 17.4535 10.0002C17.4535 10.7936 16.8135 11.4336 16.0202 11.4336Z"
+                fill="white"
+              />
+            </svg>
           </button>
           {onToggleMinimize && (
             <button
               onClick={onToggleMinimize}
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+              className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors hover:bg-white/15 border border-white/10"
+              style={{ background: "rgba(19, 245, 132, 0.08)" }}
               title="Minimize"
             >
               <Minimize2 className="w-4 h-4 text-white" />
@@ -218,20 +261,13 @@ export default function FlowChatbotPanel({
         ))}
         
         {isLoading && (
-          <div className="flex items-center gap-3 text-gray-400">
-            <div 
-              className="w-8 h-8 rounded-full flex items-center justify-center"
-              style={{
-                background: 'rgba(19, 245, 132, 0.16)'
-              }}
-            >
-              <Bot className="w-4 h-4 text-emerald-400" />
-            </div>
+          <div className="flex items-center gap-2 text-gray-400">
             <div className="flex gap-1">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
             </div>
+            <span className="text-xs tracking-wide text-white/60">Thinking...</span>
           </div>
         )}
         
@@ -306,34 +342,42 @@ export default function FlowChatbotPanel({
       )}
 
       {/* Input */}
-      <div className="px-4 py-4 border-t border-white/10">
-        <div className="flex gap-2">
+      <div className="px-4 pb-4 pt-2">
+        <div
+          className="flex items-center justify-between gap-4 px-1 py-1 rounded-xl"
+          style={{
+            background: "rgba(255, 255, 255, 0.04)",
+            border: "1px solid rgba(255, 255, 255, 0.08)"
+          }}
+        >
           <textarea
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Describe the flow you want to create..."
-            className="flex-1 px-4 py-3 rounded-xl text-sm text-white placeholder-gray-500 resize-none transition-all focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-            style={{
-              background: 'rgba(255, 255, 255, 0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.12)'
-            }}
-            rows={2}
+            placeholder="Ask anything"
+            className="flex-1 bg-transparent text-sm text-white placeholder-[#919EAB] resize-none focus:outline-none px-4 py-2 leading-relaxed"
+            style={{ fontFamily: "Public Sans, sans-serif" }}
+            rows={1}
             disabled={isLoading}
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}
-            className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <Send className="w-5 h-5" />
+            {isLoading ? (
+              <Loader className="w-5 h-5 text-white animate-spin" />
+            ) : (
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="40" height="40" rx="8" fill="#13F584" fillOpacity="0.08" />
+                <path
+                  d="M27.6528 18.9101L12.9949 11.76C12.8689 11.6985 12.7305 11.6665 12.5902 11.6665C12.0803 11.6665 11.667 12.0798 11.667 12.5897V12.6163C11.667 12.7402 11.6822 12.8636 11.7122 12.9838L13.1183 18.6079C13.1567 18.7616 13.2866 18.8751 13.4439 18.8926L19.6239 19.5792C19.8382 19.603 20.0003 19.7842 20.0003 19.9998C20.0003 20.2155 19.8382 20.3967 19.6239 20.4204L13.4439 21.1071C13.2866 21.1246 13.1567 21.2381 13.1183 21.3917L11.7122 27.0158C11.6822 27.1361 11.667 27.2595 11.667 27.3833V27.41C11.667 27.9198 12.0803 28.3332 12.5902 28.3332C12.7305 28.3332 12.8689 28.3012 12.9949 28.2397L27.6528 21.0895C28.0693 20.8864 28.3337 20.4634 28.3337 19.9998C28.3337 19.5363 28.0693 19.1133 27.6528 18.9101Z"
+                  fill="#13F584"
+                />
+              </svg>
+            )}
           </button>
-        </div>
-        
-        <div className="mt-2 flex items-center gap-2 text-xs text-gray-400">
-          <Sparkles className="w-3 h-3" />
-          <span>Press Enter to send, Shift+Enter for new line</span>
         </div>
       </div>
     </div>
@@ -344,15 +388,16 @@ export default function FlowChatbotPanel({
 function MessageBubble({ message }) {
   const isUser = message.role === "user";
   const isSystem = message.role === "system";
+  const isError = Boolean(message.error || message.isError);
 
   if (isSystem) {
     return (
       <div className="flex justify-center">
-        <div 
+        <div
           className="px-4 py-2 rounded-full text-xs text-gray-300 border"
           style={{
-            background: 'rgba(255, 255, 255, 0.08)',
-            borderColor: 'rgba(255, 255, 255, 0.12)'
+            background: "rgba(19, 245, 132, 0.16)",
+            borderColor: "rgba(255, 255, 255, 0.12)"
           }}
         >
           {message.content}
@@ -361,40 +406,56 @@ function MessageBubble({ message }) {
     );
   }
 
-  return (
-    <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""}`}>
-      {/* Avatar */}
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-        isUser 
-          ? "bg-gradient-to-br from-blue-500 to-cyan-500" 
-          : "bg-gradient-to-br from-green-500 to-emerald-600"
-      }`}>
-        {isUser ? <User className="w-4 h-4 text-white" /> : <Bot className="w-4 h-4 text-white" />}
-      </div>
+  const bubbleShape = isUser
+    ? "rounded-tl-2xl rounded-tr-none rounded-br-2xl rounded-bl-2xl ml-auto"
+    : "rounded-tr-2xl rounded-tl-none rounded-br-2xl rounded-bl-2xl";
 
-      {/* Message Content */}
-      <div className={`flex-1 ${isUser ? "items-end" : "items-start"} flex flex-col gap-2`}>
-        <div 
-          className={`px-4 py-3 rounded-2xl max-w-[85%] ${
-            isUser
-              ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white ml-auto"
-              : "text-white"
-          }`}
-          style={!isUser ? {
-            background: 'rgba(255, 255, 255, 0.08)',
-            border: '1px solid rgba(255, 255, 255, 0.12)'
-          } : {}}
-        >
-          <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+  const bubbleStyle = (() => {
+    if (isError) {
+      return {
+        background: "rgba(220, 38, 38, 0.18)",
+        border: "1px solid rgba(248, 113, 113, 0.35)"
+      };
+    }
+    if (isUser) {
+      return {
+        background: "rgba(19, 245, 132, 0.12)",
+        boxShadow: "0px 1px 1px -0.5px rgba(0, 0, 0, 0.09)"
+      };
+    }
+    return {
+      background: "rgba(63, 67, 70, 0.3)",
+      border: "1px solid rgba(255, 255, 255, 0.1)"
+    };
+  })();
+
+  const textStyle = {
+    color: isError
+      ? "#FECACA"
+      : isUser
+        ? "#13F584"
+        : "rgba(255, 255, 255, 0.72)"
+  };
+
+  return (
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+      <div className="flex flex-col gap-2 max-w-[85%] w-full">
+        <div className={`px-4 py-3 ${bubbleShape}`} style={bubbleStyle}>
+          <p className="text-sm whitespace-pre-wrap break-words" style={textStyle}>
+            {message.content}
+          </p>
         </div>
 
         {/* Warnings */}
         {message.warnings && message.warnings.length > 0 && (
-          <div className="space-y-1">
+          <div className="space-y-1 max-w-[85%]">
             {message.warnings.map((warning, i) => (
-              <div key={i} className="flex items-start gap-2 px-3 py-2 bg-yellow-950/40 border border-yellow-800/50 rounded-lg">
-                <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-                <span className="text-xs text-yellow-300">{warning}</span>
+              <div
+                key={i}
+                className="flex items-start gap-2 px-3 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg"
+              >
+                <AlertCircle className="w-4 h-4 text-yellow-300 flex-shrink-0 mt-0.5" />
+                <span className="text-xs text-yellow-200">{warning}</span>
               </div>
             ))}
           </div>
@@ -402,45 +463,44 @@ function MessageBubble({ message }) {
 
         {/* Suggestions */}
         {message.suggestions && message.suggestions.length > 0 && (
-          <div className="space-y-1">
+          <div className="space-y-1 max-w-[85%]">
             {message.suggestions.map((suggestion, i) => (
-              <div 
-                key={i} 
-                className="flex items-start gap-2 px-3 py-2 rounded-lg border"
-                style={{
-                  background: 'rgba(19, 245, 132, 0.16)',
-                  borderColor: 'rgba(19, 245, 132, 0.3)'
-                }}
+              <div
+                key={i}
+                className="flex items-start gap-2 px-3 py-2 rounded-lg border bg-emerald-500/10 border-emerald-500/30"
               >
-                <Lightbulb className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                <span className="text-xs text-emerald-300">{suggestion}</span>
+                <Lightbulb className="w-4 h-4 text-emerald-300 flex-shrink-0 mt-0.5" />
+                <span className="text-xs text-emerald-200">{suggestion}</span>
               </div>
             ))}
           </div>
         )}
 
         {/* Error */}
-        {message.error && (
-          <div className="flex items-start gap-2 px-3 py-2 bg-red-950/40 border border-red-800/50 rounded-lg">
-            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-            <span className="text-xs text-red-300">{message.error}</span>
+        {message.error && message.error !== message.content && (
+          <div className="max-w-[85%] flex items-start gap-2 px-3 py-2 bg-red-600/15 border border-red-600/30 rounded-lg">
+            <AlertCircle className="w-4 h-4 text-red-300 flex-shrink-0 mt-0.5" />
+            <span className="text-xs text-red-200">{message.error}</span>
           </div>
         )}
 
         {/* Success indicator */}
         {message.success && message.flow && (
-          <div className="flex items-center gap-2 px-3 py-2 bg-emerald-950/40 border border-emerald-800/50 rounded-lg">
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs text-emerald-300">
+          <div className="max-w-[85%] flex items-center gap-2 px-3 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+            <CheckCircle className="w-4 h-4 text-emerald-300" />
+            <span className="text-xs text-emerald-200">
               Flow generated: {message.flow.nodes?.length || 0} nodes
             </span>
           </div>
         )}
 
         {/* Timestamp */}
-        <span className="text-[10px] text-gray-500 px-1">
-          {new Date(message.timestamp).toLocaleTimeString()}
-        </span>
+        <div
+          className={`text-[10px] flex items-center gap-1 ${isUser ? "justify-end" : "justify-start"}`}
+          style={{ color: "rgba(255, 255, 255, 0.35)" }}
+        >
+          {new Date(message.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { Save, X } from 'lucide-react';
 import { API_ENDPOINTS } from '../config/api';
 
 const INPUT_BASE_CLASSES =
-  'w-full rounded-lg  bg-white/0 px-3.5 py-2.5 text-white placeholder-white/40 focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/30 transition-all backdrop-blur';
+  'w-full  rounded-lg  bg-white/0 px-3.5 py-2.5 text-white placeholder-white/40 focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/30 transition-all backdrop-blur';
 
 const FieldBlock = ({ label, isRequired = false, children }) => (
   <label className="block space-y-2 text-white/80 text-sm">
@@ -93,14 +93,14 @@ const QnAModal = ({ assistantId, qa = null, isOpen, onClose, onSave }) => {
 
             {/* Modal */}
             <div
-                className="relative w-full max-w-[1200px] max-h-[95vh] flex flex-col p-4 gap-4 isolate rounded-3xl  overflow-y-auto overflow-x-hidden custom-scrollbar"
-                style={{
-                background: "rgba(255, 255, 255, 0.04)",
-                backdropFilter: "blur(10px)",
-                WebkitBackdropFilter: "blur(10px)",
-                border: "1px solid rgba(80, 80, 80, 0.24)",
-                borderRadius: "24px",
-                }}
+                className="relative w-full max-w-[900px] max-h-[95vh] flex flex-col p-4 gap-4 isolate rounded-3xl  overflow-y-auto overflow-x-hidden custom-scrollbar"
+                 style={{
+                    background: "rgba(255, 255, 255, 0.04)",
+                    backdropFilter: "blur(10px)",
+                    WebkitBackdropFilter: "blur(10px)",
+                    border: "1px solid rgba(80, 80, 80, 0.24)",
+                    borderRadius: "24px",
+                    }}
                 onClick={(e) => e.stopPropagation()}
                 >
                 

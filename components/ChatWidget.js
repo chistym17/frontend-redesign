@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Wifi, WifiOff, MessageSquare } from 'lucide-react';
+import { Send, User } from 'lucide-react';
+import Image from 'next/image';
 
 const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingMessage, onStartNewSession, onLoadPreviousSession, currentSessionId }) => {
   const [inputMessage, setInputMessage] = useState('');
@@ -52,39 +53,41 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
       `}</style>
       
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 px-6 py-5">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/5 px-6 py-5">
         <div className="flex items-center gap-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-500/10 text-emerald-200">
-            <MessageSquare size={18} />
+          <div className="relative flex items-center justify-center">
+            <div className="absolute w-[45px] h-[45px] rounded-full bg-[#13F584] opacity-20 blur-[10px]"></div>
+            <div className="relative w-[45px] h-[45px] rounded-full bg-[rgba(19,245,132,0.1)] border border-[rgba(19,245,132,0.3)] flex items-center justify-center">
+              <Image src="/images/ai2.svg" alt="AI Assistant" width={45} height={45} />
+            </div>
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-white">AI Chat Assistant</h2>
+            <h2 className="text-lg font-semibold text-white">AI Asistance</h2>
             <p className="text-xs text-white/50">
               {isConnected ? "Ready to chat" : "Connecting..."}
             </p>
-            {currentSessionId && (
-              <p className="text-xs text-white/40 mt-1 font-mono">
-                Session: {currentSessionId.slice(-8)}...
-              </p>
-            )}
           </div>
         </div>
-        <div className="flex flex-wrap items-center justify-end gap-3">
-          <div className="hidden sm:flex items-center gap-2 text-[11px] uppercase tracking-wide text-white/40">
-            <span
-              className={`h-2 w-2 rounded-full ${
-                isConnected ? "bg-emerald-400 animate-pulse" : "bg-white/30"
-              }`}
-            />
-            <span>{isConnected ? "Connected" : "Disconnected"}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            {isConnected ? (
-              <Wifi size={16} className="text-emerald-400" />
-            ) : (
-              <WifiOff size={16} className="text-white/30" />
-            )}
-          </div>
+        <div className="flex flex-wrap items-center justify-end gap-4">
+          {/* Session Management Buttons */}
+          {isConnected && (
+            <div className="flex items-center gap-2 p-1 rounded-[9px] bg-white/[0.04]">
+              <button
+                onClick={onStartNewSession}
+                className="h-[30px] px-2 bg-[rgba(19,245,132,0.08)] text-[#9EFBCD] rounded-lg hover:bg-[rgba(19,245,132,0.12)] transition-all duration-200 flex items-center justify-center font-bold text-[13px] leading-[1.6923076923076923em]"
+                style={{ fontFamily: 'Public Sans, sans-serif' }}
+              >
+                Start New Session
+              </button>
+              <button
+                onClick={onLoadPreviousSession}
+                className="h-[30px] px-1 text-white rounded-lg hover:bg-white/5 transition-all duration-200 flex items-center justify-center font-bold text-[13px] leading-[1.6923076923076923em]"
+                style={{ fontFamily: 'Public Sans, sans-serif' }}
+              >
+                Load Previous
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -102,61 +105,51 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex gap-3 ${message.type === 'user' ? 'justify-end items-start' : 'justify-start items-start'}`}
                 >
+                  {message.type === 'bot' && (
+                    <Image src="/images/ai2.svg" alt="AI" width={30} height={30} className="flex-shrink-0 self-start" />
+                  )}
                   <div
-                    className={`max-w-[70%] rounded-2xl px-4 py-3 ${
+                    className={`max-w-[70%] rounded-2xl px-4 py-3 self-start ${
                       message.type === 'user'
-                        ? 'bg-white/5 text-emerald-400 border border-white/10'
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-white/10'
                         : 'bg-white/5 text-white border border-white/10'
                     }`}
                   >
-                    <div className="flex items-start gap-2">
-                      {message.type === 'bot' && (
-                        <Bot size={16} className="text-emerald-400 mt-1 flex-shrink-0" />
-                      )}
-                      <div className="flex-1">
-                        <p className={`text-sm leading-relaxed ${
-                          message.type === 'user' ? 'text-emerald-400' : 'text-white'
-                        }`}>{message.content}</p>
-                      </div>
-                      {message.type === 'user' && (
-                        <User size={16} className="text-emerald-400 mt-1 flex-shrink-0" />
-                      )}
-                    </div>
+                    <p className={`text-sm leading-relaxed ${
+                      message.type === 'user' ? 'text-emerald-400' : 'text-white'
+                    }`}>{message.content}</p>
                   </div>
+                  {message.type === 'user' && (
+                    <User size={16} className="text-emerald-400 mt-1 flex-shrink-0 self-start" />
+                  )}
                 </div>
               ))}
 
               {/* Streaming Message */}
               {streamingMessage && (
-                <div className="flex justify-start">
-                  <div className="bg-white/5 rounded-2xl px-4 py-3 max-w-[70%] border border-white/10">
-                    <div className="flex items-start gap-2">
-                      <Bot size={16} className="text-emerald-400 mt-1 flex-shrink-0" />
-                      <div className="flex-1">
-                        <p className="text-sm leading-relaxed text-white">
-                          {streamingMessage}
-                          <span className="inline-block w-1 h-4 bg-emerald-400 ml-1 animate-pulse"></span>
-                        </p>
-                      </div>
-                    </div>
+                <div className="flex gap-3 justify-start items-start">
+                  <Image src="/images/ai2.svg" alt="AI" width={30} height={30} className="flex-shrink-0 self-start" />
+                  <div className="bg-white/5 rounded-2xl px-4 py-3 max-w-[70%] border border-white/10 self-start">
+                    <p className="text-sm leading-relaxed text-white">
+                      {streamingMessage}
+                      <span className="inline-block w-1 h-4 bg-emerald-400 ml-1 animate-pulse"></span>
+                    </p>
                   </div>
                 </div>
               )}
 
               {/* Typing Indicator */}
               {isTyping && !streamingMessage && (
-                <div className="flex justify-start">
-                  <div className="bg-white/5 rounded-2xl px-4 py-3 max-w-[70%] border border-white/10">
-                    <div className="flex items-center gap-2">
-                      <Bot size={16} className="text-emerald-400" />
-                      <div className="flex items-center gap-1">
-                        <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-emerald-400 rounded-full typing-dot"></div>
-                          <div className="w-2 h-2 bg-emerald-400 rounded-full typing-dot"></div>
-                          <div className="w-2 h-2 bg-emerald-400 rounded-full typing-dot"></div>
-                        </div>
+                <div className="flex gap-3 justify-start items-start">
+                  <Image src="/images/ai2.svg" alt="AI" width={30} height={30} className="flex-shrink-0 self-start" />
+                  <div className="bg-white/5 rounded-2xl px-4 py-3 max-w-[70%] border border-white/10 self-start">
+                    <div className="flex items-center gap-1">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full typing-dot"></div>
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full typing-dot"></div>
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full typing-dot"></div>
                       </div>
                     </div>
                   </div>
@@ -169,50 +162,28 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
         </div>
       </div>
 
-      {/* Session Management Buttons */}
-      {isConnected && (
-        <div className="px-6 py-3 border-t border-white/5 bg-white/5">
-          <div className="flex gap-3">
+      {/* Input */}
+      <div className="flex-shrink-0 border-t border-white/5 px-6 pt-4 pb-4">
+        <form onSubmit={handleSubmit} className="w-full">
+          <div className="relative flex items-center w-full">
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              placeholder={isConnected ? "Ask anything" : "Connecting to server..."}
+              className="w-full pl-6 pr-24 py-5 rounded-[66px] border-0 bg-white/[0.04] text-white placeholder:text-[#919EAB] focus:outline-none disabled:opacity-50 text-sm"
+              style={{ fontFamily: 'Public Sans, sans-serif', fontSize: '14px', lineHeight: '1.5714285714285714em' }}
+              disabled={!isConnected || isTyping || streamingMessage}
+            />
             <button
-              onClick={onStartNewSession}
-              className="flex-1 px-4 py-2 bg-white/5 border border-white/10 text-white/70 rounded-xl hover:bg-white/10 hover:border-white/20 hover:text-white transition-all duration-200 flex items-center justify-center gap-2 text-sm font-medium"
+              type="submit"
+              disabled={!inputMessage.trim() || isTyping || !isConnected || streamingMessage}
+              className="absolute right-2 h-11 px-4 bg-white/[0.12] border border-[rgba(19,245,132,0.32)] text-[#13F584] rounded-[99px] hover:bg-white/[0.16] hover:border-[rgba(19,245,132,0.48)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center font-bold"
+              style={{ fontFamily: 'Public Sans, sans-serif', fontSize: '15px', lineHeight: '1.7333333333333334em' }}
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Start New Session
-            </button>
-            <button
-              onClick={onLoadPreviousSession}
-              className="flex-1 px-4 py-2 bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 rounded-xl hover:bg-emerald-500/30 hover:border-emerald-400/60 transition-all duration-200 flex items-center justify-center gap-2 text-sm font-medium"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Load Previous
+              <span>Send</span>
             </button>
           </div>
-        </div>
-      )}
-
-      {/* Input */}
-      <div className="flex-shrink-0 border-t border-white/5 px-6 py-4">
-        <form onSubmit={handleSubmit} className="flex gap-3">
-          <input
-            type="text"
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            placeholder={isConnected ? "Type your message here..." : "Connecting to server..."}
-            className="flex-1 px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400/40 disabled:opacity-50"
-            disabled={!isConnected || isTyping || streamingMessage}
-          />
-          <button
-            type="submit"
-            disabled={!inputMessage.trim() || isTyping || !isConnected || streamingMessage}
-            className="px-4 py-3 bg-emerald-500/80 text-white rounded-xl hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 shadow-lg shadow-emerald-500/30"
-          >
-            <Send size={18} />
-          </button>
         </form>
       </div>
     </div>

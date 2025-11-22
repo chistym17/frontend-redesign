@@ -289,7 +289,8 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
                           </div>
                           <div>
                             <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-emerald-300 transition-colors duration-300">
-                              {assistant.name}
+                              {assistant.name?.slice(0, 30)}
+                              {assistant.name?.length > 30 && "..."}
                             </h3>
                             <span className="inline-flex items-center h-6 bg-white/10 px-2 rounded-md text-[12px] font-bold text-white/70 capitalize ">
                               {assistant.business_meta?.industry_type || 'General'}
@@ -320,8 +321,8 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
                               border border-white/10
                               bg-black/70                     <!-- base black -->
                               before:absolute before:inset-0  <!-- frosted overlay -->
-                              before:bg-white/5               <!-- rgba(255,255,255,0.04) ≈ /5 -->
-                              before:backdrop-blur-[64px]
+                              before:bg-white/15              <!-- rgba(255,255,255,0.04) ≈ /5 -->
+                              before:backdrop-blur-[94px]
                               before:rounded-xl
                               before:z-[-1]
                               shadow-lg z-10
@@ -392,9 +393,10 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
                       {/* Overview */}
                       <div className="mb-4">
                         <div className="text-xs text-white/60 mb-1">Overview</div>
-                        <p className="text-white/70 text-sm leading-relaxed line-clamp-2">
-                          {assistant.description}
-                        </p>
+                          <p className="text-white/70 text-sm leading-relaxed">
+                            {assistant.description?.slice(0, 300)} 
+                            {assistant.description?.length > 300 && "..."}
+                          </p>
                       </div>
 
                      {/* Info Box: Hours + Location */}
@@ -403,20 +405,23 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
 
                           {assistant.business_meta?.operating_hours && (
                             <div className="flex flex-row gap-1">
-                              <div className="text-xs text-[#919EAB]  ">Hours:</div>
-                              <div className="text-sm text-white flex items-center">
-                          
-                                {assistant.business_meta.operating_hours}
-                              </div>
+                              <div className="text-xs text-[#919EAB]  ">Hours -</div>
+                                <div className="text-sm text-white flex items-center">
+                                  {assistant.business_meta?.operating_hours?.slice(0, 35)}
+                                  {assistant.business_meta?.operating_hours?.length > 35 && "..."}
+                                </div>
                             </div>
                           )}
                           
                           {assistant.business_meta?.address && (
                             <div className="flex flex-row gap-1">
-                              <div className="text-xs text-[#919EAB] ">Location:</div>
+                              <div className="text-xs text-[#919EAB] ">Location -</div>
                               <div className="text-sm text-white flex items-center">
                               
-                                <span className="truncate">{assistant.business_meta.address}</span>
+                                <span className="truncate">
+                                      {assistant.business_meta?.address?.slice(0, 35)}
+                                      {assistant.business_meta?.address?.length > 35 && "..."}
+                                  </span>
                               </div>
                             </div>
                           )}
@@ -444,8 +449,8 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
                             aria-label={assistantId === assistant.id ? 'Active' : 'Inactive'}
                             onClick={() => activate(assistant)}
                             className={`relative inline-flex h-6 w-11 items-center rounded-full border transition-colors ${assistantId === assistant.id
-                                ? 'bg-[#13F584] border-white/5'
-                                : 'bg-white/10 border-white/5 hover:bg-white/15'
+                                ? 'bg-emerald-500/30 border-emerald-400/50'
+                                : 'bg-white/5 border-white/15'
                               }`}
                           >
                             <span

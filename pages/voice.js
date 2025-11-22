@@ -16,7 +16,7 @@ const OrderPage = () => {
       <div className={`flex-1 transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-48'} flex items-start justify-center py-2`}>
 
         {/* Notifications Grid */}
-     <div className="px-2 pt-2 pb-2 w-full max-w-6xl ">
+     <div className="px-2 pt-2 pb-2 w-full">
   <VoiceAgent />
 </div>
 

@@ -142,11 +142,11 @@ const Settings = () => {
           <div className="flex flex-col gap-6">
             
          {/* Update User */}
-          <div className="flex flex-col items-start p-4 gap-4 w-full h-auto lg:h-[506px] bg-white/5 backdrop-blur-[10px] rounded-2xl border border-white/10">
+          <div className="flex flex-col items-start p-4 gap-4 w-full h-auto lg:h-[520px] bg-white/5 backdrop-blur-[10px] rounded-2xl border border-white/10">
   
   
   {/* Frame 1000003793 */}
-  <div className="flex flex-col items-start p-0 gap-4 w-full">
+  <div className="flex flex-col items-start p-0 gap-5 w-full">
     
     {/* Stack for Name and Phone Number */}
     <div className="flex flex-col items-start p-0 gap-1 w-full">
@@ -155,17 +155,17 @@ const Settings = () => {
     </div>
     
     {/* Row for Name and Phone Number */}
-    <div className="flex flex-row flex-wrap items-start content-start p-0 gap-6 w-full">
+    <div className="flex flex-row flex-wrap items-start  content-start p-0 gap-6 w-full">
       {/* TextField for Name */}
       <div className="flex flex-col items-start p-0 w-[349.5px] min-w-[294px] h-[54px]">
-        <div className="relative flex flex-row items-center p-0 px-4 isolate w-full h-[54px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
+        <div className="relative flex flex-row items-center p-0 px-4 isolate w-full h-[45px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
             <input
                 type="text"
                 placeholder="Name"
                 className="flex-1 h-[22px] text-sm leading-[22px] text-white bg-transparent border-none outline-none placeholder:text-white"
             />
           {/* Label Focus */}
-         <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[40px] h-[9px] left-4 -top-2">
+         <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[40px] h-[9px] left-4 -top-3.5">
            
             <span className="w-[34px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">Name</span>
           </div>
@@ -173,7 +173,7 @@ const Settings = () => {
       </div>
       
       {/* TextField for Phone Number */}
-      <div className="flex flex-col items-start p-0 w-[349.5px] min-w-[294px] h-[54px]">
+      <div className="flex flex-col items-start p-0 w-[349.5px] min-w-[294px] h-[45px]">
         <div className="relative flex flex-row items-center p-0 px-4 isolate w-full h-[54px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
           <input
             type="tel"
@@ -181,7 +181,7 @@ const Settings = () => {
             className="flex-1 h-[22px] text-sm leading-[22px] text-white bg-transparent border-none outline-none placeholder:text-white"
           />
           {/* Label Focus */}
-          <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-2">
+          <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-3.5">
             
             <span className="w-[100px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">Phone Number</span>
           </div>
@@ -193,14 +193,14 @@ const Settings = () => {
     <div className="flex flex-row flex-wrap items-start content-start p-0 gap-6 w-full">
       {/* TextField for Address */}
       <div className="flex flex-col items-start p-0 w-full min-w-[294px] h-[54px]">
-        <div className="relative flex flex-row items-center p-0 px-4 isolate w-full h-[54px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
+        <div className="relative flex flex-row items-center p-0 px-4 isolate w-full h-[45px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
           <input
             type="text"
             placeholder="Address"
             className="flex-1 h-[22px] text-sm leading-[22px] text-white bg-transparent border-none outline-none placeholder:text-white"
           />
           {/* Label Focus */}
-          <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-2">
+          <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-3.5">
            
             <span className="w-[47px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">Address</span>
           </div>
@@ -216,7 +216,7 @@ const Settings = () => {
           className="flex-1 h-[44px] text-sm leading-[22px] text-white bg-transparent border-none outline-none resize-none placeholder:text-white"
         ></textarea>
         {/* Label Focus */}
-        <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-2">
+        <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-3.5">
           
           <span className="w-[35px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">About</span>
         </div>
@@ -224,7 +224,7 @@ const Settings = () => {
     </div>
     
     {/* Frame 1000003794 */}
-    <div className="flex flex-col items-start p-0 gap-4 w-full">
+    <div className="flex flex-col items-start p-0 gap-5 w-full">
       
       {/* Stack for Email and Last Name */}
       <div className="flex flex-col items-start p-0 gap-1 w-[344px] min-w-[294px]">
@@ -236,14 +236,14 @@ const Settings = () => {
       <div className="flex flex-row flex-wrap items-start content-start p-0 gap-6 w-full">
         {/* TextField for Email */}
         <div className="flex flex-col items-start p-0 w-[349.5px] min-w-[294px] h-[80px]">
-          <div className="relative flex flex-row items-center p-0 px-[14px] isolate w-full h-[54px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
+          <div className="relative flex flex-row items-center p-0 px-[14px] isolate w-full h-[45px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
             <input
               type="email"
               placeholder="Email"
               className="flex-1 h-[22px] text-sm leading-[22px] text-white bg-transparent border-none outline-none placeholder:text-white"
             />
             {/* Label Focus */}
-            <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-2">
+            <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-3.5">
       
               <span className="w-[32px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">Email</span>
             </div>
@@ -259,14 +259,14 @@ const Settings = () => {
         
         {/* TextField for Password */}
         <div className="flex flex-col items-start p-0 w-[349.5px] min-w-[294px] h-[80px]">
-          <div className="relative flex flex-row items-center p-0 px-[14px] isolate w-full h-[54px] bg-white/3 backdrop-blur-[25px] border  border-[rgba(255,255,255,0.12)] rounded-lg">
+          <div className="relative flex flex-row items-center p-0 px-[14px] isolate w-full h-[45px] bg-white/3 backdrop-blur-[25px] border  border-[rgba(255,255,255,0.12)] rounded-lg">
             <input
               type="text"
               placeholder="Password"
               className="flex-1 h-[22px] text-sm leading-[22px] text-white bg-transparent border-none outline-none placeholder:text-white"
             />
             {/* Label Focus */}
-            <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-2">
+            <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-3.5">
           
               <span className="w-[100px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">Password</span>
             </div>
@@ -291,13 +291,13 @@ const Settings = () => {
   <div className="flex flex-row flex-wrap items-start content-start p-0 gap-6 w-full">
     
     {/* Sub-stack */}
-    <div className="flex flex-col items-start p-0 gap-1 w-[344px] min-w-[294px]">
+    <div className="flex flex-col items-start p-0 gap-1 w-[335px] min-w-[294px]">
       <span className="w-[66px] h-[28px] text-lg font-semibold leading-[28px] text-white">Activity</span>
       <span className="w-full h-[22px] text-sm leading-[22px] text-[#919EAB]">Manage your notification preferences</span>
     </div>
     
     {/* Notification Card */}
-    <div className="box-border flex flex-col items-start p-4 gap-4 w-[347px] min-w-[294px] h-[190px] bg-white/3 backdrop-blur-[25px] rounded-2xl">
+    <div className="box-border flex flex-col items-start p-4 gap-4 w-[360px] min-w-[294px] h-[190px] bg-white/3 backdrop-blur-[25px] rounded-2xl">
       
       {/* Switch 1: Email notifications */}
       <div className="flex flex-row items-center p-0 gap-[9px] w-[315px] h-[44px]">
@@ -390,52 +390,7 @@ const Settings = () => {
 
             </div>
             
-            {/* Notification 2 */}
-            <div className="flex flex-col items-start p-4 gap-4 w-full h-auto lg:h-[128px] bg-white/5  backdrop-blur-[10px] rounded-2xl border border-white/10">
-              {/* Stack */}
-  <div className="flex flex-row flex-wrap items-start content-start p-0 gap-6 w-full">
-    
-    {/* Sub-stack */}
-    <div className="flex flex-col items-start p-0 gap-1 w-[344px] min-w-[294px]">
-      <span className="w-[126px] h-[28px] text-lg font-semibold leading-[28px] text-white">Activity</span>
-      <span className="w-full h-[22px] text-sm leading-[22px] text-[#919EAB]">Manage additional preferences</span>
-    </div>
-    
-    {/* Notification Card */}
-    <div className="box-border flex flex-col items-start p-4 gap-4 w-[347px] min-w-[294px] h-[96px] bg-white/3 backdrop-blur-[25px] rounded-2xl">
-      
-      {/* Switch 1: Database Context */}
-        <div className="flex flex-row items-center p-0 gap-2 w-[315px] h-6">
-        <span className="flex-1 h-[22px] text-sm leading-[22px] text-white">Database Context</span>
-        <div className="flex flex-row items-center p-0 gap-2 w-[98px] h-6">
-            <span className="w-[40px] h-[22px] text-sm leading-[22px] text-white">esadb</span>
-            <button
-            onClick={() => handleToggle("databaseContext")}
-            className={`w-[60px] h-[24px] flex items-center justify-center rounded-full font-bold text-sm transition-colors
-                ${switches.databaseContext ? "bg-[rgba(19,245,132,0.08)] text-[#9EFBCD]" : "bg-[rgba(245,19,19,0.1)] text-[#FF5C5C]"}`}
-            >
-            <span className="text-xs leading-5">{switches.databaseContext ? "Active" : "Inactive"}</span>
-            </button>
-        </div>
-        </div>
-      {/* Switch 2: Security alerts */}
-      <div className="flex flex-row items-center p-0 gap-[9px] w-[315px] h-6">
-        <span className="flex-1 h-[22px] text-sm leading-[22px] text-white">Business Rules</span>
-        <div className="flex flex-row items-center p-0 gap-2 w-[90px] h-6">
-            <span className="w-[32px] h-[22px] text-sm leading-[22px] text-white">rule1</span>
-            <button
-            onClick={() => handleToggle("businessRules")}
-            className={`w-[60px] h-[24px] flex items-center justify-center rounded-full font-bold text-sm transition-colors
-                ${switches.businessRules ? "bg-[rgba(19,245,132,0.08)] text-[#9EFBCD]" : "bg-[rgba(245,19,19,0.1)] text-[#FF5C5C]"}`}
-            >
-            <span className="text-xs leading-5">{switches.businessRules ? "Active" : "Inactive"}</span>
-            </button>
-        </div>
-                </div>
-            
-            </div>
-        </div>
-            </div>
+         
 
             
           </div>

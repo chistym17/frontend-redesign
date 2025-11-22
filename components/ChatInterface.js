@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import ChatWidget from './ChatWidget';
 import { useAssistant } from '../lib/assistantContext';
 import { API_ENDPOINTS } from '../config/api';
-import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/router';
 import LeftSidebar from './LeftSidebar';
 import { useSidebar } from '../lib/sidebarContext';
+import { Search } from 'lucide-react';
 
 const ChatInterface = () => {
   const router = useRouter();
@@ -215,22 +215,15 @@ const ChatInterface = () => {
         <div className="flex h-full flex-col">
           <main className="flex h-full flex-1 flex-col overflow-hidden items-center justify-center p-6 lg:p-[60px_120px]">
             {/* Parent Container with margins (matching Figma design) */}
-            <div className="flex flex-1 min-h-0 w-full max-w-[1400px] max-h-[900px] flex-col gap-[18px] overflow-hidden lg:flex-row lg:items-stretch">
+            <div className="flex flex-1 min-h-0 w-full max-w-[1800px] max-h-[900px] flex-col gap-[18px] overflow-hidden lg:flex-row lg:items-stretch">
               {/* Left Panel - Agent List */}
-              <div className="flex min-h-0 w-full flex-shrink-0 flex-col lg:h-full lg:max-w-[280px]">
+              <div className="flex min-h-0 w-full flex-shrink-0 flex-col lg:h-full lg:max-w-[360px]">
                 <div className="flex h-full w-full flex-col rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20 backdrop-blur-xl">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => router.back()}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/70 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
-                      title="Go back"
-                    >
-                      <ArrowLeft size={16} />
-                    </button>
-                    <h3 className="text-base font-semibold text-white">Agent List</h3>
+                  <div className="flex items-center gap-3 pl-2">
+                    <h3 className="text-lg font-semibold text-white">Agent List</h3>
                   </div>
                   <div className="relative mt-4">
-                    <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/40">🔍</span>
+                    <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={18} />
                     <input
                       value={assistantSearch}
                       onChange={(e) => setAssistantSearch(e.target.value)}
@@ -259,7 +252,7 @@ const ChatInterface = () => {
                               key={assistant.id}
                               type="button"
                               onClick={() => handleAssistantChange(assistant.id)}
-                              className={`group flex w-full items-center justify-between rounded-lg border px-2.5 py-2 text-left transition-all duration-200 ${
+                              className={`group flex w-full items-center justify-between rounded-xl border px-2.5 py-2 text-left transition-all duration-200 ${
                                 isActive
                                   ? "border-emerald-400/60 bg-emerald-500/20 shadow-md shadow-emerald-500/20"
                                   : "border-white/5 bg-white/5 hover:border-emerald-400/30 hover:bg-white/10"
@@ -274,7 +267,7 @@ const ChatInterface = () => {
                                   {(assistant.name ?? "?").slice(0, 2).toUpperCase()}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <div className="text-xs font-medium text-white truncate">
+                                  <div className="text-sm font-medium text-white truncate">
                                     {assistant.name || "Untitled Assistant"}
                                   </div>
                                 </div>

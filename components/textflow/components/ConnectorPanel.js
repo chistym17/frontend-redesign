@@ -408,10 +408,11 @@ function CreateConnectorModal({ onClose, onSubmit, assistantId }) {
       <div 
         className="relative rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-auto shadow-2xl"
         style={{
-          background: 'rgba(255, 255, 255, 0.04)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.12)'
+          background: 'rgba(20, 25, 35, 0.65)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          border: '1.5px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
         }}
       >
         <style dangerouslySetInnerHTML={{__html: `
@@ -432,11 +433,12 @@ function CreateConnectorModal({ onClose, onSubmit, assistantId }) {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-bold text-white">Create New Connector</h3>
+              <h3 className="text-xl" style={{ color: 'rgba(255, 255, 255, 1)', fontWeight: 700 }}>Create New Connector</h3>
             </div>
             <button 
               onClick={onClose} 
-              className="w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+              className="w-6 h-6 flex items-center justify-center transition-colors"
+              style={{ color: 'rgba(255, 255, 255, 0.9)' }}
             >
               <X className="w-6 h-6" />
             </button>
@@ -446,7 +448,7 @@ function CreateConnectorModal({ onClose, onSubmit, assistantId }) {
           {error && (
             <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-2 flex items-start gap-2">
               <AlertCircle className="w-3 h-3 text-red-400 flex-shrink-0 mt-0.5" />
-              <span className="text-xs text-red-300">{error}</span>
+              <span className="text-xs" style={{ color: 'rgba(252, 165, 165, 1)', fontWeight: 500 }}>{error}</span>
             </div>
           )}
 
@@ -454,29 +456,29 @@ function CreateConnectorModal({ onClose, onSubmit, assistantId }) {
           <div 
             className="flex items-center gap-6 border-b"
             style={{
-              borderBottomColor: 'rgba(255, 255, 255, 0.12)',
+              borderBottomColor: 'rgba(255, 255, 255, 0.15)',
               borderBottomWidth: '1px'
             }}
           >
             <button
               onClick={() => setMode('trace')}
-              className={`px-0 py-2 text-sm font-medium transition-all uppercase ${
+              className={`px-0 py-2 text-sm transition-all uppercase ${
                 mode === 'trace' 
                   ? 'text-[#13F584] border-b-2 border-[#13F584]' 
                   : 'text-[#919EAB] hover:text-gray-300'
               }`}
-              style={{ height: '32px' }}
+              style={{ height: '32px', fontWeight: mode === 'trace' ? 600 : 500 }}
             >
               From Trace
             </button>
             <button
               onClick={() => setMode('openapi')}
-              className={`px-0 py-2 text-sm font-medium transition-all uppercase ${
+              className={`px-0 py-2 text-sm transition-all uppercase ${
                 mode === 'openapi' 
                   ? 'text-[#13F584] border-b-2 border-[#13F584]' 
                   : 'text-[#919EAB] hover:text-gray-300'
               }`}
-              style={{ height: '32px' }}
+              style={{ height: '32px', fontWeight: mode === 'openapi' ? 600 : 500 }}
             >
               From OpenAPI
             </button>
@@ -486,46 +488,52 @@ function CreateConnectorModal({ onClose, onSubmit, assistantId }) {
           <div className="space-y-4">
             {/* Name */}
             <div>
-              <label className="text-xs font-medium text-gray-100 block mb-1.5">Connector Name *</label>
+              <label className="text-xs block mb-1.5" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>Connector Name *</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
                 placeholder="Slack API"
-                className="w-full px-2 py-1.5 rounded-lg text-white text-xs transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-2 py-1.5 rounded-lg text-xs transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)'
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: 'rgba(255, 255, 255, 1)',
+                  fontWeight: 500
                 }}
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="text-xs font-medium text-gray-100 block mb-1.5">Description</label>
+              <label className="text-xs block mb-1.5" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>Description</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
                 placeholder="Send messages to Slack channels"
                 rows={2}
-                className="w-full px-2 py-1.5 rounded-lg text-white text-xs transition-colors resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-2 py-1.5 rounded-lg text-xs transition-colors resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)'
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: 'rgba(255, 255, 255, 1)',
+                  fontWeight: 500
                 }}
               />
             </div>
 
             {/* Category */}
             <div ref={categoryRef} className="relative">
-              <label className="text-xs font-medium text-gray-100 block mb-1.5">Category</label>
+              <label className="text-xs block mb-1.5" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>Category</label>
               <button
                 type="button"
                 onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
-                className="w-full px-2 py-1.5 rounded-lg text-white text-xs transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-left flex items-center justify-between"
+                className="w-full px-2 py-1.5 rounded-lg text-xs transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-left flex items-center justify-between"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)'
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: 'rgba(255, 255, 255, 1)',
+                  fontWeight: 500
                 }}
               >
                 <span>{categories.find(c => c.value === formData.category)?.label || 'General'}</span>
@@ -566,30 +574,32 @@ function CreateConnectorModal({ onClose, onSubmit, assistantId }) {
 
             {/* Tags */}
             <div>
-              <label className="text-xs font-medium text-gray-100 block mb-1.5">Tags (comma-separated)</label>
+              <label className="text-xs block mb-1.5" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>Tags (comma-separated)</label>
               <input
                 type="text"
                 value={formData.tags}
                 onChange={(e) => setFormData({...formData, tags: e.target.value})}
                 placeholder="slack, messaging, api"
-                className="w-full px-2 py-1.5 rounded-lg text-white text-xs transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-2 py-1.5 rounded-lg text-xs transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)'
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: 'rgba(255, 255, 255, 1)',
+                  fontWeight: 500
                 }}
               />
             </div>
 
             {/* Trace/OpenAPI Input */}
             <div>
-              <label className="text-xs font-medium text-gray-100 block mb-1.5">
+              <label className="text-xs block mb-1.5" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>
                 {mode === 'trace' ? 'API Trace JSON *' : 'OpenAPI Spec JSON *'}
               </label>
               <div 
                 className="rounded-lg overflow-hidden"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
                   borderRadius: '8px'
                 }}
               >
@@ -607,9 +617,11 @@ function CreateConnectorModal({ onClose, onSubmit, assistantId }) {
                   theme="vs-dark"
                   options={{ 
                     minimap: { enabled: false }, 
-                    fontSize: 11,
+                    fontSize: 13,
+                    fontWeight: '500',
                     scrollBeyondLastLine: false,
                     automaticLayout: true,
+                    lineHeight: 20
                   }}
                   beforeMount={(monaco) => {
                     monaco.editor.defineTheme('transparent-dark', {
@@ -627,7 +639,7 @@ function CreateConnectorModal({ onClose, onSubmit, assistantId }) {
                   }}
                 />
               </div>
-              <p className="text-[10px] text-gray-300 mt-1.5">
+              <p className="text-[10px] mt-1.5" style={{ color: 'rgba(255, 255, 255, 0.8)', fontWeight: 500 }}>
                 {mode === 'trace' 
                   ? 'Paste captured API requests with responses. Use browser dev tools or recording extension.'
                   : 'Paste OpenAPI 3.0 specification JSON.'
@@ -644,7 +656,7 @@ function CreateConnectorModal({ onClose, onSubmit, assistantId }) {
                 onChange={(e) => setMakePublic(e.target.checked)}
                 className="h-3.5 w-3.5 text-indigo-600 bg-gray-800 border-gray-700 rounded"
               />
-              <label htmlFor="makePublic" className="text-xs text-gray-100">
+              <label htmlFor="makePublic" className="text-xs" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 500 }}>
                 Make public (show in Discover so others can find & use it)
               </label>
             </div>
@@ -654,11 +666,12 @@ function CreateConnectorModal({ onClose, onSubmit, assistantId }) {
           <div className="flex justify-end items-center gap-2.5 pt-4">
             <button
               onClick={onClose}
-              className="px-3 py-2 text-sm font-bold rounded-lg transition-all"
+              className="px-3 py-2 text-sm rounded-lg transition-all"
               style={{
                 background: 'rgba(255, 86, 48, 0.08)',
                 color: '#FFAC82',
-                height: '36px'
+                height: '36px',
+                fontWeight: 600
               }}
             >
               Cancel
@@ -666,11 +679,12 @@ function CreateConnectorModal({ onClose, onSubmit, assistantId }) {
             <button
               onClick={handleSubmit}
               disabled={loading || !formData.name.trim()}
-              className="px-3 py-2 text-sm font-bold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="px-3 py-2 text-sm rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               style={{
                 background: 'rgba(19, 245, 132, 0.08)',
                 color: '#9EFBCD',
-                height: '36px'
+                height: '36px',
+                fontWeight: 600
               }}
             >
               {loading ? (
@@ -974,6 +988,17 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
           border: '1px solid rgba(255, 255, 255, 0.12)'
         }}
       >
+        {/* Backdrop overlay to blur parent content when create modal is open */}
+        {showCreateModal && (
+          <div 
+            className="absolute inset-0 z-[50] backdrop-blur-md"
+            style={{
+              background: 'rgba(0, 0, 0, 0.3)',
+              pointerEvents: 'none'
+            }}
+          />
+        )}
+        
         {/* Header */}
         <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
