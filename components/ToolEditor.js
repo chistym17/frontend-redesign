@@ -49,8 +49,14 @@ const SectionLabel = ({ title }) => (
   </div>
 );
 
-const FieldLabel = ({ children }) => (
-  <span className="text-[11px] font-semibold text-white/60">{children}</span>
+const FieldBlock = ({ label, isRequired = false, children }) => (
+  <label className="block space-y-2 text-white/80 text-sm">
+    <span className="flex items-center gap-0 text-xs tracking-[0.2em] text-white/50">
+      {label}
+      {isRequired && <span className="text-red-400">*</span>}
+    </span>
+    {children}
+  </label>
 );
 
 const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => {
@@ -299,8 +305,8 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
               <div className="flex flex-col md:flex-row gap-4 md:gap-8">
                 <SectionLabel title="HTTP Configuration" />
                 <div className="flex-1 space-y-4">
+                  <FieldBlock label="Tool Name" isRequired>
                   <div className="space-y-2">
-                    <FieldLabel required>Tool Name</FieldLabel>
                     <div className="relative">
                       <input
                         className={INPUT_STYLES}
@@ -325,9 +331,12 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                       )}
                     </div>
                   </div>
-
+                    </FieldBlock>
+                            
+                
+                  
+                  <FieldBlock label="Header (JSON)" isRequired>
                   <div className="space-y-2">
-                    <FieldLabel required>Header (JSON)</FieldLabel>
                     <textarea
                       className={`${INPUT_STYLES} font-mono text-xs resize-none`}
                       rows={4}
@@ -352,9 +361,11 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                       style={INPUT_STYLE_Orange_OBJ}
                     />
                   </div>
+                  </FieldBlock>
 
+
+                    <FieldBlock label="Status">
                   <div className="space-y-2">
-                    <FieldLabel required>Status</FieldLabel>
                     <div className="flex items-center gap-3">
                       <button
                         type="button"
@@ -376,6 +387,7 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                       </div>
                     </div>
                   </div>
+                  </FieldBlock>
                 </div>
               </div>
 
@@ -383,9 +395,8 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
               <div className="flex flex-col md:flex-row gap-4 md:gap-8">
                 <SectionLabel title="HTTP Configuration" />
                 <div className="flex-1 space-y-4">
+                  <FieldBlock label="Method" isRequired>
                  <div className="space-y-1.5">
-                    <FieldLabel required>Method</FieldLabel>
-
                     <div className="relative w-full mt-2">
                       {/* Dropdown header */}
                       <div
@@ -434,9 +445,10 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                       )}
                     </div>
                   </div>
+                  </FieldBlock>
 
+                  <FieldBlock label="Endpoint URL" isRequired>
                   <div className="space-y-1.5">
-                    <FieldLabel required>Endpoint URL</FieldLabel>
                     <input
                       className={INPUT_STYLES}
                       value={form.endpoint_url}
@@ -447,6 +459,7 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                       style={INPUT_STYLE_OBJ}
                     />
                   </div>
+                  </FieldBlock>
 
                   <div className="space-y-4">
                     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -471,7 +484,7 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                             }`}
                           />
                         </button>
-                        <p className="text-sm text-white/70">Headers</p>
+                        <p className="text-sm  text-white/70">Headers</p>
                       </div>
 
                       {/* Right side: Add Header button */}
@@ -522,8 +535,10 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
               <div className="flex flex-col md:flex-row gap-4 md:gap-8">
                 <SectionLabel title="JSON Schemas" />
                 <div className="flex-1 space-y-4">
+
+                <FieldBlock label="Input Schema" isRequired>
                   <div className="space-y-2">
-                    <FieldLabel required>Input Schema</FieldLabel>
+                   
                     <textarea
                       className={`${INPUT_STYLES} font-mono text-xs resize-none`}
                       rows={6}
@@ -540,8 +555,11 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                       style={INPUT_STYLE_Orange_OBJ}
                     />
                   </div>
+                  </FieldBlock>
+
+                  <FieldBlock label="Output Schema" isRequired>
                   <div className="space-y-2">
-                    <FieldLabel required>Output Schema</FieldLabel>
+                 
                     <textarea
                       className={`${INPUT_STYLES} font-mono text-xs resize-none`}
                       rows={6}
@@ -558,6 +576,8 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                       style={INPUT_STYLE_Orange_OBJ}
                     />
                   </div>
+                    </FieldBlock>
+
                 </div>
               </div>
 

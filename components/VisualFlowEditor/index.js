@@ -8,6 +8,8 @@ import { convertToReactFlow, convertFromReactFlow, createDefaultNode, PositionSt
 import ToolEditor from "../ToolEditor";
 import ToolsList from "../ToolsList";
 
+import LeaveConfirmPopup from "./LeaveConfirmPopup"
+
 // ============================================================================
 // REMOVED: Inline ToolEditor and ToolsList - now using imported redesigned components
 // ============================================================================
@@ -29,6 +31,9 @@ export default function VisualFlowEditor({ assistantId, router }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const fileInputRef = useRef(null);
   const savePositionTimeoutRef = useRef(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showLeavePopup, setShowLeavePopup] = useState(false);
+
   // Tools state
   const [showToolsPanel, setShowToolsPanel] = useState(false);
   const [editingTool, setEditingTool] = useState(null);
@@ -122,6 +127,7 @@ useEffect(() => {
     const newNodeId = `node_${Date.now()}`;
     const newNode = createDefaultNode(newNodeId, Math.random() * 150 + 30, Math.random() * 150 + 30);
     setNodes(prev => [...prev, newNode]);
+    setHasUnsavedChanges(true); // ⬅️ Mark unsaved
   }, []);
 
   // Update node data
@@ -131,6 +137,7 @@ useEffect(() => {
         ? { ...node, data: { ...node.data, ...newData } }
         : node
     ));
+    setHasUnsavedChanges(true); // ⬅️ Mark unsaved
   }, []);
 
   // Auto-open/close sidebar based on node selection
@@ -236,6 +243,7 @@ useEffect(() => {
       const res = await flowsService.save(assistantId, payload);
       setMessage(res?.ok === false ? `Save failed: ${res.error || "error"}` : "Saved ✅");
       setTimeout(() => setMessage(""), 3000);
+      setHasUnsavedChanges(false);
     } catch (e) {
       setMessage(`Save failed: ${e.message}`);
     } finally {
@@ -433,13 +441,21 @@ useEffect(() => {
               {/* Back Button */}
               {router && (
                 <button
-                  onClick={() => router.push(`/assistants/${assistantId}`)}
+                  onClick={() => {
+                    if (hasUnsavedChanges) {
+                      setShowLeavePopup(true); // show popup instead of window.confirm
+                      return;
+                    }
+
+                    router.push(`/assistants/${assistantId}`);
+                  }}
                   className="p-0.5 text-white/60 hover:text-white transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
+
               )}
               {/* Title */}
               <h1 className="text-sm font-semibold text-white">
@@ -843,6 +859,17 @@ useEffect(() => {
 )}
 
       </div>
+      {showLeavePopup && (
+  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <LeaveConfirmPopup
+      onConfirm={() => {
+        router.push(`/assistants/${assistantId}`);
+      }}
+      onClose={() => setShowLeavePopup(false)}
+    />
+  </div>
+)}
+
     </div>
   );
 }

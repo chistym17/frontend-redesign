@@ -244,9 +244,7 @@ const QnAList = ({ assistantId, onEdit }) => {
                     <div className="w-32 h-32 bg-white/5 rounded-full flex items-center justify-center mx-auto animate-pulse">
                       <MessageSquare size={48} className="text-white/70" />
                     </div>
-                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '1s' }}>
-                      <Zap className="w-5 h-5 text-[#141A21] m-1.5" />
-                    </div>
+                
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-4">No Q&A entries yet</h3>
                   <p className="text-white/60 mb-8 max-w-md mx-auto">

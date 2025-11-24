@@ -198,7 +198,12 @@ const HeroSection = () => {
             ].map((feature, idx) => (
               <div
                 key={idx}
-                className="relative flex flex-col items-center p-6 gap-4 w-full max-w-[358px] h-[347px] bg-white/5 backdrop-blur-[10px] rounded-[32px] isolation-auto overflow-hidden border border-transparent mx-auto"                  style={{
+                 className="
+                    relative flex flex-col items-center 
+                    p-4 gap-4 w-full h-full
+                    bg-white/5 backdrop-blur-[10px]
+                    rounded-[32px] overflow-hidden border border-transparent"             
+                     style={{
                     backgroundImage: `
                       url('/images/card1.svg'),
                       radial-gradient(

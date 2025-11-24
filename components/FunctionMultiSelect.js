@@ -74,36 +74,33 @@ export default function FunctionMultiSelect({
           alignItems: "center",
           paddingLeft: "8px"
         }}>
-          {/* Select All Checkbox */}
-        <div className="relative shrink-0 ml-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={allSelected && allOptions.length > 0}
-            onChange={allSelected ? clearAll : selectAll}
-            className="absolute opacity-0 w-5 h-5 cursor-pointer peer"
-            id="select-all-header"
-          />
-          <label htmlFor="select-all-header">
-            <div
-              className="w-5 h-5 rounded-lg border-2 border-[#919EAB] bg-transparent transition-all shadow-sm relative hover:border-gray-300"
-            >
-              {allSelected && allOptions.length > 0 && (
-                <div className="absolute inset-1 bg-white rounded-sm" />
-              )}
-              {someSelected && !allSelected && (
-                <div className="absolute inset-1 bg-white/50 rounded-sm" />
-              )}
-            </div>
-          </label>
-        </div>
+         {/* Select All Checkbox */}
+          <div className="relative shrink-0 ml-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={allSelected && allOptions.length > 0}
+              onChange={allSelected ? clearAll : selectAll}
+              className="absolute opacity-0 w-3.5 h-3.5 cursor-pointer peer"
+              id="select-all-header"
+            />
+            <label htmlFor="select-all-header">
+              <div
+                className="w-3.5 h-3.5 rounded border-2 border-[#919EAB] bg-transparent transition-all shadow-sm relative hover:border-gray-300"
+              >
+                {allSelected && allOptions.length > 0 && (
+                  <div className="absolute inset-[2px] bg-white rounded-sm" />
+                )}
+                {someSelected && !allSelected && (
+                  <div className="absolute inset-[2px] bg-white/50 rounded-sm" />
+                )}
+              </div>
+            </label>
+          </div>
 
-          <span style={{
-            marginLeft: "8px",
-            fontWeight: 600,
-            fontSize: "14px",
-            textTransform: "uppercase",
-            color: "#FFFFFF"
-          }}>FUNCTION Name</span>
+        <span className="ml-2 font-semibold text-xs text-white uppercase">
+          Function Name
+        </span>
+
         </div>
         <div style={{
           width: "85px",
@@ -152,37 +149,40 @@ export default function FunctionMultiSelect({
             borderBottom: "1px dashed rgba(145, 158, 171, 0.2)"
             
           }}>
-            {/* Main Column */}
-            <div style={{
-              width: "193px",
-              display: "flex",
-              alignItems: "center",
-              paddingLeft: "8px"
-            }}>
+           {/* Main Column */}
+            <div
+              style={{
+                width: "193px",
+                display: "flex",
+                alignItems: "center",
+                paddingLeft: "8px"
+              }}
+            >
               <div className="relative shrink-0 ml-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={value.includes(name)}
-                onChange={() => toggle(name)}
-                className="absolute opacity-0 w-5 h-5 cursor-pointer peer"
-              />
+                <input
+                  type="checkbox"
+                  checked={value.includes(name)}
+                  onChange={() => toggle(name)}
+                  className="absolute opacity-0 w-3.5 h-3.5 cursor-pointer peer"
+                  id={`row-checkbox-${name}`}
+                />
 
-              <label onClick={() => toggle(name)}>
-                <div className="w-5 h-5 rounded-lg border-2 border-[#919EAB]  bg-transparent relative transition-all hover:border-gray-300">
+                <label htmlFor={`row-checkbox-${name}`}>
+                  <div className="w-3.5 h-3.5 rounded border-2 border-[#919EAB] bg-transparent relative transition-all hover:border-gray-300">
 
-                  {value.includes(name) && (
-                    <div className="absolute inset-1 bg-[#919EAB] rounded-sm" />
-                  )}
+                    {value.includes(name) && (
+                      <div className="absolute inset-[2px] bg-[#919EAB] rounded-sm" />
+                    )}
 
-                </div>
-              </label>
-            </div>
+                  </div>
+                </label>
+              </div>
 
-              <span style={{
-                marginLeft: "8px",
-                color: "#FFFFFF",
-                fontSize: "14px"
-              }}>{name}</span>
+
+
+             <span className="ml-2 text-xs text-white">
+              {name}
+            </span>
             </div>
 
        {/* Action Column */}

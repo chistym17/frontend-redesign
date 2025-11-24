@@ -252,7 +252,10 @@ export default function NotificationsGrid() {
           overflow: "hidden",
         }}
       >
-        <div className="w-full max-w-[74rem] h-[56px] bg-white/[0.05] border border-[rgba(145,158,171,0.2)] rounded-xl flex items-center justify-between px-2 mb-1 mt-1 gap-2">
+        <label className="self-start text-white font-semibold px-2 mb-2 mt-2 ml-1 py-1 text-xl">
+          Notifications
+        </label>
+        <div className="w-full max-w-[74rem] h-[56px]   rounded-xl flex items-center justify-between px-2 mb-1 mt-1 gap-2">
           {[{ label: "All" }, { label: "Unread" }, { label: "Archived" }].map(
             (item) => (
               <div

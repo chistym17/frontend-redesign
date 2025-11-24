@@ -34,6 +34,16 @@ const FieldLabel = ({ children }) => (
   <span className="text-[11px] font-semibold text-white/60">{children}</span>
 );
 
+const FieldBlock = ({ label, isRequired = false, children }) => (
+  <label className="block space-y-2 text-white/80 text-sm">
+    <span className="flex items-center gap-0 text-xs tracking-[0.2em] text-white/50">
+      {label}
+      {isRequired && <span className="text-red-400">*</span>}
+    </span>
+    {children}
+  </label>
+);
+
 const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
   const [body, setBody] = useState('{}');
   const [running, setRunning] = useState(false);
@@ -138,8 +148,9 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
       <div className="flex flex-col md:flex-row gap-4 md:gap-8">
         <SectionLabel title="Test Tool" />
         <div className="flex-1 space-y-4">
+
+          <FieldBlock label="Body (JSON)" isRequired>
           <div className="space-y-2">
-            <FieldLabel>Body (JSON)</FieldLabel>
             <textarea
               className={`${INPUT_STYLES} font-mono text-xs resize-none placeholder-orange-custom`}
               rows={4}
@@ -149,6 +160,7 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
               style={INPUT_STYLE_Orange_OBJ} // this keeps typed text orange too
             />
           </div>
+          </FieldBlock>
 
           <div className="flex items-center gap-3">
             <button
@@ -181,11 +193,13 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
       </div>
 
       {/* Test Results Section */}
+      
       <div className="flex flex-col md:flex-row gap-4 md:gap-8">
         <SectionLabel title="Test Results" />
         <div className="flex-1 space-y-4">
+          <FieldBlock label="Response" >
           <div className="space-y-2">
-            <FieldLabel>Response</FieldLabel>
+         
             <textarea
               className={`${INPUT_STYLES} font-mono text-xs resize-none`}
               rows={4}
@@ -195,15 +209,17 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
               style={INPUT_STYLE_OBJ}
             />
           </div>
+            </FieldBlock>
         </div>
       </div>
+    
 
       {/* Verification Checks Section */}
       <div className="flex flex-col md:flex-row gap-4 md:gap-8">
         <SectionLabel title="Verification Checks" />
         <div className="flex-1 space-y-4">
+           <FieldBlock label="Checks" >
           <div className="space-y-2">
-            <FieldLabel>Checks</FieldLabel>
             <textarea
               className={`${INPUT_STYLES} font-mono text-xs resize-none text-red-400`}
               rows={6}
@@ -212,6 +228,7 @@ const ToolVerifyPanel = ({ assistantId, tool, onVerified }) => {
               style={INPUT_STYLE_RED_OBJ}
             />
           </div>
+          </FieldBlock>
         </div>
       </div>
 

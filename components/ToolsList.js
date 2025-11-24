@@ -10,7 +10,7 @@ const StatusBadge = ({ is_verified }) => {
       style={{ backgroundColor: "rgba(19, 245, 132, 0.16)" }}
     >
       <span
-        className="w-[47px] h-[20px] text-[12px] font-bold leading-[20px] text-center text-[#9EFBCD]"
+        className="w-[47px] h-[20px] text-[12px] leading-[20px] text-center text-[#9EFBCD]"
       >
        Verified
       </span>
@@ -23,7 +23,7 @@ const StatusBadge = ({ is_verified }) => {
       style={{ backgroundColor: "rgba(255, 171, 0, 0.16)" }}
     >
       <span
-        className="w-[47px] h-[20px] text-[12px] font-bold leading-[20px] text-center text-[#FFD666]"
+        className="w-[47px] h-[20px] text-[12px]  leading-[20px] text-center text-[#FFD666]"
       >
         Pending 
       </span>
@@ -134,9 +134,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
             <div className="w-32 h-32 bg-white/5 rounded-full flex items-center justify-center mx-auto animate-pulse">
               <Wrench size={48} className="text-white/70" />
             </div>
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '1s' }}>
-              <Zap className="w-5 h-5 text-[#141A21] m-1.5" />
-            </div>
+        
           </div>
           <h3 className="text-2xl font-bold text-white mb-4">No tools yet</h3>
           <p className="text-white/60 mb-8 max-w-md mx-auto">
@@ -199,27 +197,27 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                         <div className="flex items-center gap-2">
                      
                           <div className="flex items-center gap-1">
-                            <span className="text-sm font-semibold text-white uppercase">Name</span>
-                            <ArrowDown size={18} className="text-white/60" />
+                            <span className="text-xs font-semibold text-white uppercase">Name</span>
+                            <ArrowDown size={16} className="text-white/60" />
                           </div>
                         </div>
                       </th>
                       <th className="px-4 py-4 text-left">
                         <div className="flex items-center gap-1">
-                          <span className="text-sm font-semibold text-white uppercase">API</span>
-                          <ArrowDown size={18} className="text-white/60" />
+                          <span className="text-xs font-semibold text-white uppercase">API</span>
+                          <ArrowDown size={16} className="text-white/60" />
                         </div>
                       </th>
                       <th className="px-4 py-4 text-left w-[200px]">
                         <div className="flex items-center gap-1">
-                          <span className="text-sm font-semibold text-white uppercase">Status</span>
-                          <ArrowDown size={18} className="text-white/60" />
+                          <span className="text-xs font-semibold text-white uppercase">Status</span>
+                          <ArrowDown size={16} className="text-white/60" />
                         </div>
                       </th>
                       <th className="px-4 py-4 text-left w-[125px]">
                         <div className="flex items-center gap-1">
-                          <span className="text-sm font-semibold text-white uppercase">State</span>
-                          <ArrowDown  size={18} className="text-white/60" />
+                          <span className="text-xs font-semibold text-white uppercase">State</span>
+                          <ArrowDown  size={16} className="text-white/60" />
                         </div>
                       </th>
                       <th className="px-4 py-4 text-left w-[125px]">
@@ -251,7 +249,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                         {/* API Column */}
                         <td className="px-4 py-4">
                           <div className="flex flex-col gap-1">
-                            <span className="text-sm font-medium text-white">{tool.method}</span>
+                            <span className="text-xs font-medium text-white">{tool.method}</span>
                             <span className="text-xs text-white/60">{tool.endpoint_url}</span>
                           </div>
                         </td>
@@ -303,7 +301,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                               style={{ backgroundColor: "rgba(19, 245, 132, 0.16)" }}
                               className="flex justify-center items-center px-[6px] py-0 gap-[6px] w-[50px] min-w-[24px] h-[24px] rounded-[4px] transition-colors"
                             >
-                              <span className="w-[38px] h-[20px] text-[12px] font-bold leading-[20px] text-center text-[#9EFBCD]">
+                              <span className="w-[38px] h-[20px] text-[12px] leading-[20px] text-center text-[#9EFBCD]">
                                 Config
                               </span>
                             </button>
@@ -312,7 +310,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                               style={{ backgroundColor: "rgba(255, 86, 48, 0.16)" }}
                               className="flex justify-center items-center px-[6px] py-0 gap-[6px] w-[50px] min-w-[24px] h-[24px] rounded-[4px] transition-colors"
                             >
-                              <span className="w-[38px] h-[20px] text-[12px] font-bold leading-[20px] text-center text-[#FFAC82]">
+                              <span className="w-[38px] h-[20px] text-[12px]  leading-[20px] text-center text-[#FFAC82]">
                                 Delete
                               </span>
                             </button>
