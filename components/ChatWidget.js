@@ -34,7 +34,7 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
   }, [streamingMessage]);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl shadow-black/30 backdrop-blur-xl">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5  backdrop-blur-xl">
       <style>{`
         @keyframes typing-wave {
           0%, 60%, 100% {
@@ -53,12 +53,43 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
       `}</style>
       
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/5 px-6 py-5">
-        <div className="flex items-center gap-4">
-          <div className="relative flex items-center justify-center">
-            <div className="absolute w-[36px] h-[36px] rounded-full bg-[#13F584] opacity-20 blur-[10px]"></div>
-            <div className="relative w-[36px] h-[36px] rounded-full bg-[rgba(19,245,132,0.1)] border border-[rgba(19,245,132,0.3)] flex items-center justify-center">
-              <Image src="/images/ai2.svg" alt="AI Assistant" width={36} height={36} />
+      <div className="flex flex-wrap items-center justify-between gap-4  px-6 py-4">
+          <div className="flex items-center gap-4">
+            <div className="relative flex items-center justify-center">
+              {/* Expanding Glow */}
+                <div className="
+                  absolute 
+                  w-[70px] 
+                  h-[70px] 
+                  rounded-full 
+                  bg-[radial-gradient(circle,rgba(19,245,132,0.6),rgba(19,245,132,0)_70%)]
+                  blur-[20px]
+                "></div>
+              
+              {/* Outer Ring */}
+                <div className="absolute w-[60px] h-[60px] rounded-full border border-[#13F584]/40"></div>
+              
+              {/* Main Circle */}
+                <div className="
+                  relative 
+                  w-[45px] 
+                  h-[45px] 
+                  rounded-full 
+                  border 
+                  border-[rgba(19,245,132,0.3)] 
+                  flex 
+                  items-center 
+                  justify-center
+                ">
+              
+              {/* The image */}
+                <Image
+                  src="/images/voiceAi.svg"
+                  alt="AI Assistant"
+                  width={45}
+                  height={45}
+                  className="relative z-10"
+                />
             </div>
           </div>
           <div>
@@ -72,25 +103,24 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
           {/* Session Management Buttons */}
           {(isConnected || isLoadingSession) && (
             <>
+           <div className="flex flex-row  gap-2 p-1 bg-white/5 rounded-lg w-max">
               <button
                 onClick={onStartNewSession}
                 disabled={isLoadingSession}
-                className="h-[30px] px-2 rounded-lg transition-all duration-200 flex items-center justify-center font-medium text-[11px] leading-[1.6923076923076923em] disabled:opacity-50 disabled:cursor-not-allowed bg-white/5 hover:bg-white/10"
-                style={{ 
-                  fontFamily: 'Public Sans, sans-serif',
-                  color: '#00A76F'
-                }}
+                className="h-[30px] px-2 rounded-[8px] bg-[rgba(19,245,132,0.08)] flex items-center justify-center font-public-sans font-bold text-[13px] leading-[22px] text-[#9EFBCD] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
                 Start New Session
               </button>
               <button
                 onClick={onLoadPreviousSession}
                 disabled={isLoadingSession}
-                className="h-[30px] px-2 text-white rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-200 flex items-center justify-center font-medium text-[11px] leading-[1.6923076923076923em] disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ fontFamily: 'Public Sans, sans-serif' }}
+                className="h-[30px] w-[110px] px-2 flex items-center justify-center  text-white font-public-sans font-bold text-[13px] leading-[22px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Load Previous
               </button>
+
+            </div>
+
             </>
           )}
         </div>
@@ -98,7 +128,7 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
 
       {/* Messages */}
       <div className="flex-1 overflow-hidden px-6 py-6">
-        <div className="h-full overflow-y-auto space-y-4 pr-2">
+        <div className="h-full overflow-y-auto space-y-4 pr-2 custom-scrollbar">
           {isLoadingSession ? (
             <div className="flex h-full items-center justify-center px-6">
               <div className="flex flex-col items-center gap-3">
@@ -122,13 +152,13 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
                   className={`flex gap-3 ${message.type === 'user' ? 'justify-end items-start' : 'justify-start items-start'}`}
                 >
                   {message.type === 'bot' && (
-                    <Image src="/images/ai2.svg" alt="AI" width={24} height={24} className="flex-shrink-0 self-start" />
+                    <Image src="/images/voiceAi.svg" alt="AI" width={24} height={24} className="flex-shrink-0 self-start" />
                   )}
                   <div
                     className={`max-w-[70%] rounded-xl px-3 py-2 self-start ${
                       message.type === 'user'
-                        ? 'bg-emerald-500/20 text-emerald-400 border-[0.5px] border-white/10'
-                        : 'bg-white/5 text-white border-[0.5px] border-white/10'
+                        ? 'bg-[rgba(19,245,132,0.12)] text-[#13F584] rounded-tl-xl rounded-tr-none rounded-bl-xl rounded-br-xl'
+                        : 'bg-white/5 text-[#FFBC33] rounded-tl-none rounded-tr-xl rounded-br-xl rounded-bl-xl'
                     }`}
                   >
                     <p className={`text-xs leading-relaxed ${
@@ -136,7 +166,9 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
                     }`}>{message.content}</p>
                   </div>
                   {message.type === 'user' && (
-                    <User size={14} className="text-emerald-400 mt-1 flex-shrink-0 self-start" />
+                    <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
+                      <User size={14} className="text-emerald-400" />
+                    </div>
                   )}
                 </div>
               ))}
@@ -144,7 +176,7 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
               {/* Streaming Message */}
               {streamingMessage && (
                 <div className="flex gap-3 justify-start items-start">
-                  <Image src="/images/ai2.svg" alt="AI" width={24} height={24} className="flex-shrink-0 self-start" />
+                  <Image src="/images/voiceAi.svg" alt="AI" width={24} height={24} className="flex-shrink-0 self-start" />
                   <div className="bg-white/5 rounded-xl px-3 py-2 max-w-[70%] border-[0.5px] border-white/10 self-start">
                     <p className="text-xs leading-relaxed text-white">
                       {streamingMessage}
@@ -157,7 +189,7 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
               {/* Typing Indicator */}
               {isTyping && !streamingMessage && (
                 <div className="flex gap-3 justify-start items-start">
-                  <Image src="/images/ai2.svg" alt="AI" width={24} height={24} className="flex-shrink-0 self-start" />
+                  <Image src="/images/voiceAi.svg" alt="AI" width={24} height={24} className="flex-shrink-0 self-start" />
                   <div className="bg-white/5 rounded-xl px-2 py-1.5 max-w-[70%] border-[0.5px] border-white/10 self-start">
                     <div className="flex items-center gap-1">
                       <div className="flex space-x-1">
@@ -174,10 +206,24 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
             </>
           )}
         </div>
+        <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.12);
+          border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+      `}</style>
       </div>
 
       {/* Input */}
-      <div className="flex-shrink-0 border-t border-white/5 px-6 pt-3 pb-3">
+      <div className="flex-shrink-0 px-6 pt-3 pb-3">
         <form onSubmit={handleSubmit} className="w-full">
           <div className="relative flex items-center w-full">
             <input
@@ -185,36 +231,36 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder={isConnected ? "Ask anything" : "Connecting to server..."}
-              className="w-full pl-3 pr-16 py-2 rounded-[66px] border-0 bg-white/[0.04] text-white placeholder:text-[#919EAB] focus:outline-none disabled:opacity-50 text-xs"
+              className="w-full pl-3 pr-16 h-16 rounded-[66px] border-0 bg-white/[0.04] text-white placeholder:text-[#919EAB] focus:outline-none disabled:opacity-50 text-xs"
               style={{ fontFamily: 'Public Sans, sans-serif', fontSize: '12px', lineHeight: '1.5714285714285714em' }}
               disabled={!isConnected || isTyping || streamingMessage}
             />
             <button
               type="submit"
               disabled={!inputMessage.trim() || isTyping || !isConnected || streamingMessage}
-              className="absolute right-1.5 h-7 px-2 rounded-[99px] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center font-medium"
+              className="absolute right-1.5 h-12 px-4 rounded-[99px] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center font-medium"
               style={{ 
                 fontFamily: 'Public Sans, sans-serif', 
-                fontSize: '10px', 
-                lineHeight: '1.7333333333333334em',
+                fontSize: '12px', 
+                lineHeight: '1.7333333em',
                 backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                border: '0.5px solid rgba(0, 167, 111, 0.24)',
-                color: '#00A76F'
+                border: '1px solid rgba(19, 245, 132, 0.16)',
+                color: '#13F584'
               }}
               onMouseEnter={(e) => {
                 if (!e.currentTarget.disabled) {
                   e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.16)';
-                  e.currentTarget.style.borderColor = 'rgba(0, 167, 111, 0.36)';
+                  e.currentTarget.style.borderColor = 'rgba(19, 245, 132, 0.32)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!e.currentTarget.disabled) {
                   e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
-                  e.currentTarget.style.borderColor = 'rgba(0, 167, 111, 0.24)';
+                  e.currentTarget.style.borderColor = 'rgba(19, 245, 132, 0.16)';
                 }
               }}
             >
-              <span>Send</span>
+              Send
             </button>
           </div>
         </form>

@@ -245,17 +245,17 @@ const ChatInterface = () => {
             <div className="flex flex-1 min-h-0 w-full max-w-[1800px] max-h-[900px] flex-col gap-[18px] overflow-hidden lg:flex-row lg:items-stretch">
               {/* Left Panel - Agent List */}
               <div className="flex min-h-0 w-full flex-shrink-0 flex-col lg:h-full lg:max-w-[280px]">
-                <div className="flex h-full w-full flex-col rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20 backdrop-blur-xl">
+                <div className="flex h-full w-full flex-col rounded-3xl border border-white/10 bg-white/5 p-5  backdrop-blur-xl">
                   <div className="flex items-center gap-3 pl-2">
                     <h3 className="text-sm font-medium text-white">Agent List</h3>
                   </div>
                   <div className="relative mt-4">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={16} />
+                    <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={18} />
                     <input
                       value={assistantSearch}
                       onChange={(e) => setAssistantSearch(e.target.value)}
-                      placeholder="Search agents"
-                      className="w-full rounded-2xl border border-white/5 bg-white/5 py-2.5 pl-10 pr-4 text-xs text-white placeholder:text-white/40 focus:border-emerald-400/40 focus:outline-none focus:ring-2 focus:ring-emerald-400/30"
+                      placeholder="Search contacts..."
+                      className="w-full h-55  rounded-[8px]  border-2 border-[rgba(145,158,171,0.2)] bg-transparent py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-white/40 focus:border-emerald-400/40 focus:outline-none focus:ring-2 focus:ring-emerald-400/30"
                       disabled={loadingAssistant}
                     />
                   </div>
@@ -271,7 +271,7 @@ const ChatInterface = () => {
                         ))}
                       </div>
                     ) : filteredAssistants.length ? (
-                      <div className="flex-1 space-y-2 overflow-y-auto pr-1 min-h-0">
+                      <div className="flex-1 space-y-2 overflow-y-auto pr-1 min-h-0 custom-scrollbar">
                         {filteredAssistants.map((assistant) => {
                           const isActive = assistantId === assistant.id;
                           return (
@@ -281,37 +281,33 @@ const ChatInterface = () => {
                               onClick={() => handleAssistantChange(assistant.id)}
                               className={`group flex w-full items-center justify-between rounded-xl px-2 py-1.5 text-left transition-all duration-200 ${
                                 isActive
-                                  ? "bg-emerald-500/20 shadow-md shadow-emerald-500/20"
-                                  : "bg-white/5 hover:bg-white/10"
+                                  ? "bg-white/5  hover:bg-white/10"
+                                  : "bg-transparent  hover:bg-white/10"
                               }`}
                             >
                               <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <div
-                                  className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-white/10 to-white/5 text-[9px] font-semibold ${
-                                    isActive ? "text-emerald-200" : "text-white/70"
-                                  }`}
-                                >
-                                  {(assistant.name ?? "?").slice(0, 2).toUpperCase()}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className={`text-[10px] font-medium truncate ${
-                                    isActive ? "text-[#00A76F]" : "text-white"
-                                  }`}>
-                                    {assistant.name || "Untitled Assistant"}
+                    
+                                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M27.846 14.4555L26.6665 13.8661C26.6665 7.97426 21.8905 3.19922 16 3.19922C10.1088 3.19922 5.33307 7.97426 5.33307 13.8661L4.15419 14.4555C3.62939 14.7179 3.19995 15.413 3.19995 15.9992V18.1327C3.19995 18.7189 3.62939 19.4139 4.15419 19.6763L5.33307 20.2658H6.93307V13.8661C6.93307 8.8661 11.0006 4.79922 16 4.79922C20.999 4.79922 25.0665 8.8661 25.0665 13.8661V22.3992C25.0665 25.0501 22.9177 27.1992 20.2665 27.1992H17.0665V25.5992H14.9331V28.7992H20.2665C23.8009 28.7992 26.6665 25.9336 26.6665 22.3992V20.2658L27.846 19.6763C28.3708 19.4139 28.7999 18.7189 28.7999 18.1327V15.9992C28.7999 15.413 28.3708 14.7179 27.846 14.4555Z" fill="#8E33FF"/>
+                                    <path d="M20.2665 11.2004H16.8V8.93351C17.4291 8.71911 17.8665 8.26471 17.8665 7.73351C17.8665 6.99719 17.0313 6.40039 16 6.40039C14.9686 6.40039 14.1331 6.99719 14.1331 7.73351C14.1331 8.26471 14.5705 8.72039 15.2 8.93351V11.2004H11.7331C9.96668 11.2004 8.53308 12.6337 8.53308 14.4004V18.667C8.53308 21.6106 10.9232 24.0004 13.8668 24.0004H18.1334C21.0771 24.0004 23.4665 21.6106 23.4665 18.667V14.4004C23.4665 12.6337 22.0332 11.2004 20.2665 11.2004ZM12.2668 16.5338V15.4673C12.2668 14.8772 12.7449 14.4004 13.3331 14.4004C13.9219 14.4004 14.4 14.8772 14.4 15.4673V16.5338C14.4 17.1245 13.9219 17.6004 13.3331 17.6004C12.7449 17.6004 12.2668 17.1245 12.2668 16.5338ZM18.6665 20.8004L16.5334 21.3338H15.4668L13.3331 20.8004V19.7338H18.6665V20.8004ZM19.7334 16.5338C19.7334 17.1245 19.2553 17.6004 18.6665 17.6004C18.078 17.6004 17.6 17.1245 17.6 16.5338V15.4673C17.6 14.8772 18.078 14.4004 18.6665 14.4004C19.2553 14.4004 19.7334 14.8772 19.7334 15.4673V16.5338Z" fill="#8E33FF"/>
+                                  </svg>
+
+                                  <div className="flex-1 min-w-0">
+                                    <div className="text-sm font-medium text-white truncate">
+                                      {assistant.name || "Untitled Assistant"}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                              <div
-                                className={`flex h-3 w-3 flex-shrink-0 items-center justify-center rounded-full border text-[7px] font-semibold transition-colors ${
-                                  isActive
-                                    ? "border-emerald-300 bg-emerald-500/80 text-white"
-                                    : "border-white/20 text-white/40 group-hover:border-emerald-200/40 group-hover:text-emerald-200"
-                                }`}
-                                aria-hidden="true"
-                              >
-                                {isActive ? "✓" : ""}
-                              </div>
-                            </button>
+                                <div
+                              className={`relative flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border-2 border-white/20 box-border transition-all`}
+                                  aria-hidden="true"
+                                >
+                                  {isActive && (
+                                    <div className="absolute h-4 w-4  rounded-full border-4 border-[#13F584] box-border" />
+                                  )}
+                                </div>
+
+                                  </button>
                           );
                         })}
                       </div>
@@ -322,6 +318,7 @@ const ChatInterface = () => {
                     )}
                   </div>
                 </div>
+                
               </div>
 
               {/* Right Panel - Chat Area */}
@@ -343,6 +340,20 @@ const ChatInterface = () => {
           </main>
         </div>
       </div>
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.12);
+          border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+      `}</style>
     </div>
   );
 };
