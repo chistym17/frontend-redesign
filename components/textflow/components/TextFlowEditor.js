@@ -10,11 +10,13 @@ import { useWebSocketStream } from "../hooks/useWebSocketStream.js";
 import ConfigPanel from "./ConfigPanel.js";
 import ConsolePanel from "./ConsolePanel.js";
 import TriggerManager from "./TriggerManager.js";
+import CreateCredentialModal from "./CreateCredentialModal";
 import TemplateGallery from "./TemplateGallery.js";
 import ComponentLibraryPanel from "./ComponentLibraryPanel.js";
+import CreateComponentModal from "./CreateComponentModal.js";
 import FlowChatbotPanel from "./FlowChatbotPanel.js";
 import ConnectorPanel from "./ConnectorPanel.js";
-import { Play, Save, Layers, Zap, Download, Upload, Key, Activity, Settings, Sparkles, Package, AlertCircle, CheckCircle, GripHorizontal, Bot, MessageSquare, Plug, Target, Globe, Brain, GitBranch, Clock, FileText, ArrowLeft, Search, X } from "lucide-react";
+import { Play, Save, Layers, Zap, Download, Upload, Key, Activity, Settings, Sparkles, Package, AlertCircle, CheckCircle, GripHorizontal, Bot, MessageSquare, Plug, Target, Globe, Brain, GitBranch, Clock, FileText, Search, X } from "lucide-react";
 
 const MINIBAR_ICONS = {
   components: "/textflow-icons/textflow_btn_1.png",
@@ -25,6 +27,76 @@ const MINIBAR_ICONS = {
   console: "/textflow-icons/textflow_btn_6.png",
   aiDefault: "/textflow-icons/textflow_btn_hover.png",
   aiActive: "/textflow-icons/textflow_btn_hover.png",
+};
+
+// Helper function to get Figma-style gradient and border for component icons
+const getComponentIconStyle = (type) => {
+  const styles = {
+    start: {
+      // Emerald/Teal
+      background: 'rgba(16, 185, 129, 0.1)',
+      borderColor: '#10B981',
+      borderWidth: '1.17px',
+      iconColor: '#10B981'
+    },
+    trigger: {
+      // Sky/Blue
+      background: 'rgba(0, 184, 217, 0.1)',
+      borderColor: '#00B8D9',
+      borderWidth: '1.17px',
+      iconColor: '#00B8D9'
+    },
+    http: {
+      // Yellow/Amber/Orange
+      background: 'rgba(255, 171, 0, 0.1)',
+      borderColor: '#FFAB00',
+      borderWidth: '0.39px',
+      iconColor: '#FFAB00'
+    },
+    llm: {
+      // Pink/Rose/Fuchsia
+      background: 'rgba(247, 28, 182, 0.1)',
+      borderColor: '#F71CB6',
+      borderWidth: '1.17px',
+      iconColor: '#F71CB6'
+    },
+    transform: {
+      // Purple/Violet/Indigo
+      background: 'rgba(139, 92, 246, 0.1)',
+      borderColor: '#8B5CF6',
+      borderWidth: '1.17px',
+      iconColor: '#8B5CF6'
+    },
+    conditional: {
+      // Cyan/Blue/Indigo
+      background: 'rgba(6, 182, 212, 0.1)',
+      borderColor: '#06B6D4',
+      borderWidth: '1.17px',
+      iconColor: '#06B6D4'
+    },
+    parallel: {
+      // Fuchsia/Purple/Blue
+      background: 'rgba(217, 70, 239, 0.1)',
+      borderColor: '#D946EF',
+      borderWidth: '1.17px',
+      iconColor: '#D946EF'
+    },
+    wait: {
+      // Slate
+      background: 'rgba(100, 116, 139, 0.1)',
+      borderColor: '#64748B',
+      borderWidth: '1.17px',
+      iconColor: '#64748B'
+    },
+    subflow: {
+      // Teal/Emerald/Green
+      background: 'rgba(20, 184, 166, 0.1)',
+      borderColor: '#14B8A6',
+      borderWidth: '1.17px',
+      iconColor: '#14B8A6'
+    }
+  };
+  return styles[type] || styles.transform;
 };
 
 const COMPONENT_OPTIONS = [
@@ -58,8 +130,12 @@ function FlowContent({ assistantId }) {
   });
   const [isEditingName, setIsEditingName] = useState(false);
   const [showTriggerManager, setShowTriggerManager] = useState(false);
+  const [showCreateCredentialModal, setShowCreateCredentialModal] = useState(false);
+  const [credentialRefreshKey, setCredentialRefreshKey] = useState(0);
   const [showTemplateGallery, setShowTemplateGallery] = useState(false);
   const [showComponentLibrary, setShowComponentLibrary] = useState(false);
+  const [showCreateComponentModal, setShowCreateComponentModal] = useState(false);
+  const [componentRefreshTrigger, setComponentRefreshTrigger] = useState(0);
   const [showConnectorPanel, setShowConnectorPanel] = useState(false);
   const [showComponentModal, setShowComponentModal] = useState(false);
   const [componentSearch, setComponentSearch] = useState("");
@@ -82,7 +158,7 @@ function FlowContent({ assistantId }) {
   const resizeStartHeight = useRef(0);
 
   const componentDropdownOffset = consoleCollapsed ? 140 : Math.min(consoleHeight + 160, 520);
-  const chatbotBottomOffset = consoleCollapsed ? 24 : consoleHeight + 24;
+  const chatbotBottomOffset = consoleCollapsed ? 24 : consoleHeight + 10;
   const filteredComponents = useMemo(() => {
     const query = componentSearch.trim().toLowerCase();
     if (!query) return COMPONENT_OPTIONS;
@@ -640,7 +716,9 @@ function FlowContent({ assistantId }) {
             className="text-white/70 hover:text-white transition-colors p-1"
             aria-label="Go back"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
           <div className="flex items-center gap-4">
             {isEditingName ? (
@@ -696,10 +774,10 @@ function FlowContent({ assistantId }) {
               </h1>
             )}
             <span
-              className={`text-[9px] font-medium uppercase tracking-[0.25em] px-2 py-0.5 rounded-md ${
+              className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-semibold font-["Public Sans",sans-serif] ${
                 isConnected()
-                  ? "bg-emerald-500/10 text-emerald-200"
-                  : "bg-white/5 text-white/70"
+                  ? "bg-[rgba(19,245,132,0.12)] text-[#9EFBCD]"
+                  : "bg-white/10 text-white/70"
               }`}
             >
               {isConnected() ? "Connected" : "Disconnected"}
@@ -708,19 +786,19 @@ function FlowContent({ assistantId }) {
         </div>
 
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
-          <p className={`text-xs ${flowActive ? 'text-emerald-300' : 'text-white/60'}`}>
+          <p className={`text-[10px] ${flowActive ? 'text-emerald-300' : 'text-white/60'}`}>
             {flowActive ? 'Active' : 'Disabled'}
           </p>
           <button
             type="button"
-            className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
+            className={`relative inline-flex h-5 w-10 items-center rounded-full border transition-colors ${
               flowActive ? 'bg-emerald-500/30 border-emerald-400/50' : 'bg-white/5 border-white/15'
             }`}
             onClick={() => setFlowActive((prev) => !prev)}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                flowActive ? 'translate-x-6' : 'translate-x-1'
+              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                flowActive ? 'translate-x-5' : 'translate-x-1'
               }`}
             />
           </button>
@@ -857,7 +935,7 @@ function FlowContent({ assistantId }) {
         {/* AI Chatbot Panel - Right Side */}
         {showChatbot && !chatbotMinimized && (
           <div
-            className="absolute right-0 top-0 w-[420px] flex-shrink-0 p-4 pl-0 z-20 pointer-events-none"
+            className="absolute right-0 top-4 w-[420px] flex-shrink-0 p-4 pl-0 z-20 pointer-events-none"
             style={{ bottom: `${chatbotBottomOffset}px` }}
           >
             <div className="relative h-full">
@@ -1077,9 +1155,8 @@ function FlowContent({ assistantId }) {
 
         {/* Resizable Console Panel */}
         <div 
-          className="absolute bottom-0 left-0 right-0 transition-all duration-300 overflow-hidden cursor-pointer z-20" 
+          className="absolute bottom-0 left-0 right-0 transition-all duration-300 overflow-hidden z-20" 
           style={{ height: consoleCollapsed ? '40px' : consoleHeight, paddingBottom: consoleCollapsed ? '0' : '1rem' }}
-          onClick={() => setConsoleCollapsed(!consoleCollapsed)}
         >
         {/* Resize Handle */}
         {!consoleCollapsed && (
@@ -1097,7 +1174,7 @@ function FlowContent({ assistantId }) {
         )}
         {!consoleCollapsed && (
           <div className="h-full pt-2">
-            <ConsolePanel />
+            <ConsolePanel onClose={() => setConsoleCollapsed(true)} />
           </div>
         )}
         </div>
@@ -1121,11 +1198,22 @@ function FlowContent({ assistantId }) {
 
       {/* Other Modals */}
       {showTriggerManager && (
-        <TriggerManager 
-          assistantId={assistantId} 
-          onClose={() => setShowTriggerManager(false)} 
+        <TriggerManager
+          assistantId={assistantId}
+          onClose={() => setShowTriggerManager(false)}
+          onOpenCreateCredential={() => setShowCreateCredentialModal(true)}
+          credentialsRefreshKey={credentialRefreshKey}
         />
       )}
+      <CreateCredentialModal
+        isOpen={showCreateCredentialModal}
+        onClose={() => setShowCreateCredentialModal(false)}
+        assistantId={assistantId}
+        onSuccess={() => {
+          setShowCreateCredentialModal(false);
+          setCredentialRefreshKey((prev) => prev + 1);
+        }}
+      />
 
       {showTemplateGallery && (
         <TemplateGallery
@@ -1142,6 +1230,21 @@ function FlowContent({ assistantId }) {
           nodeType={selectedNodeType}
           onSelectComponent={handleSelectComponent}
           onClose={() => setShowComponentLibrary(false)}
+          onOpenCreateModal={() => setShowCreateComponentModal(true)}
+          refreshTrigger={componentRefreshTrigger}
+        />
+      )}
+
+      {showCreateComponentModal && (
+        <CreateComponentModal
+          isOpen={showCreateComponentModal}
+          onClose={() => setShowCreateComponentModal(false)}
+          assistantId={assistantId}
+          nodeType={selectedNodeType}
+          onSuccess={() => {
+            // Trigger refresh of ComponentLibraryPanel
+            setComponentRefreshTrigger(prev => prev + 1);
+          }}
         />
       )}
 
@@ -1165,44 +1268,99 @@ function FlowContent({ assistantId }) {
           />
 
           <div
-            className="relative pointer-events-auto w-full max-w-[520px] px-4"
+            className="relative pointer-events-auto w-full max-w-[440px] px-4"
           >
             <div
-              className="rounded-3xl border border-white/12 bg-white/5 backdrop-blur-2xl shadow-[0_20px_80px_rgba(0,0,0,0.45)]"
+              className="rounded-[24px]"
+              style={{
+                background: 'rgba(255, 255, 255, 0.04)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                boxShadow: '0 20px 80px rgba(0, 0, 0, 0.45)',
+                height: '450px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '10px'
+              }}
             >
-              <div className="flex flex-col gap-3 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-white">Components</p>
-                  </div>
-                  <button
-                    onClick={() => setShowComponentModal(false)}
-                    className="h-8 w-8 rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/30 transition-colors flex items-center justify-center"
-                    title="Close"
+              {/* Header Section */}
+              <div
+                className="w-full flex items-center justify-between"
+                style={{ padding: '16px', gap: '32px' }}
+              >
+                <div className="flex-1">
+                  <p 
+                    className="text-white/90"
+                    style={{
+                      fontFamily: 'Public Sans, sans-serif',
+                      fontWeight: 500,
+                      fontSize: '14px',
+                      lineHeight: '1.4em',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em'
+                    }}
                   >
-                    <span className="sr-only">Close</span>
-                    <X className="h-4 w-4" />
-                  </button>
+                    Components
+                  </p>
+                </div>
                 </div>
 
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/40" />
+              {/* Search Section */}
+              <div
+                className="w-full"
+                style={{ padding: '0px 16px', gap: '24px', display: 'flex', flexDirection: 'column' }}
+              >
+                <div 
+                  className="w-full flex items-center"
+                  style={{
+                    borderRadius: '8px',
+                    borderColor: 'rgba(145, 158, 171, 0.2)',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    padding: '0px 12px',
+                    height: '32px'
+                  }}
+                >
+                  <div className="flex items-center" style={{ padding: '0px 8px 0px 0px' }}>
+                    <Search className="h-4 w-4 text-white/40" />
+                  </div>
                   <input
                     type="text"
                     value={componentSearch}
                     onChange={(e) => setComponentSearch(e.target.value)}
                     placeholder="Search components"
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 py-2.5 pl-10 pr-3 text-xs text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/20"
+                    className="flex-1 border-0 bg-transparent text-white placeholder:text-white/40 focus:outline-none"
+                    style={{
+                      fontFamily: 'Public Sans, sans-serif',
+                      fontWeight: 400,
+                      fontSize: '12px',
+                      lineHeight: '1.4em',
+                      padding: 0
+                    }}
                   />
                 </div>
+                </div>
 
+              {/* Component List */}
                 <div
-                  className="component-scroll max-h-[360px] overflow-y-auto pr-1 space-y-1.5"
-                  style={{ scrollbarWidth: "thin" }}
+                className="component-scroll w-full overflow-y-auto"
+                style={{
+                  padding: '0px 16px',
+                  gap: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '305px'
+                }}
                 >
                   {filteredComponents.length === 0 && (
-                    <div className="rounded-2xl border border-dashed border-white/10 bg-white/5 p-5 text-center text-xs text-white/60">
-                      No components match “{componentSearch}”.
+                  <div 
+                    className="rounded-2xl border border-dashed bg-white/5 p-5 text-center text-white/60"
+                    style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}
+                  >
+                    <p style={{ fontSize: '11px' }}>No components match "{componentSearch}".</p>
                     </div>
                   )}
 
@@ -1243,19 +1401,52 @@ function FlowContent({ assistantId }) {
                           setComponentSearch("");
                           setShowComponentModal(false);
                         }}
-                        className="w-full flex items-center gap-3 rounded-2xl bg-white/5 p-3 text-left transition-all hover:bg-white/10"
+                      className="w-full flex items-center text-left"
+                      style={{ gap: '7px' }}
                       >
-                        <div className={`h-11 w-11 rounded-2xl bg-gradient-to-br ${item.accent} flex items-center justify-center shadow-lg shadow-black/30`}>
-                          <Icon className="h-5 w-5 text-white" />
+                      <div 
+                        className="flex items-center justify-center relative"
+                        style={{
+                          width: '56px',
+                          padding: '9.33px',
+                          borderRadius: '12.44px',
+                          backdropFilter: 'blur(38.89px)',
+                          background: getComponentIconStyle(item.type).background,
+                          border: `${getComponentIconStyle(item.type).borderWidth} solid ${getComponentIconStyle(item.type).borderColor}`
+                        }}
+                      >
+                        <Icon 
+                          className="h-4 w-4" 
+                          style={{ color: getComponentIconStyle(item.type).iconColor }}
+                        />
                         </div>
-                        <div className="flex-1">
-                          <p className="text-[13px] font-medium text-white">{item.label}</p>
-                          <p className="text-[11px] text-white/60">{item.description}</p>
+                      <div className="flex-1 flex flex-col" style={{ gap: '4px' }}>
+                        <p 
+                          className="text-white"
+                          style={{
+                            fontFamily: 'Public Sans, sans-serif',
+                            fontWeight: 600,
+                            fontSize: '12px',
+                            lineHeight: '1.5714285714285714em'
+                          }}
+                        >
+                          {item.label}
+                        </p>
+                        <p 
+                          style={{
+                            fontFamily: 'Public Sans, sans-serif',
+                            fontWeight: 400,
+                            fontSize: '11px',
+                            lineHeight: '1.5em',
+                            color: '#919EAB'
+                          }}
+                        >
+                          {item.description}
+                        </p>
                         </div>
                       </button>
                     );
                   })}
-                </div>
               </div>
             </div>
           </div>
@@ -1263,21 +1454,23 @@ function FlowContent({ assistantId }) {
             dangerouslySetInnerHTML={{
               __html: `
                 .component-scroll::-webkit-scrollbar {
-                  width: 6px;
+                  width: 4px;
                 }
                 .component-scroll::-webkit-scrollbar-track {
                   background: transparent;
+                  margin: 28px 0;
+                  border-radius: 999px;
                 }
                 .component-scroll::-webkit-scrollbar-thumb {
-                  background: rgba(255,255,255,0.2);
+                  background: #454F5B;
                   border-radius: 999px;
-                  border-top: 10px solid transparent;
-                  border-bottom: 10px solid transparent;
+                  border-top: 14px solid transparent;
+                  border-bottom: 14px solid transparent;
                   background-clip: padding-box;
-                  min-height: 24px;
+                  min-height: 28px;
                 }
                 .component-scroll::-webkit-scrollbar-thumb:hover {
-                  background: rgba(255,255,255,0.35);
+                  background: #5a6673;
                 }
               `,
             }}

@@ -11,7 +11,8 @@ export default function VoiceFlowChatbotPanel({
   onPreviewFlow,
   sessionId,
   isMinimized,
-  onToggleMinimize
+  onToggleMinimize,
+  onCloseChatbot = null
 }) {
   const [messages, setMessages] = useState([
     {
@@ -156,8 +157,6 @@ export default function VoiceFlowChatbotPanel({
   };
 
   const handleClearHistory = async () => {
-    if (!confirm('Clear conversation history?')) return;
-
     try {
       await fetch(`${API_BASE}/voice-flow-chatbot/clear-history?session_id=${sessionId}`, {
         method: 'POST'
@@ -173,6 +172,13 @@ export default function VoiceFlowChatbotPanel({
     }
   };
 
+  const handleClearAndClose = async () => {
+    await handleClearHistory();
+    if (onCloseChatbot) {
+      onCloseChatbot();
+    }
+  };
+
   const exportFlow = (flow) => {
     const blob = new Blob([JSON.stringify(flow, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -183,9 +189,28 @@ export default function VoiceFlowChatbotPanel({
     URL.revokeObjectURL(url);
   };
 
-  // Minimized view - removed chat bubble icon
   if (isMinimized) {
-    return null;
+    return (
+      <div className="fixed bottom-4 right-4 z-50">
+        <button
+          onClick={onToggleMinimize}
+          className="w-16 h-16 rounded-full bg-white/5 border border-white/10 shadow-2xl flex items-center justify-center transition-all hover:scale-110"
+          style={{ backdropFilter: 'blur(8px)' }}
+        >
+          <div className="relative w-11 h-11 flex items-center justify-center">
+            <div className="absolute inset-0 rounded-2xl bg-[#13F584] opacity-40 blur-md" />
+            <div className="relative w-11 h-11 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center">
+              <Image src="/images/ai2.svg" alt="AI Assistant" width={28} height={28} priority />
+            </div>
+          </div>
+          {messages.length > 1 && (
+            <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white">
+              {messages.length - 1}
+            </div>
+          )}
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -222,19 +247,26 @@ export default function VoiceFlowChatbotPanel({
             <h3 className="text-lg font-semibold text-white" style={{ fontFamily: 'Public Sans' }}>AI Asistance</h3>
           </div>
         </div>
-        <button
-          onClick={onToggleMinimize}
-          className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors hover:bg-white/10"
-          style={{
-            background: 'rgba(19, 245, 132, 0.08)'
-          }}
-          title="Close"
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16.0202 11.4336H3.98021C3.18688 11.4336 2.54688 10.7936 2.54688 10.0002C2.54688 9.20689 3.18688 8.56689 3.98021 8.56689H16.0202C16.8135 8.56689 17.4535 9.20689 17.4535 10.0002C17.4535 10.7936 16.8135 11.4336 16.0202 11.4336Z" fill="white"/>
-          </svg>
-
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleClearAndClose}
+            className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors hover:bg-white/15 border border-white/10"
+            style={{ background: 'rgba(19, 245, 132, 0.08)' }}
+            title="Clear & Close"
+          >
+            <Trash2 className="w-4 h-4 text-white" />
+          </button>
+          {onToggleMinimize && (
+            <button
+              onClick={onToggleMinimize}
+              className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors hover:bg-white/15 border border-white/10"
+              style={{ background: 'rgba(19, 245, 132, 0.08)' }}
+              title="Minimize"
+            >
+              <Minimize2 className="w-4 h-4 text-white" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Messages */}

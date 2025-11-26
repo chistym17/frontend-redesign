@@ -335,32 +335,17 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
                             
                 
                   
-                  <FieldBlock label="Header (JSON)" isRequired>
-                  <div className="space-y-2">
-                    <textarea
-                      className={`${INPUT_STYLES} font-mono text-xs resize-none`}
-                      rows={4}
-                      value={JSON.stringify(
-                        form.headers.reduce((acc, h) => {
-                          if (h.key) acc[h.key] = h.value;
-                          return acc;
-                        }, {}),
-                        null,
-                        2
-                      )}
-                      onChange={e => {
-                        try {
-                          const parsed = JSON.parse(e.target.value);
-                          const headersArray = Object.entries(parsed).map(([key, value]) => ({ key, value: String(value) }));
-                          setForm(prev => ({ ...prev, headers: headersArray }));
-                        } catch {
-                          /* ignore */
-                        }
-                      }}
-                      placeholder='{"Content-Type": "application/json"}'
-                      style={INPUT_STYLE_Orange_OBJ}
-                    />
-                  </div>
+                  <FieldBlock label="Description">
+                    <div className="space-y-2">
+                      <textarea
+                        className={`${INPUT_STYLES} text-sm resize-none`}
+                        rows={4}
+                        value={form.description}
+                        onChange={e => update('description', e.target.value)}
+                        placeholder="Explain what this tool does and when the agent should call it"
+                        style={INPUT_STYLE_OBJ}
+                      />
+                    </div>
                   </FieldBlock>
 
 

@@ -33,32 +33,28 @@ export default function LeaveConfirmPopup({ onConfirm, onClose }) {
 
       <div className="flex gap-4 mt-4">
         <button
-          disabled={loading}
-          onClick={async () => {
-            setLoading(true);
-            await onConfirm();
-          }}
-          className="relative w-[150px] h-[35px] rounded-full bg-white/[0.05] border border-white/10 
-                     shadow-[inset_0_0_4px_rgba(239,214,255,0.25)] backdrop-blur-[10px] text-white 
-                     font-bold text-sm flex items-center justify-center transition hover:scale-[1.02] overflow-hidden mt-2"
-        >
-          <span className="absolute inset-0 rounded-full 
-                           bg-[radial-gradient(circle,rgba(255,200,100,0.5)_0%,transparent_70%)] blur-md" />
-          <span className="relative z-10">
-            {loading ? "Leaving..." : "Leave"}
-          </span>
-        </button>
+  disabled={loading}
+  onClick={async () => {
+    setLoading(true);
+    await onConfirm();
+  }}
+  className="w-[100px] h-[40px] px-3 py-0 flex items-center justify-center gap-2
+             text-[#FFC864] bg-[rgba(255,200,100,0.10)] rounded-lg font-bold text-sm
+             transition disabled:opacity-50"
+>
+  {loading ? "Leaving..." : "Leave"}
+</button>
+
 
         <button
-          onClick={onClose}
-          className="relative w-[150px] h-[35px] rounded-full bg-white/[0.05] border border-white/10 
-                     shadow-[inset_0_0_4px_rgba(239,214,255,0.25)] backdrop-blur-[10px] text-white 
-                     font-bold text-sm flex items-center justify-center transition hover:scale-[1.02] overflow-hidden mt-2"
-        >
-          <span className="absolute inset-0 rounded-full 
-                           bg-[radial-gradient(circle,rgba(99,175,255,0.5)_0%,transparent_70%)] blur-md" />
-          <span className="relative z-10">Stay</span>
-        </button>
+  onClick={onClose}
+  className="w-[100px] h-[40px] px-3 py-0 flex items-center justify-center
+             text-[#9EFBCD] bg-[rgba(19,245,132,0.08)] rounded-lg font-bold text-sm
+             transition hover:scale-[1.02]"
+>
+  Stay
+</button>
+
       </div>
     </div>
   );

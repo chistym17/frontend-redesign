@@ -597,17 +597,21 @@ useEffect(() => {
           />
         </div>
 
-      {/* AI Chatbot Panel - Right Side (Full or Minimized) */}
-      {showChatbot && (
-        <div className={`flex-shrink-0 ${chatbotMinimized ? 'w-0' : 'w-[420px]'} transition-all duration-300 p-4 pl-0 h-full`}>
+      {/* AI Chatbot Panel - Right Side (Full) */}
+      {showChatbot && !chatbotMinimized && (
+        <div className="flex-shrink-0 w-[420px] transition-all duration-300 p-4 pl-0 h-full">
           <VoiceFlowChatbotPanel
             assistantId={assistantId}
             currentFlow={getCurrentFlow()}
             onApplyFlow={handleApplyChatbotFlow}
             onPreviewFlow={handlePreviewChatbotFlow}
             sessionId={chatSessionId}
-            isMinimized={chatbotMinimized}
-            onToggleMinimize={() => setChatbotMinimized(!chatbotMinimized)}
+            isMinimized={false}
+            onToggleMinimize={() => setChatbotMinimized(true)}
+            onCloseChatbot={() => {
+              setShowChatbot(false);
+              setChatbotMinimized(false);
+            }}
           />
         </div>
       )}
@@ -656,6 +660,22 @@ useEffect(() => {
         )}
       </div>
       </div>
+
+      {showChatbot && chatbotMinimized && (
+        <VoiceFlowChatbotPanel
+          assistantId={assistantId}
+          currentFlow={getCurrentFlow()}
+          onApplyFlow={handleApplyChatbotFlow}
+          onPreviewFlow={handlePreviewChatbotFlow}
+          sessionId={chatSessionId}
+          isMinimized
+          onToggleMinimize={() => setChatbotMinimized(false)}
+          onCloseChatbot={() => {
+            setShowChatbot(false);
+            setChatbotMinimized(false);
+          }}
+        />
+      )}
 
       {/* Bottom Navigation Bar - Figma Design */}
       <div 

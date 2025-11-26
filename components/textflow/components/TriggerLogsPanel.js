@@ -67,10 +67,10 @@ export default function TriggerLogsPanel({ assistantId }) {
       {/* Header */}
       <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Activity className="w-4 h-4 text-emerald-400" />
-          <span className="text-sm font-semibold text-white">Trigger Logs</span>
+          <Activity className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="text-[11px] font-semibold text-white">Trigger Logs</span>
           <span 
-            className="text-xs text-gray-300 px-2 py-0.5 rounded-full"
+            className="text-[9px] text-gray-300 px-1.5 py-0.5 rounded-full"
             style={{
               background: 'rgba(255, 255, 255, 0.08)'
             }}
@@ -79,7 +79,7 @@ export default function TriggerLogsPanel({ assistantId }) {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <label className="flex items-center gap-1.5 text-xs text-gray-400 cursor-pointer hover:text-gray-300 transition-colors">
+          <label className="flex items-center gap-1.5 text-[10px] text-gray-400 cursor-pointer hover:text-gray-300 transition-colors">
             <input
               type="checkbox"
               checked={autoRefresh}
@@ -97,32 +97,32 @@ export default function TriggerLogsPanel({ assistantId }) {
             }}
             title="Refresh logs"
           >
-            <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-2.5 h-2.5 ${loading ? 'animate-spin' : ''}`} />
           </button>
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto p-3 space-y-2">
+      <div className="flex-1 overflow-auto p-2 space-y-1.5">
         {error && (
           <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-3 flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-            <span className="text-xs text-red-300">{error}</span>
+            <AlertCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5" />
+            <span className="text-[10px] text-red-300">{error}</span>
           </div>
         )}
 
         {loading && logs.length === 0 ? (
           <div className="flex items-center justify-center h-32">
             <div className="text-center">
-              <div className="w-8 h-8 border-2 border-gray-700 border-t-emerald-500 rounded-full animate-spin mx-auto mb-2"></div>
-              <div className="text-sm text-gray-400">Loading logs...</div>
+              <div className="w-7 h-7 border-2 border-gray-700 border-t-emerald-500 rounded-full animate-spin mx-auto mb-2"></div>
+              <div className="text-[11px] text-gray-400">Loading logs...</div>
             </div>
           </div>
         ) : logs.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
-            <Activity className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            <div className="text-sm font-medium mb-1">No trigger logs yet</div>
-            <div className="text-xs">Logs will appear when triggers execute</div>
+            <Activity className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <div className="text-[11px] font-medium mb-1">No trigger logs yet</div>
+            <div className="text-[10px]">Logs will appear when triggers execute</div>
           </div>
         ) : (
           logs.map((log) => {
@@ -133,7 +133,7 @@ export default function TriggerLogsPanel({ assistantId }) {
             return (
               <div
                 key={log.log_id}
-                className={`rounded-lg p-3 border transition-all hover:shadow-md ${
+                className={`rounded-lg p-2 border transition-all hover:shadow-md ${
                   log.status === "success"
                     ? "bg-emerald-950/20 border-emerald-800/50 hover:border-emerald-700/50"
                     : log.status === "failed"
@@ -144,29 +144,29 @@ export default function TriggerLogsPanel({ assistantId }) {
                 {/* Header Row */}
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className={`w-6 h-6 rounded-lg bg-${statusColor}-900/50 flex items-center justify-center`}>
-                      <TriggerIcon className={`w-3.5 h-3.5 text-${statusColor}-400`} />
+                    <div className={`w-5 h-5 rounded-lg bg-${statusColor}-900/50 flex items-center justify-center`}>
+                      <TriggerIcon className={`w-3 h-3 text-${statusColor}-400`} />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className={`text-xs font-semibold uppercase text-${statusColor}-400`}>
+                        <span className={`text-[9px] font-semibold uppercase text-${statusColor}-400`}>
                           {log.trigger_type}
                         </span>
-                        <StatusIcon className={`w-3 h-3 text-${statusColor}-400`} />
+                        <StatusIcon className={`w-2.5 h-2.5 text-${statusColor}-400`} />
                       </div>
-                      <div className={`text-[10px] text-${statusColor}-300 mt-0.5`}>
+                      <div className={`text-[8px] text-${statusColor}-300 mt-0.5`}>
                         {log.status}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="flex items-center gap-1 text-gray-500">
-                      <Clock className="w-3 h-3" />
-                      <span className="text-[10px]">
+                      <Clock className="w-2.5 h-2.5" />
+                      <span className="text-[9px]">
                         {new Date(log.created_at).toLocaleTimeString()}
                       </span>
                     </div>
-                    <div className="text-[10px] text-gray-600">
+                    <div className="text-[9px] text-gray-600">
                       {new Date(log.created_at).toLocaleDateString()}
                     </div>
                   </div>
@@ -174,10 +174,10 @@ export default function TriggerLogsPanel({ assistantId }) {
 
                 {/* Run ID */}
                 {log.run_id && (
-                  <div className="mb-2 flex items-center gap-2 text-xs">
+                  <div className="mb-2 flex items-center gap-2 text-[9px]">
                     <span className="text-gray-500">Run:</span>
                     <code 
-                      className="font-mono text-gray-300 px-2 py-0.5 rounded"
+                      className="font-mono text-gray-300 px-1.5 py-0.5 rounded"
                       style={{
                         background: 'rgba(255, 255, 255, 0.08)'
                       }}
@@ -189,9 +189,9 @@ export default function TriggerLogsPanel({ assistantId }) {
 
                 {/* Error Message */}
                 {log.error && (
-                  <div className="mb-2 p-2 bg-red-950/50 border border-red-800/30 rounded text-xs text-red-300">
+                  <div className="mb-2 p-2 bg-red-950/50 border border-red-800/30 rounded text-[9px] text-red-300">
                     <div className="font-semibold mb-1">Error:</div>
-                    <div className="font-mono text-[10px]">{log.error}</div>
+                    <div className="font-mono text-[8px]">{log.error}</div>
                   </div>
                 )}
 
@@ -203,15 +203,15 @@ export default function TriggerLogsPanel({ assistantId }) {
                       background: 'rgba(255, 255, 255, 0.08)'
                     }}
                   >
-                    <div className="text-[10px] text-gray-400 mb-1">Payload:</div>
-                    <div className="text-xs font-mono text-gray-300 truncate">
+                    <div className="text-[9px] text-gray-400 mb-1">Payload:</div>
+                    <div className="text-[9px] font-mono text-gray-300 truncate">
                       {log.payload_preview}
                     </div>
                   </div>
                 )}
 
                 {/* Source Info */}
-                <div className="flex items-center gap-3 text-[10px] text-gray-400 pt-2 border-t border-white/10">
+                <div className="flex items-center gap-3 text-[8px] text-gray-400 pt-2 border-t border-white/10">
                   {log.source_ip && (
                     <div className="flex items-center gap-1">
                       <span>IP:</span>

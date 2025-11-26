@@ -1,7 +1,6 @@
 // components/textflow/components/ComponentLibraryPanel.js - FULLY FIXED
 import React, { useState, useEffect } from "react";
-import { Copy, Trash2, Plus, X, Star, Code, Package, Check, AlertCircle } from "lucide-react";
-import Editor from "@monaco-editor/react";
+import { Copy, Trash2, X, Star, Package, Check, AlertCircle } from "lucide-react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'https://176.9.16.194:5403/api';
 
@@ -12,120 +11,136 @@ function ComponentCard({ component, onUse, onDelete }) {
     return null;
   }
 
-  const nodeTypeColors = {
-    http: "from-violet-400 to-purple-500",
-    llm: "from-pink-400 to-rose-500",
-    transform: "from-amber-400 to-orange-500",
-    conditional: "from-indigo-400 to-blue-500",
-    trigger: "from-blue-400 to-cyan-500",
+  // Utility function to truncate text
+  const truncateText = (text, max) => {
+    if (!text) return "";
+    return text.length > max ? text.substring(0, max) + "…" : text;
   };
 
-  const color = nodeTypeColors[component.node_type] || "from-gray-400 to-gray-500";
+  // Utility function to split title into two lines
+  const splitTitle = (title, firstLineWords = 3, restMax = 35) => {
+    const words = title.trim().split(/\s+/);
+    const firstLine = words.slice(0, firstLineWords).join(" ");
+    const remaining = words.slice(firstLineWords).join(" ");
+    return {
+      firstLine,
+      remaining: truncateText(remaining, restMax),
+    };
+  };
+
+  const { firstLine, remaining } = splitTitle(component.name || "Unnamed", 3, 35);
+  const descriptionText = truncateText(component.description || "No description provided", 60);
 
   return (
     <div 
-      className="rounded-xl border transition-all hover:shadow-lg overflow-hidden group"
+      className="rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg group node-card-surface flex flex-col min-h-[170px]"
       style={{
-        background: 'rgba(255, 255, 255, 0.06)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
         borderColor: 'rgba(255, 255, 255, 0.12)'
       }}
     >
-      <div className="p-4 space-y-3">
-        <div className="flex items-start gap-3">
-          <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${color} flex items-center justify-center flex-shrink-0`}>
-            <Code className="w-5 h-5 text-white" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-white truncate">{component.name || "Unnamed"}</h3>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs font-medium text-gray-200 uppercase tracking-wide">
+      <div className="p-3 space-y-2.5 flex-1 min-h-[100px] flex flex-col">
+        {/* Header */}
+        <div className="flex items-start gap-1.5">
+          <div className="flex-1 space-y-0.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="inline-flex px-1.5 py-0.5 rounded-full text-[9px] uppercase tracking-wide node-badge-immediate">
                 {component.node_type || "unknown"}
               </span>
               {component.category && (
                 <span 
-                  className="text-xs px-2 py-0.5 text-gray-100 rounded"
+                  className="px-1.5 py-0.5 rounded-full text-[9px]"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.08)'
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'rgba(255, 255, 255, 0.75)'
                   }}
                 >
                   {component.category}
                 </span>
               )}
             </div>
+            <h3 className="text-[12px] font-semibold text-white/90 leading-tight mt-1">
+              <span className="block">{firstLine}</span>
+              {remaining && <span className="block text-white/75">{remaining}</span>}
+            </h3>
+            <p className="text-[10px] text-white/60 line-clamp-2 leading-snug">
+              {descriptionText}
+            </p>
           </div>
             <button
               onClick={() => onDelete(component.component_id)}
-              className="p-1.5 hover:bg-red-600/20 text-gray-300 hover:text-red-400 rounded transition-all opacity-0 group-hover:opacity-100"
+            className="p-1.5 text-white/50 hover:text-red-400 transition-colors flex-shrink-0"
             title="Delete component"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {component.description && (
-          <p className="text-xs text-gray-200 line-clamp-2">{component.description}</p>
+        {/* Stats */}
+        <div className="flex items-center gap-1 text-[9px] text-white/55">
+          <span>{component.usage_count || 0} uses</span>
+          {component.rating && component.rating > 0 && (
+            <>
+              <span>·</span>
+              <span className="flex items-center gap-0.5">
+                <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+                {component.rating.toFixed(1)}
+              </span>
+            </>
         )}
+        </div>
 
+        {/* Tags */}
         {component.tags && Array.isArray(component.tags) && component.tags.length > 0 && (
-          <div className="flex gap-1 flex-wrap">
-            {component.tags.slice(0, 2).map((tag, idx) => (
+          <div className="flex items-center gap-0.5 flex-wrap">
+            {component.tags.slice(0, 3).map((tag, idx) => (
               <span
                 key={`${component.component_id}-tag-${idx}`}
-                className="text-[10px] px-2 py-0.5 rounded-full"
+                className="px-2 py-0.5 rounded-full text-[10px]"
                 style={{
-                  background: 'rgba(19, 245, 132, 0.16)',
-                  color: '#9EFBCD'
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: 'rgba(255, 255, 255, 0.75)'
                 }}
               >
                 {tag}
               </span>
             ))}
+            {component.tags.length > 3 && (
+              <span className="text-[10px] text-white/40">+{component.tags.length - 3}</span>
+            )}
           </div>
         )}
+      </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-white/10">
-          <div className="flex items-center gap-2 text-[10px] text-gray-200">
-            <span className="flex items-center gap-1">
-              <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
-              {(component.rating || 0).toFixed(1)}
-            </span>
-            <span>·</span>
-            <span>{component.usage_count || 0} uses</span>
-          </div>
+      {/* Actions */}
+      <div className="pt-2 border-t border-white/5 px-3 pb-3">
+        <div className="flex items-center gap-2 text-[10px] font-semibold">
+          <div className="flex-1 flex">
           <button
             onClick={() => onUse(component)}
-            className="px-3 py-1.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-lg text-xs font-medium transition-all flex items-center gap-1"
+              className="px-2.5 py-1.5 rounded-xl text-[10px] font-semibold transition-all text-left flex items-center gap-1"
+              style={{
+                background: "rgba(19, 245, 132, 0.12)",
+                color: "#9EFBCD",
+              }}
           >
             <Copy className="w-3 h-3" />
             Use
           </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectComponent, onClose }) {
+export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectComponent, onClose, onOpenCreateModal, refreshTrigger }) {
   const [components, setComponents] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedComponent, setSelectedComponent] = useState(null);
   const [filterByType, setFilterByType] = useState(nodeType || "all");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [renderError, setRenderError] = useState(null);
-
-  const [newComponent, setNewComponent] = useState({
-    name: "",
-    description: "",
-    node_type: nodeType || "http",
-    category: "",
-    tags: [],
-    config: {},
-    is_public: false
-  });
 
   const nodeTypes = ["http", "llm", "transform", "conditional", "trigger"];
 
@@ -137,6 +152,12 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
       setRenderError(err.message);
     }
   }, [filterByType]);
+
+  useEffect(() => {
+    if (refreshTrigger !== undefined && refreshTrigger !== null) {
+      loadComponents();
+    }
+  }, [refreshTrigger]);
 
   const loadComponents = async () => {
     try {
@@ -207,66 +228,6 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
     }
   };
 
-  const handleCreateComponent = async () => {
-    if (!newComponent.name.trim()) {
-      setError("Component name is required");
-      return;
-    }
-
-    // CRITICAL FIX: Validate config before sending
-    let configToSave = newComponent.config;
-    try {
-      if (typeof configToSave === 'string') {
-        configToSave = JSON.parse(configToSave);
-      }
-      if (!configToSave || typeof configToSave !== 'object') {
-        configToSave = {};
-      }
-    } catch (e) {
-      setError("Invalid JSON in configuration");
-      return;
-    }
-
-    try {
-      const urlString = `${API_BASE}/templates/component/create?assistant_id=${encodeURIComponent(assistantId)}`;
-      
-      const response = await fetch(urlString, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...newComponent,
-          config: configToSave
-        })
-      });
-
-      if (!response.ok) throw new Error("Failed to create component");
-
-      const data = await response.json();
-      
-      // Show warning if credentials were sanitized
-      if (data.sanitized) {
-        setSuccess("Component created! (Credentials removed from public component)");
-      } else {
-        setSuccess("Component created successfully!");
-      }
-      
-      setShowCreateModal(false);
-      setNewComponent({
-        name: "",
-        description: "",
-        node_type: nodeType || "http",
-        category: "",
-        tags: [],
-        config: {},
-        is_public: false
-      });
-      loadComponents();
-      
-      setTimeout(() => setSuccess(""), 3000);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
 
   const handleDeleteComponent = async (componentId) => {
     if (!window.confirm("Delete this component? This cannot be undone.")) return;
@@ -298,7 +259,7 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
       
       {/* Modal */}
       <div 
-        className="relative rounded-3xl w-full max-w-5xl h-[85vh] max-h-[85vh] shadow-2xl flex flex-col overflow-hidden"
+        className="relative rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
         style={{
           background: 'rgba(255, 255, 255, 0.04)',
           backdropFilter: 'blur(20px)',
@@ -306,60 +267,41 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
           border: '1px solid rgba(255, 255, 255, 0.12)'
         }}
       >
-        {/* Backdrop overlay to blur parent content when create modal is open */}
-        {showCreateModal && (
-          <div 
-            className="absolute inset-0 z-[50] backdrop-blur-md"
-            style={{
-              background: 'rgba(0, 0, 0, 0.3)',
-              pointerEvents: 'none'
-            }}
-          />
-        )}
-        
         {/* Header */}
-        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-              <Package className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-white">Component Library</h2>
-              <p className="text-xs text-gray-200">Reusable node configurations</p>
-            </div>
+        <div className="px-6 py-3 border-b border-white/10 flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-medium text-white/85 tracking-tight">Component Library</h2>
+            <p className="text-[10px] text-white/50">Reusable node configurations</p>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-lg text-sm font-medium transition-all flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              New Component
-            </button>
-            <button
-              onClick={onClose}
-              className="w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-colors"
-              title="Close"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
+          <button
+            onClick={() => onOpenCreateModal && onOpenCreateModal()}
+            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-center transition-all"
+            style={{
+              color: "#9EFBCD",
+              background: "rgba(19, 245, 132, 0.08)",
+            }}
+          >
+            New Component
+          </button>
         </div>
 
         {/* Filters */}
-        <div className="px-6 py-3 border-b border-white/10 flex items-center gap-3">
-          <span className="text-sm text-gray-200">Filter:</span>
-          <div className="flex gap-2 flex-wrap">
+        <div className="px-6 py-2 border-b border-white/10 flex items-center gap-3">
+          <div className="flex gap-1.5 flex-wrap">
             <button
               onClick={() => setFilterByType("all")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className="px-3 py-1 rounded-md text-[10px] font-semibold transition-all"
+              style={
                 filterByType === "all"
-                  ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white"
-                  : "text-gray-200 hover:text-gray-100"
-              }`}
-              style={filterByType !== "all" ? {
-                background: 'rgba(255, 255, 255, 0.08)'
-              } : {}}
+                  ? {
+                      background: "rgba(19, 245, 132, 0.08)",
+                      color: "#9EFBCD",
+                    }
+                  : {
+                      background: "rgba(255, 255, 255, 0.08)",
+                      color: "rgba(255,255,255,0.7)",
+                    }
+              }
             >
               All
             </button>
@@ -367,14 +309,18 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
               <button
                 key={type}
                 onClick={() => setFilterByType(type)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${
+                className="px-3 py-1 rounded-md text-[10px] font-semibold capitalize transition-all"
+                style={
                   filterByType === type
-                    ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white"
-                    : "text-gray-200 hover:text-gray-100"
-                }`}
-                style={filterByType !== type ? {
-                  background: 'rgba(255, 255, 255, 0.08)'
-                } : {}}
+                    ? {
+                        background: "rgba(19, 245, 132, 0.08)",
+                        color: "#9EFBCD",
+                      }
+                    : {
+                        background: "rgba(255, 255, 255, 0.08)",
+                        color: "rgba(255,255,255,0.7)",
+                      }
+                }
               >
                 {type}
               </button>
@@ -426,21 +372,16 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
             </div>
           ) : components.length === 0 ? (
             <div className="flex items-center justify-center h-64">
-              <div className="text-center">
-                <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                <div className="text-lg font-medium text-gray-200 mb-2">No components yet</div>
-                <p className="text-sm text-gray-300 mb-4">Create reusable node configurations</p>
-                <button
-                  onClick={() => setShowCreateModal(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white rounded-lg text-sm font-medium transition-all flex items-center gap-2 mx-auto"
-                >
-                  <Plus className="w-4 h-4" />
-                  Create Component
-                </button>
+              <div className="flex flex-col items-center text-center gap-1.5 translate-y-3">
+                <Package className="w-10 h-10 text-gray-500/80" />
+                <div className="text-sm font-semibold text-white/75">No components yet</div>
+                <p className="text-[11px] text-white/45 max-w-xs">
+                  Create reusable node configurations to speed up your flow building.
+                </p>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {components.map((component, index) => {
                 // SAFETY: Skip invalid components
                 if (!component || !component.component_id) {
@@ -472,261 +413,6 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
           )}
         </div>
 
-        {/* Create Component Modal */}
-        {showCreateModal && (
-          <div className="absolute inset-0 z-[60] flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <div 
-              className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
-              onClick={() => {
-                setShowCreateModal(false);
-                setError("");
-              }}
-            />
-            
-            {/* Modal */}
-            <div 
-              className="relative rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-auto shadow-2xl p-6 space-y-4"
-              style={{
-                background: 'rgba(20, 25, 35, 0.65)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-                border: '1.5px solid rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
-              }}
-            >
-              <div className="flex items-center justify-between sticky top-0 pb-4 border-b" style={{ background: 'rgba(20, 25, 35, 0.65)', borderColor: 'rgba(255, 255, 255, 0.15)' }}>
-                <h3 className="text-xl font-bold" style={{ color: 'rgba(255, 255, 255, 1)', fontWeight: 700 }}>Create Component</h3>
-                <button
-                  onClick={() => {
-                    setShowCreateModal(false);
-                    setError("");
-                  }}
-                  className="w-6 h-6 flex items-center justify-center transition-colors"
-                  style={{ color: 'rgba(255, 255, 255, 0.9)' }}
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {/* Name */}
-                <div>
-                  <label className="text-sm block mb-2" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>
-                    Component Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={newComponent.name}
-                    onChange={(e) => setNewComponent({...newComponent, name: e.target.value})}
-                    placeholder="My HTTP Request"
-                    className="w-full px-3 py-2 rounded-lg text-sm transition-colors focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.12)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      color: 'rgba(255, 255, 255, 1)',
-                      fontWeight: 500
-                    }}
-                  />
-                </div>
-
-                {/* Description */}
-                <div>
-                  <label className="text-sm block mb-2" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>
-                    Description
-                  </label>
-                  <textarea
-                    value={newComponent.description}
-                    onChange={(e) => setNewComponent({...newComponent, description: e.target.value})}
-                    placeholder="Describe what this component does..."
-                    rows={3}
-                    className="w-full px-3 py-2 rounded-lg text-sm transition-colors resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.12)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      color: 'rgba(255, 255, 255, 1)',
-                      fontWeight: 500
-                    }}
-                  />
-                </div>
-
-                {/* Node Type */}
-                <div>
-                  <label className="text-sm block mb-2" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>
-                    Node Type *
-                  </label>
-                  <select
-                    value={newComponent.node_type}
-                    onChange={(e) => setNewComponent({...newComponent, node_type: e.target.value})}
-                    className="w-full px-3 py-2 rounded-lg text-sm focus:border-indigo-500 transition-colors"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.12)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      color: 'rgba(255, 255, 255, 1)',
-                      fontWeight: 500
-                    }}
-                  >
-                    {nodeTypes.map(type => (
-                      <option key={type} value={type} style={{ background: 'rgba(20, 25, 35, 1)', color: '#FFFFFF' }}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Category */}
-                <div>
-                  <label className="text-sm block mb-2" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>
-                    Category
-                  </label>
-                  <input
-                    type="text"
-                    value={newComponent.category}
-                    onChange={(e) => setNewComponent({...newComponent, category: e.target.value})}
-                    placeholder="api, database, notification..."
-                    className="w-full px-3 py-2 rounded-lg text-sm focus:border-indigo-500 transition-colors"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.12)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      color: 'rgba(255, 255, 255, 1)',
-                      fontWeight: 500
-                    }}
-                  />
-                </div>
-
-                {/* Tags */}
-                <div>
-                  <label className="text-sm block mb-2" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>
-                    Tags (comma-separated)
-                  </label>
-                  <input
-                    type="text"
-                    value={
-                      Array.isArray(newComponent.tags) 
-                        ? newComponent.tags.join(", ") 
-                        : (typeof newComponent.tags === 'string' ? newComponent.tags : "")
-                    }
-                    onChange={(e) => {
-                      const value = e.target.value || "";
-                      const tagsArray = value.split(",").map(t => t.trim()).filter(Boolean);
-                      setNewComponent({
-                        ...newComponent, 
-                        tags: tagsArray
-                      });
-                    }}
-                    placeholder="rest, json, webhook"
-                    className="w-full px-3 py-2 rounded-lg text-sm focus:border-indigo-500 transition-colors"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.12)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      color: 'rgba(255, 255, 255, 1)',
-                      fontWeight: 500
-                    }}
-                  />
-                </div>
-
-                {/* Configuration JSON */}
-                <div>
-                  <label className="text-sm block mb-2" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>
-                    Configuration (JSON) *
-                  </label>
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.12)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)'
-                    }}
-                  >
-                    <Editor
-                      height="200px"
-                      defaultLanguage="json"
-                      value={JSON.stringify(newComponent.config || {}, null, 2)}
-                      onChange={(v) => {
-                        try {
-                          const valueToUse = (v === undefined || v === null) ? "{}" : v;
-                          const parsed = JSON.parse(valueToUse);
-                          setNewComponent({...newComponent, config: parsed});
-                          setError("");
-                        } catch (e) {
-                          console.log("Invalid JSON, ignoring:", e.message);
-                        }
-                      }}
-                      theme="vs-dark"
-                      options={{ 
-                        minimap: { enabled: false }, 
-                        fontSize: 13,
-                        fontWeight: '500',
-                        scrollBeyondLastLine: false,
-                        automaticLayout: true,
-                        lineHeight: 20
-                      }}
-                      onMount={(editor, monaco) => {
-                        console.log("Monaco Editor mounted successfully");
-                      }}
-                      onValidate={(markers) => {
-                        if (markers.length > 0) {
-                          console.log("Monaco validation markers:", markers);
-                        }
-                      }}
-                    />
-                  </div>
-                  <p className="text-xs mt-1" style={{ color: 'rgba(255, 255, 255, 0.8)', fontWeight: 500 }}>
-                    Example: {`{"method": "POST", "url": "https://api.example.com", "headers": {}}`}
-                  </p>
-                </div>
-
-                {/* Public Toggle with Warning */}
-                <div className="bg-yellow-950/20 border border-yellow-800/50 rounded-lg p-3">
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={newComponent.is_public}
-                      onChange={(e) => setNewComponent({...newComponent, is_public: e.target.checked})}
-                      className="rounded text-indigo-500 focus:ring-indigo-500 mt-0.5"
-                    />
-                    <div className="flex-1">
-                      <span className="text-sm block" style={{ color: 'rgba(255, 255, 255, 0.95)', fontWeight: 600 }}>Make Public</span>
-                      <p className="text-xs mt-1" style={{ color: 'rgba(251, 191, 36, 0.95)', fontWeight: 500 }}>
-                        Warning: Public components will have all credential IDs and sensitive data removed automatically
-                      </p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex gap-3 pt-4 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.2)' }}>
-                <button
-                  onClick={() => {
-                    setShowCreateModal(false);
-                    setError("");
-                  }}
-                  className="flex-1 px-4 py-2 rounded-lg text-sm transition-all"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.12)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    color: 'rgba(255, 255, 255, 1)',
-                    fontWeight: 600
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCreateComponent}
-                  disabled={!newComponent.name.trim()}
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 rounded-lg text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  style={{
-                    color: 'rgba(255, 255, 255, 1)',
-                    fontWeight: 600
-                  }}
-                >
-                  <Plus className="w-4 h-4" />
-                  Create Component
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

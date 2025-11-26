@@ -16,6 +16,9 @@ const ChatInterface = () => {
   const [ws, setWs] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [currentSessionId, setCurrentSessionId] = useState(null);
+  const [isLoadingSession, setIsLoadingSession] = useState(false);
+  const [loadingSessionType, setLoadingSessionType] = useState(null); // 'new' or 'previous'
+  const isLoadingSessionRef = useRef(false);
   const { assistantId, setAssistant } = useAssistant();
   
   // Assistant list state
@@ -43,7 +46,10 @@ const ChatInterface = () => {
 
     websocket.onopen = () => {
       console.log('Connected to chat WebSocket', sessionId ? `with session: ${sessionId}` : 'reusing previous session');
+      isLoadingSessionRef.current = false;
       setIsConnected(true);
+      setIsLoadingSession(false);
+      setLoadingSessionType(null);
       setWs(websocket);
       if (sessionId) {
         setCurrentSessionId(sessionId);
@@ -102,13 +108,21 @@ const ChatInterface = () => {
     websocket.onclose = () => {
       console.log('Disconnected from chat WebSocket');
       setIsConnected(false);
+      // Only reset loading state if we're not actively loading a session
+      // This prevents the header from disappearing during reconnection
+      if (!isLoadingSessionRef.current) {
+        setIsLoadingSession(false);
+      }
       setStreamingMessage(null);
       setWs(null);
     };
 
     websocket.onerror = (error) => {
       console.error('WebSocket error:', error);
+      isLoadingSessionRef.current = false;
       setIsConnected(false);
+      setIsLoadingSession(false);
+      setLoadingSessionType(null);
       setStreamingMessage(null);
     };
 
@@ -116,6 +130,9 @@ const ChatInterface = () => {
   };
 
   const startNewSession = () => {
+    isLoadingSessionRef.current = true;
+    setIsLoadingSession(true);
+    setLoadingSessionType('new');
     const newSessionId = `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     setMessages([]);
     setStreamingMessage(null);
@@ -123,6 +140,9 @@ const ChatInterface = () => {
   };
 
   const loadPreviousSession = () => {
+    isLoadingSessionRef.current = true;
+    setIsLoadingSession(true);
+    setLoadingSessionType('previous');
     setMessages([]);
     setStreamingMessage(null);
     setCurrentSessionId(null);
@@ -170,6 +190,13 @@ const ChatInterface = () => {
     let websocket = null;
     let reconnectTimeout = null;
 
+    // Set loading state when assistant changes
+    if (assistantId) {
+      isLoadingSessionRef.current = true;
+      setIsLoadingSession(true);
+      setLoadingSessionType('agent');
+    }
+
     const initialConnect = () => {
       websocket = connectWebSocket();
     };
@@ -211,24 +238,24 @@ const ChatInterface = () => {
       {/* Left Sidebar */}
       <LeftSidebar />
       
-      <div className="relative flex h-full flex-col overflow-hidden" style={{ marginLeft: isCollapsed ? '64px' : '192px' }}>
+      <div className="relative flex h-full flex-col overflow-hidden" style={{ marginLeft: isCollapsed ? '64px' : '105px' }}>
         <div className="flex h-full flex-col">
           <main className="flex h-full flex-1 flex-col overflow-hidden items-center justify-center p-6 lg:p-[60px_120px]">
             {/* Parent Container with margins (matching Figma design) */}
             <div className="flex flex-1 min-h-0 w-full max-w-[1800px] max-h-[900px] flex-col gap-[18px] overflow-hidden lg:flex-row lg:items-stretch">
               {/* Left Panel - Agent List */}
-              <div className="flex min-h-0 w-full flex-shrink-0 flex-col lg:h-full lg:max-w-[360px]">
+              <div className="flex min-h-0 w-full flex-shrink-0 flex-col lg:h-full lg:max-w-[280px]">
                 <div className="flex h-full w-full flex-col rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20 backdrop-blur-xl">
                   <div className="flex items-center gap-3 pl-2">
-                    <h3 className="text-lg font-semibold text-white">Agent List</h3>
+                    <h3 className="text-sm font-medium text-white">Agent List</h3>
                   </div>
                   <div className="relative mt-4">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={18} />
+                    <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={16} />
                     <input
                       value={assistantSearch}
                       onChange={(e) => setAssistantSearch(e.target.value)}
                       placeholder="Search agents"
-                      className="w-full rounded-2xl border border-white/5 bg-white/5 py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-white/40 focus:border-emerald-400/40 focus:outline-none focus:ring-2 focus:ring-emerald-400/30"
+                      className="w-full rounded-2xl border border-white/5 bg-white/5 py-2.5 pl-10 pr-4 text-xs text-white placeholder:text-white/40 focus:border-emerald-400/40 focus:outline-none focus:ring-2 focus:ring-emerald-400/30"
                       disabled={loadingAssistant}
                     />
                   </div>
@@ -252,28 +279,30 @@ const ChatInterface = () => {
                               key={assistant.id}
                               type="button"
                               onClick={() => handleAssistantChange(assistant.id)}
-                              className={`group flex w-full items-center justify-between rounded-xl border px-2.5 py-2 text-left transition-all duration-200 ${
+                              className={`group flex w-full items-center justify-between rounded-xl px-2 py-1.5 text-left transition-all duration-200 ${
                                 isActive
-                                  ? "border-emerald-400/60 bg-emerald-500/20 shadow-md shadow-emerald-500/20"
-                                  : "border-white/5 bg-white/5 hover:border-emerald-400/30 hover:bg-white/10"
+                                  ? "bg-emerald-500/20 shadow-md shadow-emerald-500/20"
+                                  : "bg-white/5 hover:bg-white/10"
                               }`}
                             >
                               <div className="flex items-center gap-2 flex-1 min-w-0">
                                 <div
-                                  className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-white/10 to-white/5 text-xs font-semibold ${
+                                  className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-white/10 to-white/5 text-[9px] font-semibold ${
                                     isActive ? "text-emerald-200" : "text-white/70"
                                   }`}
                                 >
                                   {(assistant.name ?? "?").slice(0, 2).toUpperCase()}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <div className="text-sm font-medium text-white truncate">
+                                  <div className={`text-[10px] font-medium truncate ${
+                                    isActive ? "text-[#00A76F]" : "text-white"
+                                  }`}>
                                     {assistant.name || "Untitled Assistant"}
                                   </div>
                                 </div>
                               </div>
                               <div
-                                className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border text-[8px] font-semibold transition-colors ${
+                                className={`flex h-3 w-3 flex-shrink-0 items-center justify-center rounded-full border text-[7px] font-semibold transition-colors ${
                                   isActive
                                     ? "border-emerald-300 bg-emerald-500/80 text-white"
                                     : "border-white/20 text-white/40 group-hover:border-emerald-200/40 group-hover:text-emerald-200"
@@ -287,7 +316,7 @@ const ChatInterface = () => {
                         })}
                       </div>
                     ) : (
-                      <div className="rounded-2xl border border-white/5 bg-white/5 px-4 py-10 text-center text-sm text-white/50">
+                      <div className="rounded-2xl border border-white/5 bg-white/5 px-4 py-10 text-center text-xs text-white/50">
                         No assistants matched your search.
                       </div>
                     )}
@@ -306,6 +335,8 @@ const ChatInterface = () => {
                   onStartNewSession={startNewSession}
                   onLoadPreviousSession={loadPreviousSession}
                   currentSessionId={currentSessionId}
+                  isLoadingSession={isLoadingSession}
+                  loadingSessionType={loadingSessionType}
                 />
               </div>
             </div>

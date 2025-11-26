@@ -196,7 +196,7 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
                   className="group-hover:rotate-90 transition-transform duration-300"
                   style={{ color: "#13F584" }}
                 />
-                Create Assistance
+                Create Assistant
               </button>
 
             </div>
