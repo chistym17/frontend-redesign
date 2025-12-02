@@ -7,7 +7,7 @@ const INPUT_BASE_CLASSES =
 
 const FieldBlock = ({ label, isRequired = false, children }) => (
   <label className="block space-y-2 text-white/80 text-sm">
-    <span className="flex items-center gap-0 text-xs tracking-[0.2em] text-white/50">
+    <span className="flex items-center gap-0 text-xs text-white/50">
       {label}
       {isRequired && <span className="text-red-400">*</span>}
     </span>
@@ -180,12 +180,16 @@ const AssistantProfileForm = ({ assistant = null, isOpen, onSave, onCancel }) =>
             {formData.business_meta.industry_type
               ? industryOptions.find((cat) => cat.value === formData.business_meta.industry_type)?.label
               : "Select Type"}
-            <span className="ml-2 text-xs opacity-70">▼</span>
+            <span className="ml-2 text-xs opacity-70">
+              <svg width="12" height="6" viewBox="0 0 12 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.8344 5.8344C5.63969 5.83478 5.45099 5.76696 5.30106 5.64273L0.301063 1.47606C-0.0533202 1.18151 -0.101823 0.655445 0.192729 0.301062C0.487281 -0.0533202 1.01335 -0.101823 1.36773 0.192729L5.8344 3.92606L10.3011 0.326063C10.4732 0.186254 10.694 0.120838 10.9145 0.1443C11.1351 0.167761 11.3372 0.278163 11.4761 0.451063C11.6303 0.624279 11.7054 0.85396 11.6833 1.08486C11.6612 1.31576 11.5438 1.52699 11.3594 1.66773L6.3594 5.69273C6.20516 5.79733 6.02031 5.8472 5.8344 5.8344Z" fill="#919EAB" fill-opacity="0.8"/>
+              </svg>
+            </span>
           </div>
 
           {/* Dropdown menu */}
           {dropdownOpen && (
-            <div className="absolute top-full left-0 w-full mt-1 bg-black/80 rounded-lg backdrop-blur-2xl shadow-[0_0_15px_rgba(0,0,0,0.4)] z-50 max-h-48 overflow-y-scroll">
+            <div className="absolute top-full left-0 w-full mt-1 bg-black/90 rounded-lg backdrop-blur-2xl shadow-[0_0_15px_rgba(0,0,0,0.4)] z-50 max-h-48 overflow-y-scroll">
               <style>{`
                 div::-webkit-scrollbar {
                   display: none;

@@ -476,9 +476,9 @@ useEffect(() => {
                   WebkitBackdropFilter: 'blur(10px)'
                 }}
               >
-                <option value="" className="bg-[#141A21]">Select initial node</option>
+                <option value="" className="bg-black/90 text-white">Select initial node</option>
                 {nodes.map(node => (
-                  <option key={node.id} value={node.data.id} className="bg-[#141A21]">
+                  <option key={node.id} value={node.data.id} className="bg-black/90 text-white">
                     {node.data.title || node.data.id}
                   </option>
                 ))}

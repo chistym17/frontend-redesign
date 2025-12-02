@@ -273,7 +273,10 @@ const QnAList = ({ assistantId, onEdit }) => {
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
                           <h4 className="text-lg font-semibold text-white mb-2 group-hover:text-emerald-300 transition-colors duration-300">
-                            {qa.question}
+                            {qa.question?.trim()
+                              ? qa.question.slice(0, 70) + (qa.question.length > 70 ? "..." : "")
+                              : "-"}
+
                           </h4>
                         </div>
 
@@ -309,9 +312,9 @@ const QnAList = ({ assistantId, onEdit }) => {
                       </div>
 
                       {/* Answer Section */}
-                      <div className="mb-4">
+                      <div className="mb-4 ">
                         <p className="text-sm text-white/70 leading-relaxed">
-                          {qa.answer.length > 200 ? qa.answer.slice(0, 300) + '...' : qa.answer}
+                          {qa.answer.length > 200 ? qa.answer.slice(0, 200) + '...' : qa.answer}
                         </p>
                       </div>
 
@@ -321,7 +324,7 @@ const QnAList = ({ assistantId, onEdit }) => {
                           <div className="flex items-center gap-2">
                             
                             <span className="w-[60px] h-[22px] text-sm leading-[22px] text-white/50">Category:</span>
-                            <div className=" bg-white/5 rounded-lg flex items-center justify-center border border-white/10 px-2 py-1">
+                            <div className=" bg-white/5 rounded-lg flex items-center justify-center  px-2 py-1">
                               <span className="text-sm text-white/70">{qa.category}</span>
                             </div>
                             
@@ -339,7 +342,7 @@ const QnAList = ({ assistantId, onEdit }) => {
                     <div className="flex justify-center pt-4">
                       <button
                         onClick={() => setShowAll(!showAll)}
-                        className="inline-flex items-center gap-2 px-4 py-2 border border-white/10 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white rounded-lg transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2  bg-white/5 hover:bg-white/10 text-white/70 hover:text-white rounded-lg transition-colors"
                       >
                         {showAll ? (
                           <>

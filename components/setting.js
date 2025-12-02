@@ -165,7 +165,7 @@ const Settings = () => {
                 className="flex-1 h-[22px] text-sm leading-[22px] text-white bg-transparent border-none outline-none placeholder:text-white"
             />
           {/* Label Focus */}
-         <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[40px] h-[9px] left-4 -top-3.5">
+         <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[40px] h-[9px] left-4 -top-4">
            
             <span className="w-[34px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">Name</span>
           </div>
@@ -181,7 +181,7 @@ const Settings = () => {
             className="flex-1 h-[22px] text-sm leading-[22px] text-white bg-transparent border-none outline-none placeholder:text-white"
           />
           {/* Label Focus */}
-          <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-3.5">
+          <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-4">
             
             <span className="w-[100px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">Phone Number</span>
           </div>
@@ -200,7 +200,7 @@ const Settings = () => {
             className="flex-1 h-[22px] text-sm leading-[22px] text-white bg-transparent border-none outline-none placeholder:text-white"
           />
           {/* Label Focus */}
-          <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-3.5">
+          <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-4">
            
             <span className="w-[47px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">Address</span>
           </div>
@@ -216,7 +216,7 @@ const Settings = () => {
           className="flex-1 h-[44px] text-sm leading-[22px] text-white bg-transparent border-none outline-none resize-none placeholder:text-white"
         ></textarea>
         {/* Label Focus */}
-        <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-3.5">
+        <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-4">
           
           <span className="w-[35px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">About</span>
         </div>
@@ -243,7 +243,7 @@ const Settings = () => {
               className="flex-1 h-[22px] text-sm leading-[22px] text-white bg-transparent border-none outline-none placeholder:text-white"
             />
             {/* Label Focus */}
-            <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-3.5">
+            <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-4">
       
               <span className="w-[32px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">Email</span>
             </div>
@@ -266,7 +266,7 @@ const Settings = () => {
               className="flex-1 h-[22px] text-sm leading-[22px] text-white bg-transparent border-none outline-none placeholder:text-white"
             />
             {/* Label Focus */}
-            <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-3.5">
+            <div className="absolute flex flex-row items-center p-0 px-1 isolate w-[100px] h-[9px] left-4 -top-4">
           
               <span className="w-[100px] h-[9px] text-xs leading-[12px] font-semibold text-[#919EAB]">Password</span>
             </div>

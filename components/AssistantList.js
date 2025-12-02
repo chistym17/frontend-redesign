@@ -286,8 +286,8 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
                           </div>
                           <div>
                             <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-emerald-300 transition-colors duration-300">
-                              {assistant.name?.slice(0, 30)}
-                              {assistant.name?.length > 30 && "..."}
+                              {assistant.name?.slice(0, 25)}
+                              {assistant.name?.length > 25 && "..."}
                             </h3>
                             <span className="inline-flex items-center h-6 bg-white/10 px-2 rounded-md text-[12px] font-bold text-white/70 capitalize ">
                               {assistant.business_meta?.industry_type || 'General'}
@@ -390,40 +390,42 @@ const AssistantList = ({ onEdit, onDelete, onView }) => {
                       {/* Overview */}
                       <div className="mb-4">
                         <div className="text-xs text-white/60 mb-1">Overview</div>
-                          <p className="text-white/70 text-sm leading-relaxed">
-                            {assistant.description?.slice(0, 300)} 
-                            {assistant.description?.length > 300 && "..."}
-                          </p>
+
+                        <p className="text-white/70 text-sm leading-relaxed min-h-[44px]">
+                          {assistant.description?.trim()
+                            ? assistant.description.slice(0, 100) +
+                              (assistant.description.length > 100 ? "..." : "")
+                            : "-"}
+                        </p>
                       </div>
+
 
                      {/* Info Box: Hours + Location */}
                       <div className="mb-6 bg-white/[0.04] border border-white/15 rounded-lg p-3">
                         <div className="flex flex-col gap-3">
 
-                          {assistant.business_meta?.operating_hours && (
                             <div className="flex flex-row gap-1">
                               <div className="text-xs text-[#919EAB]  ">Hours -</div>
                                 <div className="text-sm text-white flex items-center">
-                                  {assistant.business_meta?.operating_hours?.slice(0, 35)}
-                                  {assistant.business_meta?.operating_hours?.length > 35 && "..."}
+                                 {assistant.business_meta?.operating_hours?.trim()
+                                  ? assistant.business_meta.operating_hours.slice(0, 25) +
+                                    (assistant.business_meta.operating_hours.length > 25 ? "..." : "")
+                                  : "-"}
                                 </div>
                             </div>
-                          )}
-                          
-                          {assistant.business_meta?.address && (
+                       
                             <div className="flex flex-row gap-1">
                               <div className="text-xs text-[#919EAB] ">Location -</div>
                               <div className="text-sm text-white flex items-center">
                               
                                 <span className="truncate">
-                                      {assistant.business_meta?.address?.slice(0, 35)}
-                                      {assistant.business_meta?.address?.length > 35 && "..."}
+                                      {assistant.business_meta?.address?.trim()
+                                      ? assistant.business_meta.address.slice(0, 25) +
+                                        (assistant.business_meta.address.length > 25 ? "..." : "")
+                                      : "-"}
                                   </span>
                               </div>
                             </div>
-                          )}
-
-                        
 
                         </div>
                       </div>

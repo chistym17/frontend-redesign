@@ -360,14 +360,18 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
 
                       <div
                         onClick={() => setRowsDropdownOpen(!rowsDropdownOpen)}
-                        className="flex items-center justify-center bg-transparent text-white text-[12px] px-2 py-1 w-[40px] rounded-xl outline-none border border-white/[0.2] hover:bg-white/[0.1] transition-all cursor-pointer"
+                        className="flex items-center justify-center bg-transparent text-white text-[12px] px-2 py-1 w-[50px] rounded-xl outline-none border border-white/[0.2] hover:bg-white/[0.1] transition-all cursor-pointer"
                       >
                         {itemsPerPage === filteredTools.length ? "All" : itemsPerPage}
-                        <span className="ml-1 text-[10px]">▼</span>
+                        <span className="ml-1 text-[10px]">
+                          <svg width="12" height="6" viewBox="0 0 12 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.8344 5.8344C5.63969 5.83478 5.45099 5.76696 5.30106 5.64273L0.301063 1.47606C-0.0533202 1.18151 -0.101823 0.655445 0.192729 0.301062C0.487281 -0.0533202 1.01335 -0.101823 1.36773 0.192729L5.8344 3.92606L10.3011 0.326063C10.4732 0.186254 10.694 0.120838 10.9145 0.1443C11.1351 0.167761 11.3372 0.278163 11.4761 0.451063C11.6303 0.624279 11.7054 0.85396 11.6833 1.08486C11.6612 1.31576 11.5438 1.52699 11.3594 1.66773L6.3594 5.69273C6.20516 5.79733 6.02031 5.8472 5.8344 5.8344Z" fill="#919EAB" fill-opacity="0.8"/>
+                          </svg>
+                        </span>
                       </div>
 
                       {rowsDropdownOpen && (
-                        <div className="absolute left-[85px] top-full mt-[2px] w-[40px] bg-black/80  rounded-lg backdrop-blur-2xl z-50">
+                        <div className="absolute left-[85px] top-full mt-[2px] w-[50px] bg-black/80  rounded-lg backdrop-blur-2xl z-50">
                           {[5, 10, 20, "All"].map((option) => (
                             <div
                               key={option}
@@ -405,7 +409,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToFirstPage}
                         disabled={currentPage === 1 || totalPages === 0}
-                        className={`w-8 h-8 flex items-center justify-center rounded-[6px] transition-all ${
+                        className={`w-10 h-0 flex items-center justify-center rounded-lg transition-all text-2xl ${
                           currentPage === 1 ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >
@@ -416,7 +420,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToPreviousPage}
                         disabled={currentPage === 1 || totalPages === 0}
-                        className={`w-8 h-8 flex items-center justify-center rounded-[6px] transition-all ${
+                        className={`w-10 h-0 flex items-center justify-center rounded-lg transition-all text-2xl ${
                           currentPage === 1 ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >
@@ -427,7 +431,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToNextPage}
                         disabled={currentPage === totalPages || totalPages === 0}
-                        className={`w-8 h-8 flex items-center justify-center rounded-[6px] transition-all ${
+                        className={`w-10 h-0 flex items-center justify-center rounded-lg transition-all text-2xl ${
                           currentPage === totalPages ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >
@@ -438,7 +442,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToLastPage}
                         disabled={currentPage === totalPages || totalPages === 0}
-                        className={`w-8 h-8 flex items-center justify-center rounded-[6px] transition-all ${
+                        className={`w-10 h-0 flex items-center justify-center rounded-lg transition-all text-2xl ${
                           currentPage === totalPages ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >

@@ -7,7 +7,7 @@ const INPUT_BASE_CLASSES =
 
 const FieldBlock = ({ label, isRequired = false, children }) => (
   <label className="block space-y-2 text-white/80 text-sm">
-    <span className="flex items-center gap-0 text-xs tracking-[0.2em] text-white/50">
+    <span className="flex items-center gap-0 text-xs text-white/50">
       {label}
       {isRequired && <span className="text-red-400">*</span>}
     </span>

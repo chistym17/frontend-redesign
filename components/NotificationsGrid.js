@@ -247,7 +247,6 @@ export default function NotificationsGrid() {
           backgroundColor: "rgba(255,255,255,0.05)",
           borderRadius: "10px",
           border: "1px solid rgba(80,80,80,0.24)",
-          boxShadow: "inset 0 0 7px rgba(255,255,255,0.16)",
           backdropFilter: "blur(12px)",
           overflow: "hidden",
         }}
@@ -298,7 +297,6 @@ export default function NotificationsGrid() {
           backgroundColor: "rgba(255,255,255,0.05)",
           borderRadius: "10px",
           border: "1px solid rgba(80,80,80,0.24)",
-          boxShadow: "inset 0 0 7px rgba(255,255,255,0.16)",
           backdropFilter: "blur(12px)",
           overflow: "hidden",
         }}
