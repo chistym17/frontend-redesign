@@ -157,18 +157,18 @@ export default function ConditionTester() {
         </div>
       </div>
 
-      <button 
-        className="w-full px-3 py-1.5 text-xs font-semibold transition-all rounded-lg flex items-center justify-center gap-1.5" 
-        onClick={run}
-        style={{
-          background: 'rgba(99, 102, 241, 0.2)',
-          color: '#C7D2FE',
-          border: '1px solid rgba(99, 102, 241, 0.3)'
-        }}
-      >
-        <Play className="w-3 h-3" />
-        Test Condition
-      </button>
+      <div className="flex justify-end">
+        <button 
+          className="px-3 py-1.5 text-xs font-semibold text-white transition-all rounded-lg flex items-center justify-center gap-1.5" 
+          onClick={run}
+          style={{
+            border: '1px solid rgba(255, 255, 255, 0.32)'
+          }}
+        >
+          <Play className="w-3 h-3" />
+          Test Condition
+        </button>
+      </div>
 
       {result && (
         <div 

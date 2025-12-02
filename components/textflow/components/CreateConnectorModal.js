@@ -176,7 +176,7 @@ export default function CreateConnectorModal({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex flex-col gap-3 p-3">
+        <div className="flex flex-col gap-3 pt-5 px-3 pb-3">
           {/* Header */}
           <div className="flex items-center justify-between">
             <h3 
@@ -221,7 +221,7 @@ export default function CreateConnectorModal({
           >
             <button
               onClick={() => setMode('trace')}
-              className={`px-0 py-2 transition-all uppercase focus:outline-none ${
+              className={`px-0 py-2 transition-all focus:outline-none ${
                 mode === 'trace' 
                   ? 'text-[#13F584] border-b-2 border-[#13F584]' 
                   : 'text-[#919EAB] hover:text-gray-300'
@@ -237,7 +237,7 @@ export default function CreateConnectorModal({
             </button>
             <button
               onClick={() => setMode('openapi')}
-              className={`px-0 py-2 transition-all uppercase focus:outline-none ${
+              className={`px-0 py-2 transition-all focus:outline-none ${
                 mode === 'openapi' 
                   ? 'text-[#13F584] border-b-2 border-[#13F584]' 
                   : 'text-[#919EAB] hover:text-gray-300'

@@ -725,7 +725,12 @@ function TriggerConfig({ node, assistantId }) {
           <div className="flex gap-2">
             <button
               onClick={handleCreateSchedule}
-              className="flex-1 px-3 py-2 bg-purple-600/80 hover:bg-purple-600 text-white rounded-lg text-xs font-medium flex items-center justify-center gap-1 transition-all shadow-lg shadow-purple-500/20"
+              className="flex-1 px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-center gap-1 transition-all"
+              style={{
+                background: 'rgba(147, 51, 234, 0.08)',
+                border: '1px solid rgba(147, 51, 234, 0.4)',
+                color: '#E9D5FF'
+              }}
             >
               <Calendar className="w-3 h-3" />
               Create
@@ -1089,7 +1094,7 @@ export default function ConfigPanel({ assistantId }) {
   const renderHttpNodeConfig = () => {
     return (
       <div className="space-y-4">
-        {/* HTTP Mode Selector - FIXED */}
+        {/* HTTP Mode Selector - tab style like header tabs */}
         <div 
           className="rounded-xl p-4 border backdrop-blur"
           style={{
@@ -1097,42 +1102,43 @@ export default function ConfigPanel({ assistantId }) {
             borderColor: 'rgba(255, 255, 255, 0.12)'
           }}
         >
-          <div className="flex items-center gap-2 mb-3">
-            <Globe className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs font-semibold text-white">HTTP Configuration Mode</span>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs font-semibold text-white">HTTP Configuration Mode</span>
+            </div>
             {/* DEBUG INFO (remove after testing) */}
-            <span className="ml-auto text-[10px] text-gray-500 font-mono">
+            <span className="ml-4 text-[10px] text-gray-500 font-mono">
               Mode: {httpMode} | Connector: {selectedConnector ? 'YES' : 'NO'} | Loaded: {connectorLoaded ? 'YES' : 'NO'}
             </span>
           </div>
-          <div 
-            className="flex gap-2 rounded-lg p-1"
-            style={{
-              background: 'rgba(255, 255, 255, 0.08)'
-            }}
-          >
-            <button
-              onClick={handleSwitchToConnector}
-              className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-all ${
-                httpMode === 'connector'
-                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg'
-                  : 'text-gray-400 hover:text-gray-300'
-              }`}
-            >
-              <Plug className="w-3 h-3 inline mr-1" />
-              Use Connector
-            </button>
+
+          {/* Tabs */}
+          <div className="flex gap-6 border-b border-white/10 mb-2">
             <button
               onClick={handleSwitchToTraditional}
-              className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-all ${
-                httpMode === 'traditional'
-                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg'
-                  : 'text-gray-400 hover:text-gray-300'
+              className={`px-0 py-2 text-[11px] font-medium transition-all ${
+                httpMode === 'traditional' 
+                  ? 'text-[#13F584] border-b-2 border-[#13F584]' 
+                  : 'text-gray-400 hover:text-gray-300 border-b-2 border-transparent'
               }`}
+              style={{ height: '28px' }}
             >
               Traditional
             </button>
+            <button
+              onClick={handleSwitchToConnector}
+              className={`px-0 py-2 text-[11px] font-medium transition-all ${
+                httpMode === 'connector' 
+                  ? 'text-[#13F584] border-b-2 border-[#13F584]' 
+                  : 'text-gray-400 hover:text-gray-300 border-b-2 border-transparent'
+              }`}
+              style={{ height: '28px' }}
+            >
+              Use Connector
+            </button>
           </div>
+
           <div className="mt-2 text-xs text-gray-500">
             {httpMode === 'connector' 
               ? '🔌 Using API connector with pre-configured endpoints'
@@ -1616,7 +1622,7 @@ export default function ConfigPanel({ assistantId }) {
         <div className="flex gap-6 pb-0">
           <button
             onClick={() => setActiveTab('config')}
-            className={`px-0 py-2 text-xs font-medium transition-all uppercase ${
+            className={`px-0 py-2 text-xs font-medium transition-all ${
               activeTab === 'config' 
                 ? 'text-[#13F584] border-b-2 border-[#13F584]' 
                 : 'text-gray-400 hover:text-gray-300'
@@ -1627,7 +1633,7 @@ export default function ConfigPanel({ assistantId }) {
           </button>
           <button
             onClick={() => setActiveTab('advanced')}
-            className={`px-0 py-2 text-xs font-medium transition-all uppercase ${
+            className={`px-0 py-2 text-xs font-medium transition-all ${
               activeTab === 'advanced' 
                 ? 'text-[#13F584] border-b-2 border-[#13F584]' 
                 : 'text-gray-400 hover:text-gray-300'
@@ -1830,7 +1836,7 @@ export default function ConfigPanel({ assistantId }) {
                 borderColor: 'rgba(255, 255, 255, 0.1)'
               }}
             >
-              <div className="text-xs font-semibold text-white mb-2 uppercase tracking-wide">Node ID</div>
+              <div className="text-[10px] font-semibold text-white mb-2 uppercase tracking-wide">Node ID</div>
               <div 
                 className="text-xs font-mono text-white p-3 rounded-lg break-all select-all"
                 style={{
@@ -1854,9 +1860,9 @@ export default function ConfigPanel({ assistantId }) {
                 borderColor: 'rgba(255, 255, 255, 0.1)'
               }}
             >
-              <div className="text-xs font-semibold text-white mb-3 uppercase tracking-wide">Position</div>
+              <div className="text-[10px] font-semibold text-white mb-3 uppercase tracking-wide">Position</div>
               <div 
-                className="text-sm text-white space-y-2 p-3 rounded-lg"
+                className="text-xs text-white space-y-2 p-3 rounded-lg"
                 style={{
                   background: 'rgba(255, 255, 255, 0.04)',
                   backdropFilter: 'blur(10px)',
@@ -1876,21 +1882,21 @@ export default function ConfigPanel({ assistantId }) {
               </div>
             </div>
 
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(JSON.stringify(config, null, 2));
-              }}
-              className="w-full px-3 py-2.5 text-white rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2"
-              style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
-              }}
-            >
-              <Copy className="w-4 h-4" />
-              Copy Config
-            </button>
+            <div className="flex justify-end">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(JSON.stringify(config, null, 2));
+                }}
+                className="px-2.5 py-1.5 rounded-lg text-[10px] font-semibold text-white transition-all flex items-center gap-1.5"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)'
+                }}
+              >
+                <Copy className="w-3 h-3" />
+                Copy config
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -1908,23 +1914,20 @@ export default function ConfigPanel({ assistantId }) {
             lineHeight: '1.5em'
           }}
         >
-          <Copy className="w-3 h-3" />
-          Duplicate Node
+          Duplicate
         </button>
         <button
           onClick={handleDelete}
           className="px-3 py-1.5 text-xs font-semibold transition-all rounded-lg flex items-center justify-center gap-1.5"
           style={{
-            background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.8) 0%, rgba(185, 28, 28, 0.8) 100%)',
-            color: '#FFFFFF',
+            background: 'rgba(255, 86, 48, 0.08)',
+            color: '#FFAC82',
             height: '28px',
             fontSize: '11px',
-            lineHeight: '1.5em',
-            boxShadow: '0 4px 14px 0 rgba(220, 38, 38, 0.2)'
+            lineHeight: '1.5em'
           }}
         >
-          <Trash2 className="w-3 h-3" />
-          Delete Node
+          Delete
         </button>
       </div>
     </div>

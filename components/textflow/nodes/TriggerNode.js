@@ -41,8 +41,8 @@ export default function TriggerNode({ id, data, selected }) {
   return (
     <div
       onClick={() => setSelection(id)}
-      className={`px-2 py-1.5 min-w-[110px] rounded-lg border-2 ${colors.border} bg-gradient-to-br from-gray-800 to-gray-900 shadow-lg cursor-pointer transition-all hover:shadow-xl hover:${colors.glow} ${
-        selected ? `ring-2 ${ringColor} ring-offset-2 ring-offset-gray-950` : ""
+      className={`px-2 py-1.5 min-w-[110px] rounded-lg border ${colors.border} bg-gradient-to-br from-gray-800 to-gray-900 shadow-lg cursor-pointer transition-all hover:shadow-xl hover:${colors.glow} ${
+        selected ? `ring-1 ${ringColor} ring-offset-2 ring-offset-gray-950` : ""
       }`}
     >
       <div className="flex items-center gap-1 mb-0.5">

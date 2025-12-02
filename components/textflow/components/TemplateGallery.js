@@ -465,7 +465,7 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
       {templateToDelete && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-transparent"
             onClick={() => {
               if (!deleteLoading) {
                 setTemplateToDelete(null);
@@ -560,7 +560,7 @@ export default function TemplateGallery({ assistantId, onSelectTemplate, onClose
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
+        className="absolute inset-0 bg-transparent" 
         onClick={onClose} 
       />
       

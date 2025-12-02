@@ -293,7 +293,7 @@ function FlowContent({ assistantId }) {
     // Fit view to show all nodes when they change
     if (tf.flow.nodes.length > 0) {
       setTimeout(() => {
-        fitView({ padding: 0.2, duration: 300 });
+        fitView({ padding: 0.1, duration: 300 });
       }, 100);
     }
   }, [tf.flow.nodes, fitView]);
@@ -666,7 +666,7 @@ function FlowContent({ assistantId }) {
   const selectedNode = nodes.find(n => n.id === tf.selection);
 
   return (
-    <div className="h-screen flex bg-[#141A21] relative">
+    <div className="h-full flex bg-[#141A21] relative">
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Notification Toast */}
@@ -786,33 +786,25 @@ function FlowContent({ assistantId }) {
         </div>
 
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
-          <p className={`text-[10px] ${flowActive ? 'text-emerald-300' : 'text-white/60'}`}>
+          <p className={`text-xs ${flowActive ? 'text-emerald-300' : 'text-white/60'}`}>
             {flowActive ? 'Active' : 'Disabled'}
           </p>
           <button
             type="button"
-            className={`relative inline-flex h-5 w-10 items-center rounded-full border transition-colors ${
+            className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
               flowActive ? 'bg-emerald-500/30 border-emerald-400/50' : 'bg-white/5 border-white/15'
             }`}
             onClick={() => setFlowActive((prev) => !prev)}
           >
             <span
-              className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
-                flowActive ? 'translate-x-5' : 'translate-x-1'
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                flowActive ? 'translate-x-6' : 'translate-x-1'
               }`}
             />
           </button>
         </div>
 
         <div className="flex items-center gap-1">
-            <button
-              onClick={handleSave}
-              disabled={loading}
-              className="px-2 py-1 text-xs font-bold text-[#13F584] border border-[#13F584] rounded-lg bg-transparent hover:bg-[#13F584]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
-            >
-              <Save className="w-4 h-4 text-[#13F584]" />
-              <span>{saveStatus || "Save"}</span>
-            </button>
             <button
               onClick={handleRun}
               disabled={!nodes.length || !isConnected()}
@@ -821,7 +813,18 @@ function FlowContent({ assistantId }) {
                 border: "2px solid rgba(145, 158, 171, 0.32)",
               }}
             >
-              <Play className="w-4 h-4" />
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.16675 9.99884V5.66808C4.16675 3.8738 6.10947 2.75139 7.66156 3.64984L11.4142 5.81652L15.1668 7.9832C16.7215 8.87904 16.7215 11.1238 15.1668 12.0197L11.4142 14.1864L7.66156 16.353C6.10947 17.2463 4.16675 16.1265 4.16675 14.3322V9.99884Z"
+                  fill="white"
+                />
+              </svg>
               Run
             </button>
             <button
@@ -846,6 +849,25 @@ function FlowContent({ assistantId }) {
               <Download className="w-4 h-4" />
               <span>Export</span>
             </button>
+            <button
+              onClick={handleSave}
+              disabled={loading}
+              className="px-2 py-1 text-xs font-bold text-[#13F584] border border-[#13F584] rounded-lg bg-transparent hover:bg-[#13F584]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M16.0154 5.01013L14.9899 3.98464C14.5733 3.56736 14.0083 3.3335 13.4188 3.3335H4.86106C4.01715 3.3335 3.33325 4.0174 3.33325 4.86131V15.139C3.33325 15.9829 4.01715 16.6668 4.86106 16.6668H15.1388C15.9827 16.6668 16.6666 15.9829 16.6666 15.139V6.58128C16.6666 5.99178 16.4327 5.4268 16.0154 5.01013ZM5.55544 6.80568V5.41683C5.55544 5.18683 5.74211 5.00016 5.97211 5.00016H11.8054C12.0354 5.00016 12.2221 5.18683 12.2221 5.41683V6.80568C12.2221 7.03569 12.0354 7.22235 11.8054 7.22235H5.97211C5.74211 7.22235 5.55544 7.03569 5.55544 6.80568ZM9.99992 14.4446C8.6194 14.4446 7.49992 13.3252 7.49992 11.9446C7.49992 10.564 8.6194 9.44464 9.99992 9.44464C11.3804 9.44464 12.4999 10.564 12.4999 11.9446C12.4999 13.3252 11.3804 14.4446 9.99992 14.4446Z"
+                  fill="#13F584"
+                />
+              </svg>
+              <span>{saveStatus || "Save"}</span>
+            </button>
         </div>
         </div>
       </div>
@@ -862,7 +884,7 @@ function FlowContent({ assistantId }) {
           onPaneClick={onPaneClick}
           nodeTypes={nodeTypes}
           fitView
-          fitViewOptions={{ padding: 0.2 }}
+          fitViewOptions={{ padding: 0.1 }}
           connectionLineType={ConnectionLineType.SmoothStep}
           connectionLineStyle={{
             stroke: '#13F584',
@@ -1189,8 +1211,8 @@ function FlowContent({ assistantId }) {
             onClick={() => tf.setSelection(null)}
           />
           
-          {/* Config Panel - Scrollable content */}
-          <div className="relative z-50 w-full max-w-2xl h-[90vh] flex flex-col">
+          {/* Config Panel - Scrollable content (auto height, clamped by viewport) */}
+          <div className="relative z-50 w-full max-w-2xl max-h-[90vh] flex flex-col">
             <ConfigPanel assistantId={assistantId} />
           </div>
         </div>
@@ -1263,7 +1285,7 @@ function FlowContent({ assistantId }) {
           style={{ paddingBottom: componentDropdownOffset }}
         >
           <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-[2px] pointer-events-auto"
+            className="absolute inset-0 bg-transparent pointer-events-auto"
             onClick={() => setShowComponentModal(false)}
           />
 
@@ -1298,19 +1320,18 @@ function FlowContent({ assistantId }) {
                       fontWeight: 500,
                       fontSize: '14px',
                       lineHeight: '1.4em',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.08em'
+                      letterSpacing: '0.02em'
                     }}
                   >
                     Components
                   </p>
                 </div>
-                </div>
+              </div>
 
               {/* Search Section */}
               <div
                 className="w-full"
-                style={{ padding: '0px 16px', gap: '24px', display: 'flex', flexDirection: 'column' }}
+                style={{ padding: '0px 16px 8px 16px', gap: '24px', display: 'flex', flexDirection: 'column' }}
               >
                 <div 
                   className="w-full flex items-center"
@@ -1342,19 +1363,19 @@ function FlowContent({ assistantId }) {
                     }}
                   />
                 </div>
-                </div>
+              </div>
 
               {/* Component List */}
-                <div
+              <div
                 className="component-scroll w-full overflow-y-auto"
                 style={{
-                  padding: '0px 16px',
+                  padding: '0px 16px 12px 16px',
                   gap: '16px',
                   display: 'flex',
                   flexDirection: 'column',
-                  height: '305px'
+                  flex: 1
                 }}
-                >
+              >
                   {filteredComponents.length === 0 && (
                   <div 
                     className="rounded-2xl border border-dashed bg-white/5 p-5 text-center text-white/60"

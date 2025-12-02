@@ -246,16 +246,26 @@ const ChatInterface = () => {
               {/* Left Panel - Agent List */}
               <div className="flex min-h-0 w-full flex-shrink-0 flex-col lg:h-full lg:max-w-[280px]">
                 <div className="flex h-full w-full flex-col rounded-3xl border border-white/10 bg-white/5 p-5  backdrop-blur-xl">
-                  <div className="flex items-center gap-3 pl-2">
+                  <div className="flex items-center justify-between gap-3 pl-2">
                     <h3 className="text-sm font-medium text-white">Agent List</h3>
+                    {(isConnected || isLoadingSession) && (
+                      <button
+                        type="button"
+                        onClick={startNewSession}
+                        disabled={isLoadingSession}
+                        className="inline-flex items-center justify-center rounded-[8px] bg-[rgba(19,245,132,0.08)] px-2 py-1 text-[10px] font-medium text-[#9EFBCD] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:bg-[rgba(19,245,132,0.14)]"
+                      >
+                        New session
+                      </button>
+                    )}
                   </div>
                   <div className="relative mt-4">
                     <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/40" size={18} />
                     <input
                       value={assistantSearch}
                       onChange={(e) => setAssistantSearch(e.target.value)}
-                      placeholder="Search contacts..."
-                      className="w-full h-55  rounded-[8px]  border-2 border-[rgba(145,158,171,0.2)] bg-transparent py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-white/40 focus:border-emerald-400/40 focus:outline-none focus:ring-2 focus:ring-emerald-400/30"
+                      placeholder="Search agents..."
+                      className="w-full h-55 rounded-[8px] border-2 border-[rgba(145,158,171,0.2)] bg-transparent py-1.5 pl-10 pr-3 text-xs text-white placeholder:text-white/40 focus:border-emerald-400/40 focus:outline-none focus:ring-2 focus:ring-emerald-400/30"
                       disabled={loadingAssistant}
                     />
                   </div>
@@ -274,6 +284,9 @@ const ChatInterface = () => {
                       <div className="flex-1 space-y-2 overflow-y-auto pr-1 min-h-0 custom-scrollbar">
                         {filteredAssistants.map((assistant) => {
                           const isActive = assistantId === assistant.id;
+                          const rawName = assistant.name || "Untitled Assistant";
+                          const displayName =
+                            rawName.length > 12 ? `${rawName.slice(0, 15)}...` : rawName;
                           return (
                             <button
                               key={assistant.id}
@@ -294,7 +307,7 @@ const ChatInterface = () => {
 
                                   <div className="flex-1 min-w-0">
                                     <div className="text-sm font-medium text-white truncate">
-                                      {assistant.name || "Untitled Assistant"}
+                                      {displayName}
                                     </div>
                                   </div>
                                 </div>

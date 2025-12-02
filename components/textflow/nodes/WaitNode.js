@@ -8,8 +8,8 @@ export default function WaitNode({ id, data, selected }) {
   return (
     <div
       onClick={() => setSelection(id)}
-      className={`px-2 py-1.5 min-w-[110px] rounded-lg border-2 border-gray-600/30 bg-gradient-to-br from-gray-800 to-gray-900 shadow-lg cursor-pointer transition-all hover:shadow-xl hover:shadow-gray-500/20 ${
-        selected ? "ring-2 ring-gray-500 ring-offset-2 ring-offset-gray-950" : ""
+      className={`px-2 py-1.5 min-w-[110px] rounded-lg border border-gray-600/30 bg-gradient-to-br from-gray-800 to-gray-900 shadow-lg cursor-pointer transition-all hover:shadow-xl hover:shadow-gray-500/20 ${
+        selected ? "ring-1 ring-gray-500 ring-offset-2 ring-offset-gray-950" : ""
       }`}
     >
       <div className="flex items-center gap-1 mb-0.5">

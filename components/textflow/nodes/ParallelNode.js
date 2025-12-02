@@ -8,8 +8,8 @@ export default function ParallelNode({ id, data, selected }) {
   return (
     <div
       onClick={() => setSelection(id)}
-      className={`px-2 py-1.5 min-w-[110px] rounded-lg border-2 border-fuchsia-500/30 bg-gradient-to-br from-gray-800 to-gray-900 shadow-lg cursor-pointer transition-all hover:shadow-xl hover:shadow-fuchsia-500/20 ${
-        selected ? "ring-2 ring-fuchsia-500 ring-offset-2 ring-offset-gray-950" : ""
+      className={`px-2 py-1.5 min-w-[110px] rounded-lg border border-fuchsia-500/30 bg-gradient-to-br from-gray-800 to-gray-900 shadow-lg cursor-pointer transition-all hover:shadow-xl hover:shadow-fuchsia-500/20 ${
+        selected ? "ring-1 ring-fuchsia-500 ring-offset-2 ring-offset-gray-950" : ""
       }`}
     >
       <div className="flex items-center gap-1 mb-0.5">

@@ -154,7 +154,7 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-transparent backdrop-blur-sm"
         onClick={() => {
           resetForm();
           onClose();
@@ -162,7 +162,7 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
       />
 
       <div
-        className="relative rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-auto shadow-2xl create-credential-modal"
+        className="relative rounded-3xl max-w-xl w-full max-h-[90vh] overflow-auto shadow-2xl create-credential-modal"
         style={{
           background: "rgba(255, 255, 255, 0.04)",
           backdropFilter: "blur(20px)",

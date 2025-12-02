@@ -8,9 +8,9 @@ export default function StartNode({ id, data, selected }) {
   return (
     <div
       onClick={() => setSelection(id)}
-      className={`px-2 py-1.5 min-w-[110px] rounded-lg border-2 bg-gradient-to-br from-gray-800 to-gray-900 shadow-lg cursor-pointer transition-all hover:shadow-2xl ${
+      className={`px-2 py-1.5 min-w-[110px] rounded-lg border bg-gradient-to-br from-gray-800 to-gray-900 shadow-lg cursor-pointer transition-all hover:shadow-2xl ${
         selected 
-          ? "ring-2 ring-emerald-500 ring-offset-2 ring-offset-gray-950 scale-105 shadow-emerald-500/25" 
+          ? "ring-1 ring-emerald-500 ring-offset-2 ring-offset-gray-950 scale-105 shadow-emerald-500/25" 
           : "hover:scale-102 border-emerald-500/50"
       }`}
       style={{
