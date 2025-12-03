@@ -546,7 +546,7 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
 // MAIN TEMPLATE GALLERY
 // ============================================================================
 
-export default function TemplateGallery({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow }) {
+export default function TemplateGallery({ assistantId, onSelectTemplate, onClose, onGetCurrentFlow, bottomOffset = 140 }) {
   const [activeTab, setActiveTab] = useState("browse");
   const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
   const [myTemplatesRefreshKey, setMyTemplatesRefreshKey] = useState(0);
@@ -557,16 +557,16 @@ export default function TemplateGallery({ assistantId, onSelectTemplate, onClose
 
   return (
     <>
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none" style={{ paddingBottom: bottomOffset }}>
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-transparent" 
+        className="absolute inset-0 bg-transparent pointer-events-auto" 
         onClick={onClose} 
       />
       
       {/* Modal */}
       <div 
-        className="relative rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
+        className="relative pointer-events-auto rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
         style={{
           background: 'rgba(255, 255, 255, 0.04)',
           backdropFilter: 'blur(20px)',
@@ -575,7 +575,7 @@ export default function TemplateGallery({ assistantId, onSelectTemplate, onClose
         }}
       >
         {/* Header */}
-        <div className="px-6 py-3 flex items-center justify-between">
+        <div className="px-6 pt-5 pb-3 flex items-center justify-between">
             <div>
             <h2 className="text-base font-semibold text-white/90 tracking-tight">Template Library</h2>
             <p className="text-[11px] text-white/60">Discover and reuse flow templates</p>

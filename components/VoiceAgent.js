@@ -768,10 +768,9 @@ const FlowHUD = ({ className = "" }) => {
     Boolean(currentMode);
 
   return (
-    <div className={`flex flex-col h-full min-h-0 rounded-3xl border border-white/10 bg-white/5 text-white backdrop-blur-xl ${className}`}>
-      <div className="flex items-center gap-3  border-white/5 px-4 py-3 flex-shrink-0">
-        <div className={`h-2.5 w-2.5 rounded-full ${flowEnabled ? "bg-emerald-400 animate-pulse" : "bg-white/30"}`} />
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-white/70">Flow Monitor</h3>
+    <div className={`flex flex-col h-full min-h-0 rounded-3xl border border-white/10 bg-white/5 p-5 text-white backdrop-blur-xl ${className}`}>
+      <div className="flex items-center border-white/5 pl-2 pb-3 flex-shrink-0">
+        <h3 className="text-sm font-medium text-white">Flow monitor</h3>
       </div>
 
       {!flowEnabled ? (
@@ -782,13 +781,13 @@ const FlowHUD = ({ className = "" }) => {
         <div className="flex-1 overflow-y-auto space-y-3 p-4 text-[11px] text-white/70 min-h-0">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <div className="text-[10px] font-medium uppercase tracking-wide text-white/40">Current Node</div>
+              <div className="text-[10px] font-medium text-white/40">Current node</div>
               <div className="mt-1 font-semibold text-white truncate">
                 {flowCurrent?.title || flowCurrent?.id || "-"}
               </div>
             </div>
             <div>
-              <div className="text-[10px] font-medium uppercase tracking-wide text-white/40">Mode</div>
+              <div className="text-[10px] font-medium text-white/40">Mode</div>
               <div className="mt-1 font-semibold text-white">
                 {currentMode || (flowEnabled ? "flow" : "direct")}
               </div>
@@ -796,7 +795,7 @@ const FlowHUD = ({ className = "" }) => {
           </div>
 
           <div>
-            <div className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-white/40">Recent Path</div>
+            <div className="mb-1.5 text-[10px] font-medium text-white/40">Recent path</div>
             {!nodes.length ? (
               <div className="rounded-[8px]  bg-white/5 py-1.5 px-2 text-center text-[8px] text-white/40">
                 No path data yet
@@ -823,18 +822,18 @@ const FlowHUD = ({ className = "" }) => {
             )}
           </div>
 
-          <div>
-            <div className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-white/40">Functions</div>
-          {!funcs.length ? (
-            <div className="rounded-[8px]  bg-white/5 py-1.5 px-2 text-center text-[8px] text-white/40">
-              No functions registered
-            </div>
-          ) : (
+          <div className="mt-3">
+            <div className="mb-1.5 text-[10px] font-medium text-white/40">Functions</div>
+            {!funcs.length ? (
+              <div className="rounded-[8px] bg-white/5 py-1.5 px-2 text-center text-[8px] text-white/40">
+                No functions registered
+              </div>
+            ) : (
               <div className="flex flex-wrap gap-2">
                 {funcs.map((f, idx) => (
                   <span
                     key={f}
-                    className="rounded-[4px] bg-[rgba(34,197,94,0.16)] text-[#77ED8B]  px-2.5 py-1 text-[10px] "
+                    className="rounded-[4px] bg-[rgba(34,197,94,0.16)] text-[#77ED8B] px-2.5 py-1 text-[10px]"
                     style={{ animationDelay: `${idx * 50}ms` }}
                   >
                     {f}
@@ -843,12 +842,6 @@ const FlowHUD = ({ className = "" }) => {
               </div>
             )}
           </div>
-
-          {!hasActivity && (
-            <div className="rounded-[8px]  bg-white/5 py-1.5 px-2 text-center text-[8px] text-white/50">
-              Flow activity will appear here once the conversation starts.
-            </div>
-          )}
         </div>
       )}
     </div>
@@ -1123,44 +1116,27 @@ const PanelTabs = ({ entries, className = "" }) => {
                   <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5  backdrop-blur-xl">
                   <div className="flex flex-wrap items-center justify-between gap-3  px-6 py-5">
                     <div className="flex items-center gap-4">
-                      <div className="relative flex items-center justify-center">
-
-                        {/* Expanding Glow (softened) */}
-                        <div className="
+                    <div className="relative flex items-center justify-center">
+                      {/* Expanding Glow (softened) */}
+                      <div
+                        className="
                           absolute 
                           w-[60px] 
                           h-[60px] 
                           rounded-full 
                           bg-[radial-gradient(circle,rgba(19,245,132,0.35),rgba(19,245,132,0)_70%)]
                           blur-[12px]
-                        "></div>
+                        "
+                      ></div>
 
-                        {/* Outer Ring */}
-                        <div className="absolute w-[60px] h-[60px] rounded-full border border-[#13F584]/40"></div>
-
-                        {/* Main Circle */}
-                        <div className="
-                          relative 
-                          w-[45px] 
-                          h-[45px] 
-                          rounded-full 
-                          border 
-                          border-[rgba(19,245,132,0.3)] 
-                          flex 
-                          items-center 
-                          justify-center
-                        ">
-
-                          {/* The image */}
-                          <Image
-                            src="/images/voiceAi.svg"
-                            alt="AI Assistant"
-                            width={45}
-                            height={45}
-                            className="relative z-10"
-                          />
-                      </div>
-
+                      {/* Icon without extra ring borders */}
+                      <Image
+                        src="/images/voiceAi.svg"
+                        alt="AI Assistant"
+                        width={45}
+                        height={45}
+                        className="relative z-10"
+                      />
                     </div>
 
                       <div>
@@ -1168,28 +1144,22 @@ const PanelTabs = ({ entries, className = "" }) => {
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center justify-end gap-3">
-                      <label className="flex cursor-pointer items-center gap-2 text-xs text-white/70">
-                 <div className="relative">
-                          <input
-                            type="checkbox"
-                            checked={flowEnabled}
-                            onChange={(e) => setFlowEnabled(e.target.checked)}
-                            className="peer sr-only"
-                          />
-                          <div
-                            className={`flex h-5 w-10 items-center rounded-full transition-colors duration-200 ${
-                              flowEnabled ? "bg-emerald-500/30 border-emerald-400/50" : "bg-white/5 border-white/15"
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
+                            flowEnabled ? "bg-emerald-500/30 border-emerald-400/50" : "bg-white/5 border-white/15"
+                          }`}
+                          onClick={() => setFlowEnabled((prev) => !prev)}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              flowEnabled ? "translate-x-6" : "translate-x-1"
                             }`}
-                          >
-                            <div
-                              className={`ml-1 h-3 w-3 rounded-full bg-white transition-transform duration-200 ${
-                                flowEnabled ? "translate-x-5" : ""
-                              }`}
-                            />
-                          </div>
-                        </div>
-                        <span className="font-medium text-white">Flow Mode</span>
-                      </label>
+                          />
+                        </button>
+                        <span className="text-xs text-white/70">Flow mode</span>
+                      </div>
                       <button
                         onClick={isWsConnected ? disconnectWebSocket : connectWebSocket}
                         className={`h-[30px] px-2 flex items-center justify-center gap-2 rounded-lg font-medium text-[13px] transition-all duration-200 ${

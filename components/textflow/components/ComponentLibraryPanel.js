@@ -133,7 +133,7 @@ function ComponentCard({ component, onUse, onDelete }) {
   );
 }
 
-export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectComponent, onClose, onOpenCreateModal, refreshTrigger }) {
+export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectComponent, onClose, onOpenCreateModal, refreshTrigger, bottomOffset = 140 }) {
   const [components, setComponents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedComponent, setSelectedComponent] = useState(null);
@@ -250,16 +250,16 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none" style={{ paddingBottom: bottomOffset }}>
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-transparent" 
+        className="absolute inset-0 bg-transparent pointer-events-auto" 
         onClick={onClose} 
       />
       
       {/* Modal */}
       <div 
-        className="relative rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
+        className="relative pointer-events-auto rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
         style={{
           background: 'rgba(255, 255, 255, 0.04)',
           backdropFilter: 'blur(20px)',
@@ -268,10 +268,10 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
         }}
       >
         {/* Header */}
-        <div className="px-6 py-3 border-b border-white/10 flex items-center justify-between">
+        <div className="px-6 pt-5 pb-3 border-b border-white/10 flex items-center justify-between">
           <div>
-            <h2 className="text-sm font-medium text-white/85 tracking-tight">Component Library</h2>
-            <p className="text-[10px] text-white/50">Reusable node configurations</p>
+            <h2 className="text-base font-semibold text-white/90 tracking-tight">Component Library</h2>
+            <p className="text-[11px] text-white/60">Reusable node configurations</p>
           </div>
           <button
             onClick={() => onOpenCreateModal && onOpenCreateModal()}
@@ -366,7 +366,7 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
           {loading ? (
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
-                <div className="w-8 h-8 border-2 border-gray-700 border-t-indigo-500 rounded-full animate-spin mx-auto mb-2"></div>
+                <div className="w-8 h-8 border-2 border-gray-700 border-t-emerald-400 rounded-full animate-spin mx-auto mb-2"></div>
                 <div className="text-sm text-gray-200">Loading components...</div>
               </div>
             </div>

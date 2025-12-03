@@ -253,7 +253,7 @@ const ChatInterface = () => {
                         type="button"
                         onClick={startNewSession}
                         disabled={isLoadingSession}
-                        className="inline-flex items-center justify-center rounded-[8px] bg-[rgba(19,245,132,0.08)] px-2 py-1 text-[10px] font-medium text-[#9EFBCD] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:bg-[rgba(19,245,132,0.14)]"
+                        className="inline-flex items-center justify-center rounded-[8px] bg-[rgba(19,245,132,0.08)] px-4 py-2.5 text-[11px] font-medium text-[#9EFBCD] transition-all duration-200 hover:bg-[rgba(19,245,132,0.14)] disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         New session
                       </button>

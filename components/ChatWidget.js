@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, User, MoreHorizontal } from 'lucide-react';
+import { Send, User } from 'lucide-react';
 import Image from 'next/image';
 
 const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingMessage, onStartNewSession, onLoadPreviousSession, currentSessionId, isLoadingSession = false, loadingSessionType = null }) => {
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef(null);
-  const [sessionMenuOpen, setSessionMenuOpen] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,41 +56,26 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
       <div className="flex flex-wrap items-center justify-between gap-4  px-6 py-4">
           <div className="flex items-center gap-4">
             <div className="relative flex items-center justify-center">
-            {/* Expanding Glow (softened) */}
-              <div className="
-                absolute 
-                w-[60px] 
-                h-[60px] 
-                rounded-full 
-                bg-[radial-gradient(circle,rgba(19,245,132,0.35),rgba(19,245,132,0)_70%)]
-                blur-[12px]
-              "></div>
-              
-              {/* Outer Ring */}
-                <div className="absolute w-[60px] h-[60px] rounded-full border border-[#13F584]/40"></div>
-              
-              {/* Main Circle */}
-                <div className="
-                  relative 
-                  w-[45px] 
-                  h-[45px] 
-                  rounded-full 
-                  border 
-                  border-[rgba(19,245,132,0.3)] 
-                  flex 
-                  items-center 
-                  justify-center
-                ">
-              
-              {/* The image */}
-                <Image
-                  src="/images/voiceAi.svg"
-                  alt="AI Assistant"
-                  width={45}
-                  height={45}
-                  className="relative z-10"
-                />
-            </div>
+          {/* Expanding Glow (softened) */}
+          <div
+            className="
+              absolute 
+              w-[60px] 
+              h-[60px] 
+              rounded-full 
+              bg-[radial-gradient(circle,rgba(19,245,132,0.35),rgba(19,245,132,0)_70%)]
+              blur-[12px]
+            "
+          ></div>
+
+          {/* Icon without extra ring borders */}
+          <Image
+            src="/images/voiceAi.svg"
+            alt="AI Assistant"
+            width={45}
+            height={45}
+            className="relative z-10"
+          />
           </div>
           <div>
             <h2 className="text-sm font-medium text-white">AI Asistance</h2>
@@ -101,58 +85,15 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-3">
-          {/* Session Management Config (Load Previous in menu) */}
           {(isConnected || isLoadingSession) && (
-            <div className="relative">
-              <button
-                type="button"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-                onClick={() => setSessionMenuOpen((prev) => !prev)}
-                aria-label="Session options"
-              >
-                <MoreHorizontal size={16} />
-              </button>
-              {sessionMenuOpen && (
-                <div
-                  className="
-                    absolute right-0 mt-2
-                    w-[160px] min-h-[60px]
-                    rounded-xl
-                    border border-white/10
-                    bg-black/70
-                    before:absolute before:inset-0
-                    before:bg-white/15
-                    before:backdrop-blur-[94px]
-                    before:rounded-xl
-                    before:z-[-1]
-                    shadow-lg z-20
-                    flex flex-col p-1 gap-1
-                    overflow-hidden
-                  "
-                >
-                  {/* Blur effects BEHIND content */}
-                  <div className="absolute w-[80px] h-[80px] right-[-16px] top-[-16px] 
-                                  bg-cyan-400/10 blur-[40px] rounded-full pointer-events-none z-0"></div>
-
-                  {/* Menu Items - ABOVE blur */}
-                  <div className="relative z-10 flex flex-col gap-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSessionMenuOpen(false);
-                        onLoadPreviousSession();
-                      }}
-                      disabled={isLoadingSession}
-                      className="flex items-center gap-1 px-3 py-2 text-sm text-white rounded-lg
-                                transition-all duration-200 hover:bg-green-600/20 hover:text-[#13F584]
-                                disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Load previous session
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            <button
+              type="button"
+              onClick={onLoadPreviousSession}
+              disabled={isLoadingSession}
+              className="inline-flex items-center justify-center rounded-[8px] bg-white/5 px-4 py-2.5 text-[11px] font-medium text-white transition-all duration-200 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous session
+            </button>
           )}
         </div>
       </div>
@@ -262,20 +203,20 @@ const ChatWidget = ({ messages, onSendMessage, isTyping, isConnected, streamingM
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder={isConnected ? "Ask anything" : "Connecting to server..."}
-              className="w-full pl-3 pr-14 h-12 rounded-[66px] border-0 bg-white/[0.04] text-white placeholder:text-[#919EAB] focus:outline-none disabled:opacity-50 text-xs"
+              className="w-full pl-3 pr-14 h-[52px] rounded-[66px] border-0 bg-white/[0.04] text-white placeholder:text-[#919EAB] focus:outline-none disabled:opacity-50 text-xs"
               style={{ fontFamily: 'Public Sans, sans-serif', fontSize: '12px', lineHeight: '1.5714285714285714em' }}
               disabled={!isConnected || isTyping || streamingMessage}
             />
             <button
               type="submit"
               disabled={!inputMessage.trim() || isTyping || !isConnected || streamingMessage}
-              className="absolute right-1.5 h-10 px-3 rounded-[99px] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center font-medium"
+              className="absolute right-1.5 h-9 px-3 rounded-full disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center font-bold"
               style={{ 
                 fontFamily: 'Public Sans, sans-serif', 
-                fontSize: '12px', 
-                lineHeight: '1.7333333em',
+                fontSize: '15px', 
+                lineHeight: '1.7333333333333334em',
                 backgroundColor: 'rgba(255, 255, 255, 0.12)',
-                border: '1px solid rgba(19, 245, 132, 0.16)',
+                border: '1px solid #13F584',
                 color: '#13F584'
               }}
               onMouseEnter={(e) => {

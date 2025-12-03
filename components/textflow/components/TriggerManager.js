@@ -10,18 +10,19 @@ export default function TriggerManager({
   onClose,
   onOpenCreateCredential,
   credentialsRefreshKey = 0,
+  bottomOffset = 140,
 }) {
   const [activeTab, setActiveTab] = useState("credentials");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none" style={{ paddingBottom: bottomOffset }}>
       <div
-        className="absolute inset-0 bg-transparent"
+        className="absolute inset-0 bg-transparent pointer-events-auto"
         onClick={onClose}
       />
 
       <div
-        className="relative rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
+        className="relative pointer-events-auto rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
         style={{
           background: 'rgba(255, 255, 255, 0.04)',
           backdropFilter: 'blur(20px)',

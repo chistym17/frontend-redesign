@@ -254,7 +254,7 @@ function ConnectorCard({
 // ============================================================================
 // MAIN CONNECTOR PANEL
 // ============================================================================
-export default function ConnectorPanel({ assistantId, onSelectConnector, onClose }) {
+export default function ConnectorPanel({ assistantId, onSelectConnector, onClose, bottomOffset = 140 }) {
   const [connectors, setConnectors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -535,16 +535,16 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
 
   return (
     <>
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none" style={{ paddingBottom: bottomOffset }}>
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-transparent" 
+        className="absolute inset-0 bg-transparent pointer-events-auto" 
         onClick={onClose} 
       />
       
       {/* Modal */}
       <div 
-          className="relative rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
+          className="relative pointer-events-auto rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
         style={{
           background: 'rgba(255, 255, 255, 0.04)',
           backdropFilter: 'blur(20px)',
@@ -654,9 +654,9 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
         )}
 
         {success && (
-          <div className="mx-6 mt-4 bg-emerald-950/30 border border-emerald-800/50 rounded-lg p-3 flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
-            <span className="text-sm text-emerald-300">{success}</span>
+          <div className="mx-6 mt-4 bg-emerald-950/30 border border-emerald-800/50 rounded-lg px-2 py-1.5 flex items-center gap-2">
+            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-xs text-emerald-300">{success}</span>
           </div>
         )}
 
@@ -737,7 +737,7 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
         {deleteModal.open && (
           <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
             <div
-              className="absolute inset-0 bg-transparent"
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={() => {
                 if (!deleteLoading) {
                   setDeleteModal({ open: false, connectorId: null, connectorName: '', isOwner: false });
@@ -748,25 +748,18 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
             <div
               className="relative rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden"
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                borderRadius: '24px'
+                background: "rgba(255, 255, 255, 0.04)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                borderRadius: "24px"
               }}
             >
               <div className="flex flex-col gap-3 p-4">
                 <div className="flex items-center justify-between">
-                  <div>
                     <h3 className="text-sm font-semibold text-white/90">
                       {deleteModal.isOwner ? 'Delete Connector' : 'Remove Connector'}
                     </h3>
-                    <p className="text-[11px] text-white/60">
-                      {deleteModal.isOwner
-                        ? 'Deleting removes it for everyone. This cannot be undone.'
-                        : 'You can add it again from Discover later.'}
-                    </p>
-                  </div>
                   <button
                     onClick={() => {
                       if (!deleteLoading) {
@@ -779,30 +772,27 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
                     <X className="w-4 h-4" />
                   </button>
                 </div>
-
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
-                  <p className="text-[12px] text-white/75 leading-relaxed">
+                <p className="text-[11px] text-white/60">
                     {deleteModal.isOwner ? (
                       <>
-                        Permanently delete <span className="text-white font-semibold">"{deleteModal.connectorName}"</span>?<br />
-                        Installed users will lose access immediately.
+                      Are you sure you want to delete{" "}
+                      <span className="text-white/90 font-semibold">"{deleteModal.connectorName}"</span>?
+                      This action cannot be undone.
                       </>
                     ) : (
                       <>
-                        Remove <span className="text-white font-semibold">"{deleteModal.connectorName}"</span> from your workspace?
-                        You can reinstall it whenever needed.
+                      Are you sure you want to remove{" "}
+                      <span className="text-white/90 font-semibold">"{deleteModal.connectorName}"</span>?
+                      You can add it again from Discover later.
                       </>
                     )}
                   </p>
-                </div>
-
                 {deleteError && (
                   <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-2 flex items-start gap-2">
                     <AlertCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5" />
                     <span className="text-[11px] text-red-300">{deleteError}</span>
                   </div>
                 )}
-
                 <div className="flex justify-end items-center gap-2 pt-2">
                   <button
                     onClick={() => {
@@ -812,22 +802,18 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
                       }
                     }}
                     className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-white/70 hover:text-white transition-colors"
-                    style={{ background: 'rgba(255,255,255,0.04)' }}
+                    style={{ background: "rgba(255,255,255,0.04)" }}
                     disabled={deleteLoading}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={deleteModal.isOwner ? confirmDelete : confirmUninstall}
-                    className="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all disabled:opacity-50 flex items-center gap-1.5"
-                    style={{
-                      background: deleteModal.isOwner ? 'rgba(255, 86, 48, 0.15)' : 'rgba(19, 245, 132, 0.12)',
-                      color: deleteModal.isOwner ? '#FF8A8A' : '#9EFBCD'
-                    }}
+                    className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-red-200 transition-all disabled:opacity-50"
+                    style={{ background: "rgba(255, 72, 72, 0.15)" }}
                     disabled={deleteLoading}
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    {deleteLoading ? 'Processing...' : deleteModal.isOwner ? 'Delete' : 'Remove'}
+                    {deleteLoading ? (deleteModal.isOwner ? "Deleting..." : "Removing...") : (deleteModal.isOwner ? "Delete" : "Remove")}
                   </button>
                 </div>
               </div>
