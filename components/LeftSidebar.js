@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useSidebar } from "../lib/sidebarContext"; // Keeping this, but adapting collapse logic
 // Assuming you add the CSS below to a file named LeftSidebar.css
 
-const LeftSidebar = () => {
+const LeftSidebar = ({ mobileOpen, setMobileOpen }) => {
   const pathname = usePathname(); // Changed from router.pathname
   const { isCollapsed, setIsCollapsed } = useSidebar();
   const [activeRoute, setActiveRoute] = useState(pathname);
@@ -17,6 +17,39 @@ const LeftSidebar = () => {
 
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    const activeItem = document.querySelector(".menu-subitem.active");
+    if (!activeItem) return;
+
+    const rect = activeItem.getBoundingClientRect();
+    const sidebar = activeItem.closest(".sidebar");
+    if (!sidebar) return;
+
+    const sidebarRect = sidebar.getBoundingClientRect();
+
+    if (glowRightRef.current)
+      glowRightRef.current.style.top = rect.top - sidebarRect.top + "px";
+
+    if (glowLeftRef.current)
+      glowLeftRef.current.style.top = rect.top - sidebarRect.top + "px";
+  }, 50); // slight delay so layout settles
+
+  return () => clearTimeout(timer);
+}, [mobileOpen, activeRoute]);
+
+  
+
+  useEffect(() => {
+    const closeOnEsc = (e) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEsc);
+    return () => document.removeEventListener("keydown", closeOnEsc);
+  }, []);
+
+
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
@@ -108,7 +141,85 @@ const LeftSidebar = () => {
 
   // Don't render on mobile unless open (assuming isMobileOpen prop or similar; for now, keeping simple)
   // Note: Target has mobile logic, but original doesn't. Adding basic mobile check.
-  if (isMobile) return null; // Or handle mobile overlay if needed
+  if (isMobile) {
+  return (
+    <>
+      {/* BACKDROP */}
+      {mobileOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* MOBILE SIDEBAR DRAWER */}
+      <aside
+        className={`sidebar mobile ${mobileOpen ? "open" : ""}`}
+      >
+        <button
+          className="collapse-btn "
+          onClick={() => {
+            if (isMobile) {
+              setMobileOpen(false);   // close menu
+            } else {
+              setIsCollapsed(!isCollapsed); // collapse desktop
+            }
+          }}
+        >
+          {/* Your same icon here */}
+          <img
+            src="/images/ic-eva_arrow-ios-back-fill.svg"
+            alt="close sidebar"
+          />
+        </button>
+
+  
+        {/* SAME MENU CONTENT */}
+        <nav className="menu">
+          
+          {menuBlocks.map((block) => (
+            <div key={block.label} className="menu-block">
+              <div className="menu-label">{block.label}</div>
+
+              {block.items.map((item) => {
+                const active =
+                  item.path === "/"
+                    ? activeRoute === item.path
+                    : activeRoute.startsWith(item.path);
+
+                return (
+                  <Link
+                    key={item.path}
+                    href={item.path}
+                    className={`menu-subitem ${active ? "active" : ""}`}
+                    onClick={() => {
+                      handleNavigation(item.path, item.onClick);
+                      setMobileOpen(false); // auto-close
+                    }}
+                  >
+                    <Image
+                      src={getIcon(item.image, active)}
+                      alt={item.label}
+                      width={24}
+                      height={24}
+                    />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+         {/* Glow effects (same as desktop) */}
+          <div className="sidebar-glow" ref={glowRightRef}></div>
+          <div className="sidebar-glow-left" ref={glowLeftRef}></div>
+      </aside>
+
+ 
+    </>
+  );
+}
+
 
   return (
     <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>

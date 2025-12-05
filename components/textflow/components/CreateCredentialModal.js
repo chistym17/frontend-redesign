@@ -154,7 +154,12 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-transparent backdrop-blur-sm"
+        className="absolute inset-0"
+        style={{
+          background: 'rgba(0, 0, 0, 0.3)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)'
+        }}
         onClick={() => {
           resetForm();
           onClose();
@@ -179,10 +184,10 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
           }
           .create-credential-modal .input-slim {
             width: 100%;
-            height: 32px;
-            padding: 0 8px;
+            height: 40px;
+            padding: 0 12px;
             border-radius: 8px;
-            font-size: 11px;
+            font-size: 14px;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.12);
             color: white;
@@ -196,7 +201,7 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
               style={{
                 fontFamily: "Public Sans, sans-serif",
                 fontWeight: 700,
-                fontSize: "18px",
+                fontSize: "20px",
                 lineHeight: "1.5em",
               }}
             >
@@ -207,20 +212,20 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
                 resetForm();
                 onClose();
               }}
-              className="w-5 h-5 flex items-center justify-center transition-colors hover:opacity-70"
+              className="w-6 h-6 flex items-center justify-center transition-colors hover:opacity-70"
             >
-              <X className="w-5 h-5 text-white" />
+              <X className="w-6 h-6 text-white" />
             </button>
           </div>
 
           {error && (
-            <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-2.5 flex items-start gap-2">
-              <AlertCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5" />
+            <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-3 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <span className="text-xs text-red-300">{error}</span>
+                <span className="text-sm text-red-300">{error}</span>
               </div>
               <button onClick={() => setError("")} className="text-red-400 hover:text-red-300">
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -236,13 +241,13 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
                 style={{
                   fontFamily: "Public Sans, sans-serif",
                   fontWeight: 400,
-                  fontSize: "12px",
+                  fontSize: "14px",
                   lineHeight: "1.466em",
                   background: "rgba(255, 255, 255, 0.04)",
                   border: "1px solid rgba(255, 255, 255, 0.12)",
                   borderRadius: "8px",
-                  padding: "0px 8px",
-                  height: "36px",
+                  padding: "0px 12px",
+                  height: "40px",
                 }}
               />
             </FieldGroup>
@@ -252,7 +257,7 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
                 <select
                   value={form.type}
                   onChange={(e) => handleTypeChange(e.target.value)}
-                  className="w-full h-9 px-3 rounded-lg bg-white/5 border border-white/10 text-white text-[12px] focus:outline-none appearance-none"
+                  className="w-full h-10 px-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none appearance-none"
                 >
                   {CREDENTIAL_TYPES.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -262,7 +267,7 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
                 </select>
                 <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60 pointer-events-none" />
               </div>
-              <p className="text-[10px] text-gray-400 mt-1">{selectedType.description}</p>
+              <p className="text-xs text-gray-400 mt-1">{selectedType.description}</p>
             </FieldGroup>
 
             {form.type === "api_key" && (
@@ -360,21 +365,21 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
 
             {form.type === "header" && (
               <div className="space-y-2">
-                <label className="text-[10px] font-medium text-gray-400">Headers</label>
+                <label className="text-sm font-medium text-gray-400">Headers</label>
                 {Object.entries(form.data.headers || {}).map(([key, value]) => (
                   <div
                     key={key}
-                    className="flex items-center gap-2 h-8 px-2.5 rounded-lg"
+                    className="flex items-center gap-2 h-10 px-3 rounded-lg"
                     style={{
                       background: "rgba(255, 255, 255, 0.08)",
                       border: "1px solid rgba(255, 255, 255, 0.12)",
                     }}
                   >
-                    <span className="flex-1 text-[11px] text-white font-mono truncate">
+                    <span className="flex-1 text-sm text-white font-mono truncate">
                       {key}: {value}
                     </span>
                     <button onClick={() => removeHeader(key)} className="text-gray-500 hover:text-red-400 transition-colors">
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
                 ))}
@@ -395,13 +400,13 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
                   />
                   <button
                     onClick={addHeader}
-                    className="h-8 w-8 rounded-lg flex items-center justify-center transition-colors"
+                    className="h-10 w-10 rounded-lg flex items-center justify-center transition-colors"
                     style={{
                       background: "rgba(19, 245, 132, 0.18)",
                       color: "#9EFBCD",
                     }}
                   >
-                    <Plus className="w-3.5 h-3.5" />
+                    <Plus className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -418,11 +423,11 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
               style={{
                 background: "rgba(255, 86, 48, 0.08)",
                 color: "#FFAC82",
-                height: "32px",
-                padding: "0px 8px",
+                height: "36px",
+                padding: "0px 12px",
                 fontFamily: "Public Sans, sans-serif",
                 fontWeight: 600,
-                fontSize: "12px",
+                fontSize: "14px",
                 lineHeight: "1.5em",
               }}
             >
@@ -435,11 +440,11 @@ export default function CreateCredentialModal({ isOpen, onClose, assistantId, on
               style={{
                 background: "rgba(19, 245, 132, 0.12)",
                 color: "#9EFBCD",
-                height: "32px",
-                padding: "0px 8px",
+                height: "36px",
+                padding: "0px 12px",
                 fontFamily: "Public Sans, sans-serif",
                 fontWeight: 600,
-                fontSize: "12px",
+                fontSize: "14px",
                 lineHeight: "1.5em",
               }}
             >
@@ -460,7 +465,7 @@ function FieldGroup({ label, children, slim = false }) {
         style={{
           fontFamily: "Public Sans, sans-serif",
           fontWeight: slim ? 500 : 600,
-          fontSize: slim ? "10px" : "11px",
+          fontSize: slim ? "13px" : "13px",
           lineHeight: "1em",
           color: "#919EAB",
         }}

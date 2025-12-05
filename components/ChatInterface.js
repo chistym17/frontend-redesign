@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import LeftSidebar from './LeftSidebar';
 import { useSidebar } from '../lib/sidebarContext';
 import { Search } from 'lucide-react';
+import AgentsPopup from './AgentsPopup';
 
 const ChatInterface = () => {
   const router = useRouter();
@@ -20,6 +21,17 @@ const ChatInterface = () => {
   const [loadingSessionType, setLoadingSessionType] = useState(null); // 'new' or 'previous'
   const isLoadingSessionRef = useRef(false);
   const { assistantId, setAssistant } = useAssistant();
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [agentsOpen, setAgentsOpen] = useState(false);
+      
+    
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
   
   // Assistant list state
   const [assistants, setAssistants] = useState([]);
@@ -236,14 +248,15 @@ const ChatInterface = () => {
   return (
     <div className="min-h-screen h-screen bg-[#141A21] text-white">
       {/* Left Sidebar */}
-      <LeftSidebar />
+  
+      <div className="relative flex h-full flex-col overflow-hidden" style={{  marginLeft:isMobile ? '0px' : isCollapsed ? '64px' : '105px' }}>
       
-      <div className="relative flex h-full flex-col overflow-hidden" style={{ marginLeft: isCollapsed ? '64px' : '105px' }}>
         <div className="flex h-full flex-col">
           <main className="flex h-full flex-1 flex-col overflow-hidden items-center justify-center p-6 lg:p-[60px_120px]">
             {/* Parent Container with margins (matching Figma design) */}
-            <div className="flex flex-1 min-h-0 w-full max-w-[1800px] max-h-[900px] flex-col gap-[18px] overflow-hidden lg:flex-row lg:items-stretch">
+            <div className="flex flex-1 min-h-0 w-full max-w-[1800px] max-h-[900px] flex-col gap-5 overflow-hidden lg:flex-row lg:items-stretch -mt-4 lg:-mt-6">
               {/* Left Panel - Agent List */}
+             {!isMobile && (
               <div className="flex min-h-0 w-full flex-shrink-0 flex-col lg:h-full lg:max-w-[280px]">
                 <div className="flex h-full w-full flex-col rounded-3xl border border-white/10 bg-white/5 p-5  backdrop-blur-xl">
                   <div className="flex items-center justify-between gap-3 pl-2">
@@ -333,9 +346,30 @@ const ChatInterface = () => {
                 </div>
                 
               </div>
+                )}
+
+                 {isMobile && (
+                  <div className="flex justify-between items-center ">
+                    <h1 className="text-lg font-bold text-white">
+                      AI ChatAgent 
+                    </h1>
+      
+                    <button
+                      onClick={() => setAgentsOpen(true)}
+                      className="group inline-flex items-center gap-2 px-4 py-2 border border-emerald-400/50 text-emerald-300 rounded-lg hover:bg-emerald-400/10 transition-colors"
+                    >
+                      Agent List
+                    </button>
+                  </div>
+                  )}
 
               {/* Right Panel - Chat Area */}
-              <div className="flex min-h-0 flex-1 flex-col lg:h-full">
+              <div
+                  className={`flex min-h-0 flex-col overflow-hidden lg:h-full
+                  ${isMobile ? "h-[calc(100vh-150px)]" : "flex-1"} 
+                  
+                `}
+                >
                 <ChatWidget
                   messages={messages}
                   onSendMessage={handleSendMessage}
@@ -350,6 +384,26 @@ const ChatInterface = () => {
                 />
               </div>
             </div>
+             {/* Agents Popup (mobile only) */}
+            {isMobile && (
+              <AgentsPopup
+                open={agentsOpen}
+                onClose={() => setAgentsOpen(false)}
+                assistants={filteredAssistants}
+                loadingAssistant={loadingAssistant}
+                assistantSearch={assistantSearch}
+                setAssistantSearch={setAssistantSearch}
+                assistantId={assistantId}
+                handleAssistantChange={(id) => {
+                  handleAssistantChange(id);
+                  setAgentsOpen(false); // close popup on select
+                }}
+                startNewSession={startNewSession}          
+                isLoadingSession={isLoadingSession}         
+                isConnected={isConnected}   
+              />
+
+            )}
           </main>
         </div>
       </div>

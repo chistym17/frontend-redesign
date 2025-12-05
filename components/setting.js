@@ -1,11 +1,23 @@
 // settings.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import { ChevronRight } from 'lucide-react';
+import LeftSidebar from '../components/LeftSidebar';
+import { useSidebar } from '../lib/sidebarContext';
 const Settings = () => {
    const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [mockProfileImage, setMockProfileImage] = useState(null);
+  const { isCollapsed } = useSidebar();
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+ 
+  useEffect(() => {
+      const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+      checkMobile();
+      window.addEventListener("resize", checkMobile);
+      return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const [isActive1, setIsActive1] = useState(false);
   const [isActive2, setIsActive2] = useState(false);
@@ -51,15 +63,36 @@ const Settings = () => {
 
   const profileImage = mockProfileImage; // using mock
   return (
-    <div className="min-h-screen bg-[#141A21] text-white p-4 md:p-8">
+   
+   
+     <div className="fixed inset-0 bg-[#141A21] overflow-y-auto flex p-4">
+
+         <LeftSidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+         
+         <div className={`flex-1 transition-all duration-300 ${isMobile ? 'ml-0' : isCollapsed ? 'ml-16' : 'ml-48'} flex items-start justify-center `}>
       <div className="max-w-7xl mx-auto">
-    
-        
+         {/* Header */}
+          <div className="mb-8 animate-fade-in-up">
+     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2 ">
+             {isMobile && !mobileOpen && (
+                <button
+                  className="mobile-menu-btn"
+                  onClick={() => setMobileOpen(true)}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.8 13.1999H1.2C0.881741 13.1999 0.576516 13.0734 0.351472 12.8484C0.126428 12.6234 0 12.3181 0 11.9999C0 11.6816 0.126428 11.3764 0.351472 11.1514C0.576516 10.9263 0.881741 10.7999 1.2 10.7999H22.8C23.1182 10.7999 23.4235 10.9263 23.6485 11.1514C23.8735 11.3764 24 11.6816 24 11.9999C24 12.3181 23.8735 12.6234 23.6485 12.8484C23.4235 13.0734 23.1182 13.1999 22.8 13.1999ZM22.8 4.7999H1.2C0.881741 4.7999 0.576516 4.67347 0.351472 4.44843C0.126428 4.22339 0 3.91817 0 3.5999C0 3.28164 0.126428 2.97642 0.351472 2.75137C0.576516 2.52633 0.881741 2.3999 1.2 2.3999H22.8C23.1182 2.3999 23.4235 2.52633 23.6485 2.75137C23.8735 2.97642 24 3.28164 24 3.5999C24 3.91817 23.8735 4.22339 23.6485 4.44843C23.4235 4.67347 23.1182 4.7999 22.8 4.7999ZM22.8 21.5999H1.2C0.881741 21.5999 0.576516 21.4734 0.351472 21.2484C0.126428 21.0234 0 20.7181 0 20.3999C0 20.0817 0.126428 19.7764 0.351472 19.5514C0.576516 19.3264 0.881741 19.1999 1.2 19.1999H22.8C23.1182 19.1999 23.4235 19.3264 23.6485 19.5514C23.8735 19.7764 24 20.0817 24 20.3999C24 20.7181 23.8735 21.0234 23.6485 21.2484C23.4235 21.4734 23.1182 21.5999 22.8 21.5999Z" fill="white"/>
+                  </svg>
+                </button>
+              )}
+                </div>
+  
         {/* Main Grid: Stack on mobile, side-by-side on larger screens */}
         <div className="grid grid-cols-1 lg:grid-cols-[307px_1fr] gap-6">
           
+          
           {/* First Column: Update Avatar */}
-          <div className="flex flex-col items-center p-4 gap-4 w-full lg:w-[307px] h-auto lg:h-[400px] bg-white/5 backdrop-blur-[25px] rounded-2xl border border-white/10">
+          <div className="flex flex-col items-center p-4 gap-4 w-full lg:w-[307px] h-[400px] lg:h-[400px] bg-white/5 backdrop-blur-[25px] rounded-2xl border border-white/10">
+          
             {/* Avatar Update Content Here */}
             {/* Stack */}
               <div className="flex flex-col items-center p-0 gap-6 w-[175px] h-[204px]">
@@ -157,7 +190,7 @@ const Settings = () => {
     {/* Row for Name and Phone Number */}
     <div className="flex flex-row flex-wrap items-start  content-start p-0 gap-6 w-full">
       {/* TextField for Name */}
-      <div className="flex flex-col items-start p-0 w-[349.5px] min-w-[294px] h-[54px]">
+      <div className="flex flex-col items-start p-0 w-full md:w-[349.5px] min-w-[250px] h-[54px]">
         <div className="relative flex flex-row items-center p-0 px-4 isolate w-full h-[45px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
             <input
                 type="text"
@@ -173,7 +206,7 @@ const Settings = () => {
       </div>
       
       {/* TextField for Phone Number */}
-      <div className="flex flex-col items-start p-0 w-[349.5px] min-w-[294px] h-[45px]">
+      <div className="flex flex-col items-start p-0 w-full md:w-[349.5px] min-w-[250px] h-[45px]">
         <div className="relative flex flex-row items-center p-0 px-4 isolate w-full h-[54px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
           <input
             type="tel"
@@ -192,7 +225,7 @@ const Settings = () => {
     {/* Row for Address */}
     <div className="flex flex-row flex-wrap items-start content-start p-0 gap-6 w-full">
       {/* TextField for Address */}
-      <div className="flex flex-col items-start p-0 w-full min-w-[294px] h-[54px]">
+      <div className="flex flex-col items-start p-0 w-full min-w-[250px] h-[54px]">
         <div className="relative flex flex-row items-center p-0 px-4 isolate w-full h-[45px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
           <input
             type="text"
@@ -209,7 +242,7 @@ const Settings = () => {
     </div>
     
     {/* Textarea for About */}
-    <div className="flex flex-col items-start p-0 isolate w-full h-[98px] rounded-lg">
+    <div className="flex flex-col items-start p-0 isolate w-full min-w-[250px] h-[98px] rounded-lg">
       <div className="relative flex flex-row items-start p-[16px] px-[14px] isolate w-full min-h-[98px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
         <textarea
           placeholder="About"
@@ -227,7 +260,7 @@ const Settings = () => {
     <div className="flex flex-col items-start p-0 gap-5 w-full">
       
       {/* Stack for Email and Last Name */}
-      <div className="flex flex-col items-start p-0 gap-1 w-[344px] min-w-[294px]">
+      <div className="flex flex-col items-start p-0 gap-1 w-[344px] min-w-[250px]">
         <span className="w-[73px] h-[28px] text-lg font-semibold leading-[28px] text-white">Security</span>
         <span className="w-full h-[22px] text-sm leading-[22px] text-[#919EAB]">Update your security details</span>
       </div>
@@ -235,7 +268,7 @@ const Settings = () => {
       {/* Row for Email and Last Name */}
       <div className="flex flex-row flex-wrap items-start content-start p-0 gap-6 w-full">
         {/* TextField for Email */}
-        <div className="flex flex-col items-start p-0 w-[349.5px] min-w-[294px] h-[80px]">
+        <div className="flex flex-col items-start p-0 w-full md:w-[349.5px] min-w-[250px] h-[80px]">
           <div className="relative flex flex-row items-center p-0 px-[14px] isolate w-full h-[45px] bg-white/3 backdrop-blur-[25px] border border-[rgba(255,255,255,0.12)] rounded-lg">
             <input
               type="email"
@@ -258,7 +291,7 @@ const Settings = () => {
         </div>
         
         {/* TextField for Password */}
-        <div className="flex flex-col items-start p-0 w-[349.5px] min-w-[294px] h-[80px]">
+        <div className="flex flex-col items-start p-0 w-full md:w-[349.5px] min-w-[250px] h-[80px]">
           <div className="relative flex flex-row items-center p-0 px-[14px] isolate w-full h-[45px] bg-white/3 backdrop-blur-[25px] border  border-[rgba(255,255,255,0.12)] rounded-lg">
             <input
               type="text"
@@ -297,106 +330,95 @@ const Settings = () => {
     </div>
     
     {/* Notification Card */}
-    <div className="box-border flex flex-col items-start p-4 gap-4 w-[360px] min-w-[294px] h-[190px] bg-white/3 backdrop-blur-[25px] rounded-2xl">
+    <div className="box-border flex flex-col items-start p-4 gap-4 w-[360px] min-w-[250px] h-[190px] bg-white/3 backdrop-blur-[25px] rounded-2xl">
       
       {/* Switch 1: Email notifications */}
-      <div className="flex flex-row items-center p-0 gap-[9px] w-[315px] h-[44px]">
-        <span className="flex-1 h-[44px] text-sm leading-[22px] text-white">Email me when someone comments on my article</span>
-        <div className="flex flex-col justify-center items-start p-0 w-[33px] h-[38px]">
-           {/* Switch */}
-            <div className="flex items-center ">
-            {/* Text */}
-            
+      <div className="flex flex-row items-start gap-3 w-full">
+        <span className="flex-1 text-sm leading-[20px] text-white whitespace-normal break-words">
+          Email me when someone comments on my article
+        </span>
 
-            {/* Toggle Button */}
-             <button
-                type="button"
-                aria-pressed={isActive2}
-                aria-label={isActive2 ? "Active" : "Inactive"}
-                onClick={toggle2}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full border transition-colors ${
-                isActive2 ? "bg-[#13F584] border-white/5" : "bg-white/10 border-white/5 hover:bg-white/15"
-                }`}
-            >
-                <span
-                className={`inline-block h-4 w-4 transform rounded-full transition ${
-                    isActive2 ? "translate-x-6 bg-white" : "translate-x-1 bg-white"
-                }`}
-                />
-            </button>
-            </div>
-        </div>
+        <button
+          type="button"
+          aria-pressed={isActive2}
+          aria-label={isActive2 ? "Active" : "Inactive"}
+          onClick={toggle2}
+          className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border transition-colors ${
+            isActive2
+              ? "bg-[#13F584] border-white/5"
+              : "bg-white/10 border-white/5 hover:bg-white/15"
+          }`}
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full transition ${
+              isActive2 ? "translate-x-6 bg-white" : "translate-x-1 bg-white"
+            }`}
+          />
+        </button>
       </div>
+
       {/* Switch 2: Push notifications */}
-      <div className="flex flex-row items-center p-0 gap-[9px] w-[315px] h-[44px]">
-        <span className="flex-1 h-[44px] text-sm leading-[22px] text-white">Email me when someone answers on my form</span>
-        <div className="flex flex-col justify-center items-start p-0 w-[33px] h-[38px]">
-           {/* Switch */}
-            <div className="flex items-center ">
-            {/* Text */}
-            
+      <div className="flex flex-row items-start gap-3 w-full">
+        <span className="flex-1 text-sm leading-[20px] text-white whitespace-normal break-words">
+          Email me when someone comments on my article
+        </span>
 
-            {/* Toggle Button */}
-            <button
-                type="button"
-                aria-pressed={isActive3}
-                aria-label={isActive3 ? "Active" : "Inactive"}
-                onClick={toggle3}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full border transition-colors ${
-                isActive3 ? "bg-[#13F584] border-white/5" : "bg-white/10 border-white/5 hover:bg-white/15"
-                }`}
-            >
-                <span
-                className={`inline-block h-4 w-4 transform rounded-full transition ${
-                    isActive3 ? "translate-x-6 bg-white" : "translate-x-1 bg-white"
-                }`}
-                />
-            </button>
-            </div>
-        </div>
+        <button
+          type="button"
+          aria-pressed={isActive2}
+          aria-label={isActive2 ? "Active" : "Inactive"}
+          onClick={toggle2}
+          className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border transition-colors ${
+            isActive2
+              ? "bg-[#13F584] border-white/5"
+              : "bg-white/10 border-white/5 hover:bg-white/15"
+          }`}
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full transition ${
+              isActive2 ? "translate-x-6 bg-white" : "translate-x-1 bg-white"
+            }`}
+          />
+        </button>
       </div>
+
       
       {/* Switch 3: Another notification (e.g., SMS) */}
-      <div className="flex flex-row items-center p-0 gap-[9px] w-[315px] h-[38px]">
-        <span className="flex-1 h-[22px] text-sm leading-[22px] text-white">Email me hen someone follows me</span>
-        <div className="flex flex-col justify-center items-start p-0 w-[33px] h-[38px]">
-         {/* Switch */}
-            <div className="flex items-center ">
-            {/* Text */}
-            
+          <div className="flex flex-row items-start gap-3 w-full">
+      <span className="flex-1 text-sm leading-[20px] text-white whitespace-normal break-words">
+        Email me when someone comments on my article
+      </span>
 
-            {/* Toggle Button */}
-             <button
-                type="button"
-                aria-pressed={isActive4}
-                aria-label={isActive4 ? "Active" : "Inactive"}
-                onClick={toggle4}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full border transition-colors ${
-                isActive4 ? "bg-[#13F584] border-white/5" : "bg-white/10 border-white/5 hover:bg-white/15"
-                }`}
-            >
-                <span
-                className={`inline-block h-4 w-4 transform rounded-full transition ${
-                    isActive4 ? "translate-x-6 bg-white" : "translate-x-1 bg-white"
-                }`}
-                />
-            </button>
-            </div>
-        </div>
-      </div>
+      <button
+        type="button"
+        aria-pressed={isActive2}
+        aria-label={isActive2 ? "Active" : "Inactive"}
+        onClick={toggle2}
+        className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full border transition-colors ${
+          isActive2
+            ? "bg-[#13F584] border-white/5"
+            : "bg-white/10 border-white/5 hover:bg-white/15"
+        }`}
+      >
+        <span
+          className={`inline-block h-4 w-4 transform rounded-full transition ${
+            isActive2 ? "translate-x-6 bg-white" : "translate-x-1 bg-white"
+          }`}
+        />
+      </button>
+    </div>
+
       
     </div>
   </div>
-
             </div>
-            
-         
-
             
           </div>
         </div>
       </div>
     </div>
+    </div>
+</div>
   );
 };
 

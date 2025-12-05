@@ -184,7 +184,7 @@ export default function CreateConnectorModal({
               style={{
                 fontFamily: 'Public Sans, sans-serif',
                 fontWeight: 600,
-                fontSize: '16px',
+                fontSize: '20px',
                 lineHeight: '1.5em'
               }}
             >
@@ -192,21 +192,21 @@ export default function CreateConnectorModal({
             </h3>
             <button
               onClick={handleClose}
-              className="w-5 h-5 flex items-center justify-center transition-colors hover:opacity-70"
+              className="w-6 h-6 flex items-center justify-center transition-colors hover:opacity-70"
             >
-              <X className="w-5 h-5 text-white" />
+              <X className="w-6 h-6 text-white" />
             </button>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-2.5 flex items-start gap-2">
-              <AlertCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5" />
+            <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-3 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <span className="text-xs text-red-300">{error}</span>
+                <span className="text-sm text-red-300">{error}</span>
               </div>
               <button onClick={() => setError("")} className="text-red-400 hover:text-red-300">
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -227,10 +227,10 @@ export default function CreateConnectorModal({
                   : 'text-[#919EAB] hover:text-gray-300'
               }`}
               style={{ 
-                height: '32px', 
+                height: '36px', 
                 fontWeight: mode === 'trace' ? 500 : 400,
                 fontFamily: 'Public Sans, sans-serif',
-                fontSize: '12px'
+                fontSize: '14px'
               }}
             >
               From Trace
@@ -243,10 +243,10 @@ export default function CreateConnectorModal({
                   : 'text-[#919EAB] hover:text-gray-300'
               }`}
               style={{ 
-                height: '32px', 
+                height: '36px', 
                 fontWeight: mode === 'openapi' ? 500 : 400,
                 fontFamily: 'Public Sans, sans-serif',
-                fontSize: '12px'
+                fontSize: '14px'
               }}
             >
               From OpenAPI
@@ -262,7 +262,7 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 500,
-                  fontSize: '10px',
+                  fontSize: '13px',
                   lineHeight: '1em',
                   color: '#919EAB'
                 }}
@@ -278,13 +278,13 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '12px',
+                  fontSize: '14px',
                   lineHeight: '1.4666666666666666em',
                   background: 'rgba(255, 255, 255, 0.04)',
                   border: '1px solid rgba(255, 255, 255, 0.12)',
                   borderRadius: '8px',
-                  padding: '0px 8px',
-                  height: '36px'
+                  padding: '0px 12px',
+                  height: '40px'
                 }}
               />
             </div>
@@ -296,7 +296,7 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 500,
-                  fontSize: '10px',
+                  fontSize: '13px',
                   lineHeight: '1em',
                   color: '#919EAB'
                 }}
@@ -312,12 +312,12 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '12px',
+                  fontSize: '14px',
                   lineHeight: '1.4666666666666666em',
                   background: 'rgba(255, 255, 255, 0.04)',
                   border: '1px solid rgba(255, 255, 255, 0.12)',
                   borderRadius: '8px',
-                  padding: '10px 8px',
+                  padding: '12px 12px',
                   color: '#919EAB'
                 }}
               />
@@ -330,7 +330,7 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 500,
-                  fontSize: '10px',
+                  fontSize: '13px',
                   lineHeight: '1em',
                   color: '#919EAB'
                 }}
@@ -344,13 +344,13 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '12px',
+                  fontSize: '14px',
                   lineHeight: '1.4666666666666666em',
                   background: 'rgba(255, 255, 255, 0.04)',
                   border: '1px solid rgba(255, 255, 255, 0.12)',
                   borderRadius: '8px',
-                  padding: '0px 8px',
-                  height: '36px'
+                  padding: '0px 12px',
+                  height: '40px'
                 }}
               >
                 <span>{categories.find(c => c.value === formData.category)?.label || 'General'}</span>
@@ -372,10 +372,10 @@ export default function CreateConnectorModal({
                         setFormData({...formData, category: category.value});
                         setCategoryDropdownOpen(false);
                       }}
-                      className="w-full px-2.5 py-1.5 text-left transition-colors focus:outline-none"
+                      className="w-full px-3 py-2 text-left transition-colors focus:outline-none"
                       style={{
                         fontFamily: 'Public Sans, sans-serif',
-                        fontSize: '12px',
+                        fontSize: '14px',
                         background: formData.category === category.value 
                           ? 'rgba(19, 245, 132, 0.2)' 
                           : 'transparent',
@@ -396,7 +396,7 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 500,
-                  fontSize: '10px',
+                  fontSize: '13px',
                   lineHeight: '1em',
                   color: '#919EAB'
                 }}
@@ -412,13 +412,13 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '12px',
+                  fontSize: '14px',
                   lineHeight: '1.4666666666666666em',
                   background: 'rgba(255, 255, 255, 0.04)',
                   border: '1px solid rgba(255, 255, 255, 0.12)',
                   borderRadius: '8px',
-                  padding: '0px 8px',
-                  height: '36px'
+                  padding: '0px 12px',
+                  height: '40px'
                 }}
               />
               <p
@@ -426,7 +426,7 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '10px',
+                  fontSize: '12px',
                   lineHeight: '1.5em',
                   color: '#919EAB',
                   paddingTop: '0px'
@@ -443,7 +443,7 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 500,
-                  fontSize: '10px',
+                  fontSize: '13px',
                   lineHeight: '1em',
                   color: '#919EAB'
                 }}
@@ -472,11 +472,11 @@ export default function CreateConnectorModal({
                   theme="vs-dark"
                   options={{ 
                     minimap: { enabled: false }, 
-                    fontSize: 11,
+                    fontSize: 13,
                     fontWeight: '400',
                     scrollBeyondLastLine: false,
                     automaticLayout: true,
-                    lineHeight: 16
+                    lineHeight: 19
                   }}
                 />
               </div>
@@ -485,7 +485,7 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '10px',
+                  fontSize: '12px',
                   lineHeight: '1.5em',
                   color: '#919EAB',
                   paddingTop: '0px'
@@ -514,7 +514,7 @@ export default function CreateConnectorModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '12px',
+                  fontSize: '14px',
                   lineHeight: '1.5em'
                 }}
               >
@@ -531,11 +531,11 @@ export default function CreateConnectorModal({
               style={{
                 background: 'rgba(255, 86, 48, 0.08)',
                 color: '#FFAC82',
-                height: '32px',
-                padding: '0px 8px',
+                height: '36px',
+                padding: '0px 12px',
                 fontFamily: 'Public Sans, sans-serif',
                 fontWeight: 600,
-                fontSize: '12px',
+                fontSize: '14px',
                 lineHeight: '1.5em'
               }}
             >
@@ -548,17 +548,17 @@ export default function CreateConnectorModal({
               style={{
                 background: 'rgba(19, 245, 132, 0.08)',
                 color: '#9EFBCD',
-                height: '32px',
-                padding: '0px 8px',
+                height: '36px',
+                padding: '0px 12px',
                 fontFamily: 'Public Sans, sans-serif',
                 fontWeight: 600,
-                fontSize: '12px',
+                fontSize: '14px',
                 lineHeight: '1.5em'
               }}
             >
               {loading ? (
                 <>
-                  <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   Creating...
                 </>
               ) : (

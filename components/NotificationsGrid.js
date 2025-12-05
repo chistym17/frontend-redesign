@@ -267,7 +267,7 @@ export default function NotificationsGrid() {
 
         {/* Skeleton notification cards */}
         <div className="flex flex-col w-full items-center">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 7 }).map((_, i) => (
             <NotificationsCardSkeleton key={i} />
           ))}
         </div>
@@ -370,7 +370,7 @@ export default function NotificationsGrid() {
 
         <style jsx>{`
           .notifications-scroll {
-            max-height: calc(6 * 76px);
+            max-height: calc(7 * 76px);
             padding-right: 6px;
             scroll-behavior: smooth;
           }

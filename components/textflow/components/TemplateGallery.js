@@ -31,16 +31,16 @@ const descriptionText = truncate(template?.description || "No description provid
         borderColor: 'rgba(255, 255, 255, 0.12)',
       }}
     >
-      <div className="p-3 space-y-2.5 relative">
+      <div className="p-4 space-y-3 relative">
         {/* Header */}
         <div className="flex items-start justify-between gap-1.5">
           <div className="flex-1 space-y-0.5">
             <span
-              className="inline-flex px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wide node-badge-immediate"
+              className="inline-flex px-2 py-1 rounded-full text-xs uppercase tracking-wide node-badge-immediate"
             >
               {template.category}
             </span>
-            <h3 className="text-[12px] font-semibold text-white/85 transition-colors leading-tight">
+            <h3 className="text-base font-semibold text-white/85 transition-colors leading-tight">
               <span className="block">{firstLineTitle}</span>
               {remainingTitle && (
                 <span className="block text-white/70">
@@ -49,7 +49,7 @@ const descriptionText = truncate(template?.description || "No description provid
               )}
             </h3>
             {/* FIXED: Show description properly */}
-            <p className="text-[10px] text-white/50 line-clamp-2">
+            <p className="text-sm text-white/50 line-clamp-2">
               {descriptionText}
             </p>
           </div>
@@ -58,7 +58,7 @@ const descriptionText = truncate(template?.description || "No description provid
             className="flex-shrink-0 text-white/40 hover:text-red-400 transition-colors"
           >
             <Heart
-              className={`w-3.5 h-3.5 transition-colors ${
+              className={`w-4 h-4 transition-colors ${
                 isFavorite ? "fill-red-500 text-red-500" : ""
               }`}
             />
@@ -66,17 +66,17 @@ const descriptionText = truncate(template?.description || "No description provid
         </div>
 
         {/* Metadata */}
-        <div className="flex items-center gap-1 flex-wrap text-[9px] text-white/55">
+        <div className="flex items-center gap-1 flex-wrap text-xs text-white/55">
           <span>{template.usage_count || 0} users</span>
         </div>
 
         {/* Tags */}
         {template.tags && template.tags.length > 0 && (
-          <div className="flex items-center gap-1 flex-wrap">
+          <div className="flex items-center gap-0.5 flex-wrap">
             {template.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-0.5 rounded-full text-[10px]"
+                className="px-2.5 py-1 rounded-full text-xs"
                 style={{
                   background: 'rgba(255, 255, 255, 0.1)',
                   color: 'rgba(255, 255, 255, 0.75)',
@@ -86,7 +86,7 @@ const descriptionText = truncate(template?.description || "No description provid
               </span>
             ))}
             {template.tags.length > 3 && (
-              <span className="text-[10px] text-white/40">+{template.tags.length - 3}</span>
+              <span className="text-xs text-white/40">+{template.tags.length - 3}</span>
             )}
           </div>
         )}
@@ -96,7 +96,7 @@ const descriptionText = truncate(template?.description || "No description provid
           <div className="flex-1 flex">
           <button
             onClick={() => onSelect(template)}
-              className="px-2 py-1.5 rounded-xl text-[10px] font-semibold transition-all text-left"
+              className="px-2.5 py-1.5 rounded-xl text-sm font-semibold transition-all text-left flex items-center gap-1.5"
               style={{
                 background: "rgba(19, 245, 132, 0.12)",
                 color: "#9EFBCD",
@@ -109,7 +109,7 @@ const descriptionText = truncate(template?.description || "No description provid
             className="px-2 py-1 text-white/70 hover:text-white transition-colors"
             title="Share"
           >
-            <Share2 className="w-3 h-3" />
+            <Share2 className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -202,13 +202,13 @@ function TemplateDiscovery({ assistantId, onSelectTemplate, onClose, mode = "bro
       {/* Search & Filters */}
       <div className="px-4 space-y-3">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/40" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
           <input
             type="text"
             placeholder="Search templates..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-9 pr-3.5 py-1.5 rounded-2xl text-[12px] text-white placeholder-white/40 transition-colors focus:ring-2 focus:ring-emerald-400/20 focus:border-emerald-400/60 border"
+            className="w-full pl-10 pr-4 py-2 rounded-2xl text-sm text-white placeholder-white/40 transition-colors focus:ring-2 focus:ring-emerald-400/20 focus:border-emerald-400/60 border"
             style={{
               background: 'rgba(255, 255, 255, 0.04)',
               borderColor: 'rgba(145, 158, 171, 0.2)'
@@ -222,7 +222,7 @@ function TemplateDiscovery({ assistantId, onSelectTemplate, onClose, mode = "bro
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className="px-3 py-1.5 rounded-md text-[11px] font-semibold whitespace-nowrap transition-all"
+                className="px-4 py-1.5 rounded-md text-sm font-semibold whitespace-nowrap transition-all"
                 style={
                   selectedCategory === cat
                     ? {
@@ -247,16 +247,16 @@ function TemplateDiscovery({ assistantId, onSelectTemplate, onClose, mode = "bro
         {loading ? (
           <div className="flex items-center justify-center h-32">
             <div className="text-center">
-              <div className="w-7 h-7 border-2 border-gray-700 border-t-emerald-400 rounded-full animate-spin mx-auto mb-2"></div>
-              <div className="text-xs text-white/60">Loading templates...</div>
+              <div className="w-10 h-10 border-2 border-gray-700 border-t-emerald-400 rounded-full animate-spin mx-auto mb-3"></div>
+              <div className="text-base text-white/60">Loading templates...</div>
             </div>
           </div>
         ) : templates.length === 0 ? (
           <div className="flex items-center justify-center h-32">
-            <div className="text-center space-y-1">
-              <Sparkles className="w-8 h-8 mx-auto text-white/30" />
-              <div className="text-[12px] font-semibold text-white/75">No templates found</div>
-              <div className="text-[10px] text-white/45">Try adjusting your filters</div>
+            <div className="text-center space-y-2">
+              <Sparkles className="w-12 h-12 mx-auto text-white/30" />
+              <div className="text-base font-semibold text-white/75">No templates found</div>
+              <div className="text-sm text-white/45">Try adjusting your filters</div>
             </div>
           </div>
         ) : (
@@ -345,19 +345,19 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
       {/* Header */}
       <div className="px-4 pt-3 pb-2 flex items-center justify-between border-b border-white/10">
         <div>
-          <h3 className="text-sm font-semibold text-white/90">My Templates</h3>
-          <p className="text-[11px] text-white/50">{templates.length} templates</p>
+          <h3 className="text-base font-semibold text-white/90">My Templates</h3>
+          <p className="text-sm text-white/50">{templates.length} templates</p>
         </div>
         {onOpenSaveModal && (
           <button
             onClick={onOpenSaveModal}
-            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-all"
+            className="px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all"
             style={{
               background: "rgba(19, 245, 132, 0.12)",
               color: "#9EFBCD",
             }}
           >
-            <Plus className="w-3 h-3" />
+            <Plus className="w-4 h-4" />
             Save Current
           </button>
         )}
@@ -365,21 +365,21 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
 
       {/* Alerts */}
       {error && (
-        <div className="mx-4 bg-red-950/30 border border-red-800/50 rounded-lg p-3 flex items-start gap-2">
-          <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+        <div className="mx-4 bg-red-950/30 border border-red-800/50 rounded-lg p-4 flex items-start gap-2">
+          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <span className="text-sm text-red-300">{error}</span>
+            <span className="text-base text-red-300">{error}</span>
           </div>
           <button onClick={() => setError("")} className="text-red-400 hover:text-red-300">
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
       )}
 
       {success && (
-        <div className="mx-4 bg-emerald-950/30 border border-emerald-800/50 rounded-lg p-3 flex items-center gap-2">
-          <Check className="w-4 h-4 text-emerald-400" />
-          <span className="text-sm text-emerald-300">{success}</span>
+        <div className="mx-4 bg-emerald-950/30 border border-emerald-800/50 rounded-lg p-4 flex items-center gap-2">
+          <Check className="w-5 h-5 text-emerald-400" />
+          <span className="text-base text-emerald-300">{success}</span>
         </div>
       )}
 
@@ -390,10 +390,10 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
             <div className="text-xs text-white/60">Loading...</div>
           </div>
         ) : templates.length === 0 ? (
-          <div className="text-center py-10 space-y-1.5">
-            <Code className="w-10 h-10 mx-auto text-white/30" />
-            <div className="text-sm font-semibold text-white/75">No templates yet</div>
-            <div className="text-[11px] text-white/50">Save your flows as templates to reuse them</div>
+          <div className="text-center py-10 space-y-2">
+            <Code className="w-12 h-12 mx-auto text-white/30" />
+            <div className="text-base font-semibold text-white/75">No templates yet</div>
+            <div className="text-sm text-white/50">Save your flows as templates to reuse them</div>
           </div>
         ) : (
           templates.map(template => (
@@ -409,13 +409,13 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1">
-                  <h4 className="text-sm font-semibold text-white/90">{template.name}</h4>
-                  <p className="text-[11px] text-white/50 mt-1 line-clamp-2">
+                  <h4 className="text-base font-semibold text-white/90">{template.name}</h4>
+                  <p className="text-sm text-white/50 mt-1 line-clamp-2">
                     {template.description || "No description"}
                   </p>
-                  <div className="flex items-center gap-3 mt-2 text-[10px] text-white/50">
+                  <div className="flex items-center gap-3 mt-2 text-xs text-white/50">
                     <span
-                      className="px-2 py-0.5 rounded capitalize"
+                      className="px-2.5 py-1 rounded capitalize"
                       style={{
                         background: 'rgba(255, 255, 255, 0.08)',
                         color: 'rgba(255,255,255,0.7)'
@@ -427,7 +427,7 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
                     <span>{template.usage_count} uses</span>
                     {template.is_public && (
                       <span className="flex items-center gap-1 text-emerald-400">
-                        <Shield className="w-3 h-3" />
+                        <Shield className="w-4 h-4" />
                         Public
                       </span>
                     )}
@@ -439,7 +439,7 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
                       onSelectTemplate(template);
                       onClose();
                     }}
-                    className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-[#9EFBCD] transition-all"
+                    className="px-3 py-1.5 rounded-lg text-sm font-semibold text-[#9EFBCD] transition-all"
                     style={{ background: 'rgba(19, 245, 132, 0.12)' }}
                   >
                     Use
@@ -449,7 +449,7 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
                       setTemplateToDelete(template);
                       setDeleteError("");
                     }}
-                    className="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-red-300 transition-all"
+                    className="px-2.5 py-1.5 rounded-lg text-sm font-semibold text-red-300 transition-all"
                     style={{ background: 'rgba(255, 72, 72, 0.1)' }}
                   >
                     Delete
@@ -485,7 +485,7 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
           >
             <div className="flex flex-col gap-3 p-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-white/90">Delete Template</h3>
+                <h3 className="text-base font-semibold text-white/90">Delete Template</h3>
                 <button
                   onClick={() => {
                     if (!deleteLoading) {
@@ -493,12 +493,12 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
                       setDeleteError("");
                     }
                   }}
-                  className="w-5 h-5 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+                  className="w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
-              <p className="text-[11px] text-white/60">
+              <p className="text-sm text-white/60">
                 Are you sure you want to delete{" "}
                 <span className="text-white/90 font-semibold">
                   {templateToDelete.name}
@@ -506,9 +506,9 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
                 ? This action cannot be undone.
               </p>
               {deleteError && (
-                <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-2 flex items-start gap-2">
-                  <AlertCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-[11px] text-red-300">{deleteError}</span>
+                <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-3 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-red-300">{deleteError}</span>
                 </div>
               )}
               <div className="flex justify-end items-center gap-2 pt-2">
@@ -519,7 +519,7 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
                       setDeleteError("");
                     }
                   }}
-                  className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-white/70 hover:text-white transition-colors"
+                  className="px-4 py-2 rounded-lg text-sm font-semibold text-white/70 hover:text-white transition-colors"
                   style={{ background: "rgba(255,255,255,0.04)" }}
                   disabled={deleteLoading}
                 >
@@ -527,7 +527,7 @@ function MyTemplates({ assistantId, onSelectTemplate, onClose, refreshKey = 0, o
                 </button>
                 <button
                   onClick={handleDeleteTemplate}
-                  className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-red-200 transition-all disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg text-sm font-semibold text-red-200 transition-all disabled:opacity-50"
                   style={{ background: "rgba(255, 72, 72, 0.15)" }}
                   disabled={deleteLoading}
                 >
@@ -566,8 +566,11 @@ export default function TemplateGallery({ assistantId, onSelectTemplate, onClose
       
       {/* Modal */}
       <div 
-        className="relative pointer-events-auto rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
+        className="relative pointer-events-auto rounded-3xl w-full shadow-2xl flex flex-col overflow-hidden"
         style={{
+          width: '700px',
+          height: '60vh',
+          maxHeight: '60vh',
           background: 'rgba(255, 255, 255, 0.04)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
@@ -577,8 +580,8 @@ export default function TemplateGallery({ assistantId, onSelectTemplate, onClose
         {/* Header */}
         <div className="px-6 pt-5 pb-3 flex items-center justify-between">
             <div>
-            <h2 className="text-base font-semibold text-white/90 tracking-tight">Template Library</h2>
-            <p className="text-[11px] text-white/60">Discover and reuse flow templates</p>
+            <h2 className="text-xl font-semibold text-white/90 tracking-tight">Template Library</h2>
+            <p className="text-sm text-white/60">Discover and reuse flow templates</p>
           </div>
           <button
             onClick={onClose}
@@ -602,13 +605,13 @@ export default function TemplateGallery({ assistantId, onSelectTemplate, onClose
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-2.5 py-1.5 text-[11px] font-semibold rounded-md transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-2 text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 ${
                   activeTab === tab.id
                     ? "bg-[rgba(19,245,132,0.08)] text-[#9EFBCD]"
                     : "text-white/60 hover:text-white/80"
                 }`}
               >
-                <Icon className="w-3 h-3 opacity-80" />
+                <Icon className="w-4 h-4 opacity-80" />
                 {tab.label}
               </button>
             );

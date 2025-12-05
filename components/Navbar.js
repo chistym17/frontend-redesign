@@ -18,6 +18,17 @@ const Navbar = () => {
       window.location.href = '/login';
     }
   };
+  const [navWidth, setNavWidth] = useState('100%');
+
+  useEffect(() => {
+    const handleResize = () => {
+      setNavWidth(window.innerWidth < 768 ? '95%' : '100%'); // mobile <768px
+    };
+
+    handleResize(); // set initially
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <nav style={{
@@ -29,7 +40,7 @@ const Navbar = () => {
       padding: '6px 6px 6px 24px',
       gap: '24px',
       position: 'absolute',
-      width: '100%',
+      width: navWidth,
       maxWidth: '748px',
       height: '56px',
       left: '50%',

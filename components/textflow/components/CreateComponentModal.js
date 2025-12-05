@@ -140,7 +140,7 @@ export default function CreateComponentModal({
               style={{
                 fontFamily: 'Public Sans, sans-serif',
                 fontWeight: 700,
-                fontSize: '18px',
+                fontSize: '20px',
                 lineHeight: '1.5em'
               }}
             >
@@ -148,30 +148,30 @@ export default function CreateComponentModal({
             </h3>
             <button
               onClick={handleClose}
-              className="w-5 h-5 flex items-center justify-center transition-colors hover:opacity-70"
+              className="w-6 h-6 flex items-center justify-center transition-colors hover:opacity-70"
             >
-              <X className="w-5 h-5 text-white" />
+              <X className="w-6 h-6 text-white" />
             </button>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-2.5 flex items-start gap-2">
-              <AlertCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5" />
+            <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-3 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <span className="text-xs text-red-300">{error}</span>
+                <span className="text-sm text-red-300">{error}</span>
               </div>
               <button onClick={() => setError("")} className="text-red-400 hover:text-red-300">
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
 
           {/* Success Message */}
           {success && (
-            <div className="bg-emerald-950/30 border border-emerald-800/50 rounded-lg p-2.5 flex items-start gap-2">
-              <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <span className="text-xs text-emerald-300">{success}</span>
+            <div className="bg-emerald-950/30 border border-emerald-800/50 rounded-lg p-3 flex items-start gap-2">
+              <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <span className="text-sm text-emerald-300">{success}</span>
             </div>
           )}
 
@@ -184,7 +184,7 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 600,
-                  fontSize: '11px',
+                  fontSize: '13px',
                   lineHeight: '1em',
                   color: '#919EAB'
                 }}
@@ -200,13 +200,13 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '13px',
+                  fontSize: '14px',
                   lineHeight: '1.4666666666666666em',
                   background: 'rgba(255, 255, 255, 0.04)',
                   border: '1px solid rgba(255, 255, 255, 0.12)',
                   borderRadius: '8px',
-                  padding: '0px 10px',
-                  height: '36px'
+                  padding: '0px 12px',
+                  height: '40px'
                 }}
               />
             </div>
@@ -218,7 +218,7 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 600,
-                  fontSize: '11px',
+                  fontSize: '13px',
                   lineHeight: '1em',
                   color: '#919EAB'
                 }}
@@ -234,12 +234,12 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '13px',
+                  fontSize: '14px',
                   lineHeight: '1.4666666666666666em',
                   background: 'rgba(255, 255, 255, 0.04)',
                   border: '1px solid rgba(255, 255, 255, 0.12)',
                   borderRadius: '8px',
-                  padding: '12px 10px',
+                  padding: '12px 12px',
                   color: '#919EAB'
                 }}
               />
@@ -252,7 +252,7 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 600,
-                  fontSize: '11px',
+                  fontSize: '13px',
                   lineHeight: '1em',
                   color: '#919EAB'
                 }}
@@ -267,13 +267,13 @@ export default function CreateComponentModal({
                   style={{
                     fontFamily: 'Public Sans, sans-serif',
                     fontWeight: 400,
-                    fontSize: '13px',
+                    fontSize: '14px',
                     lineHeight: '1.4666666666666666em',
                     background: 'rgba(255, 255, 255, 0.04)',
                     border: '1px solid rgba(255, 255, 255, 0.12)',
                     borderRadius: '8px',
-                    padding: '0px 10px',
-                    height: '36px'
+                    padding: '0px 12px',
+                    height: '40px'
                   }}
                 >
                   {nodeTypes.map(type => (
@@ -293,7 +293,7 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 600,
-                  fontSize: '11px',
+                  fontSize: '13px',
                   lineHeight: '1em',
                   color: '#919EAB'
                 }}
@@ -309,13 +309,13 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '13px',
+                  fontSize: '14px',
                   lineHeight: '1.4666666666666666em',
                   background: 'rgba(255, 255, 255, 0.04)',
                   border: '1px solid rgba(145, 158, 171, 0.2)',
                   borderRadius: '8px',
-                  padding: '0px 10px',
-                  height: '36px',
+                  padding: '0px 12px',
+                  height: '40px',
                   color: '#919EAB'
                 }}
               />
@@ -328,7 +328,7 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 600,
-                  fontSize: '11px',
+                  fontSize: '13px',
                   lineHeight: '1em',
                   color: '#919EAB'
                 }}
@@ -355,13 +355,13 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '13px',
+                  fontSize: '14px',
                   lineHeight: '1.4666666666666666em',
                   background: 'rgba(255, 255, 255, 0.04)',
                   border: '1px solid rgba(145, 158, 171, 0.2)',
                   borderRadius: '8px',
-                  padding: '0px 10px',
-                  height: '36px',
+                  padding: '0px 12px',
+                  height: '40px',
                   color: '#919EAB'
                 }}
               />
@@ -370,7 +370,7 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '11px',
+                  fontSize: '12px',
                   lineHeight: '1.5em',
                   color: '#919EAB',
                   paddingTop: '6px'
@@ -387,7 +387,7 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 600,
-                  fontSize: '11px',
+                  fontSize: '13px',
                   lineHeight: '1em',
                   color: '#919EAB'
                 }}
@@ -419,11 +419,11 @@ export default function CreateComponentModal({
                   theme="vs-dark"
                   options={{ 
                     minimap: { enabled: false }, 
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: '500',
                     scrollBeyondLastLine: false,
                     automaticLayout: true,
-                    lineHeight: 18
+                    lineHeight: 19
                   }}
                   onMount={(editor, monaco) => {
                     console.log("Monaco Editor mounted successfully");
@@ -452,7 +452,7 @@ export default function CreateComponentModal({
                   style={{
                     fontFamily: 'Public Sans, sans-serif',
                     fontWeight: 400,
-                    fontSize: '13px',
+                    fontSize: '14px',
                     lineHeight: '1.5714285714285714em',
                     color: '#FFFFFF'
                   }}
@@ -465,7 +465,7 @@ export default function CreateComponentModal({
                 style={{
                   fontFamily: 'Public Sans, sans-serif',
                   fontWeight: 400,
-                  fontSize: '11px',
+                  fontSize: '12px',
                   lineHeight: '1.5em',
                   color: '#919EAB'
                 }}
@@ -483,12 +483,12 @@ export default function CreateComponentModal({
               style={{
                 fontFamily: 'Public Sans, sans-serif',
                 fontWeight: 700,
-                fontSize: '13px',
+                fontSize: '14px',
                 lineHeight: '1.7142857142857142em',
                 background: 'rgba(255, 86, 48, 0.08)',
                 color: '#FFAC82',
-                padding: '0px 10px',
-                height: '32px',
+                padding: '0px 12px',
+                height: '36px',
                 borderRadius: '8px'
               }}
             >
@@ -501,12 +501,12 @@ export default function CreateComponentModal({
               style={{
                 fontFamily: 'Public Sans, sans-serif',
                 fontWeight: 700,
-                fontSize: '13px',
+                fontSize: '14px',
                 lineHeight: '1.7142857142857142em',
                 background: 'rgba(19, 245, 132, 0.08)',
                 color: '#9EFBCD',
-                padding: '0px 10px',
-                height: '32px',
+                padding: '0px 12px',
+                height: '36px',
                 borderRadius: '8px'
               }}
             >

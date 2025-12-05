@@ -386,6 +386,54 @@ body {
   z-index: 2;
 }
 
+.sidebar.mobile {
+  width: 260px;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  border-radius: 0;
+  padding-top: 5px;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 2000;
+}
+.sidebar.mobile.open {
+  transform: translateX(0);
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(5px);
+  z-index: 1900;
+}
+
+/* MOBILE HAMBURGER BUTTON */
+.mobile-menu-btn {
+  z-index: 50;                  /* on top of other elements */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;                     /* slightly larger for touch devices */
+  height: 44px;
+  border-radius: 12px;            /* softer corners */
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.mobile-menu-btn:hover {
+  background: rgba(0, 0, 0, 0.048);  /* highlight on hover */
+  transform: scale(1.05);          /* slight zoom effect */
+}
+
+@media (min-width: 769px) {
+  .mobile-menu-btn {
+    display: none;                  /* hide on larger screens */
+  }
+}
+
+
 /* Global custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px; /* width of the scrollbar */

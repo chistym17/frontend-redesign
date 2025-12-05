@@ -121,50 +121,50 @@ export default function CredentialsPanel({ assistantId, refreshKey = 0 }) {
       <div className={`flex-1 px-6 py-4 space-y-3 ${credentials.length > 0 ? 'overflow-y-auto custom-scrollbar' : 'overflow-hidden'}`}>
         {/* Alerts */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 flex items-start gap-3">
-            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-            <span className="text-sm text-red-300 flex-1">{error}</span>
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <span className="text-base text-red-300 flex-1">{error}</span>
             <button onClick={() => setError("")} className="text-red-400 hover:text-red-300 flex-shrink-0">
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
         )}
 
         {success && (
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex items-start gap-3">
-            <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-            <span className="text-sm text-emerald-300">{success}</span>
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex items-start gap-3">
+            <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+            <span className="text-base text-emerald-300">{success}</span>
           </div>
         )}
 
         {/* Credentials List */}
         {loading && credentials.length === 0 ? (
           <div className="flex items-center justify-center py-20">
-            <div className="text-sm text-gray-500">Loading credentials...</div>
+            <div className="text-base text-gray-500">Loading credentials...</div>
           </div>
         ) : credentials.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20">
             <div 
-              className="w-10 h-10 rounded-2xl flex items-center justify-center mb-4"
+              className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
               style={{
                 background: 'rgba(255, 255, 255, 0.08)'
               }}
             >
-              <Key className="w-5 h-5 text-gray-400" />
+              <Key className="w-6 h-6 text-gray-400" />
             </div>
-            <p className="text-sm font-medium text-white mb-1">No credentials</p>
-            <p className="text-xs text-gray-400">Create one to get started</p>
+            <p className="text-base font-medium text-white mb-1">No credentials</p>
+            <p className="text-sm text-gray-400">Create one to get started</p>
           </div>
         ) : (
           <div className="overflow-auto custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="text-[10px] uppercase tracking-wide text-[#8FA0B1] border-b border-white/5">
-                  <th className="px-2 py-2 font-semibold text-[#C7D2DC]">Name</th>
-                  <th className="px-2 py-2 font-semibold text-[#C7D2DC]">Key Name</th>
-                  <th className="px-2 py-2 font-semibold text-[#C7D2DC]">Location</th>
-                  <th className="px-2 py-2 font-semibold text-[#C7D2DC]">Key Value</th>
-                  <th className="px-2 py-2 font-semibold text-[#C7D2DC] text-right">Delete</th>
+                <tr className="text-xs uppercase tracking-wide text-[#8FA0B1] border-b border-white/5">
+                  <th className="px-3 py-3 font-semibold text-[#C7D2DC]">Name</th>
+                  <th className="px-3 py-3 font-semibold text-[#C7D2DC]">Key Name</th>
+                  <th className="px-3 py-3 font-semibold text-[#C7D2DC]">Location</th>
+                  <th className="px-3 py-3 font-semibold text-[#C7D2DC]">Key Value</th>
+                  <th className="px-3 py-3 font-semibold text-[#C7D2DC] text-right">Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -199,33 +199,33 @@ export default function CredentialsPanel({ assistantId, refreshKey = 0 }) {
                   return (
                     <tr
                       key={cred.credential_id}
-                      className={`text-[11px] text-white/80 ${
+                      className={`text-sm text-white/80 ${
                         index !== credentials.length - 1 ? "border-b border-white/5" : ""
                       }`}
                     >
-                      <td className="px-2 py-2">
+                      <td className="px-3 py-3">
                         <div className="flex flex-col">
                           <span className="font-semibold text-white/90 leading-tight">{cred.name}</span>
-                          <span className="text-[10px] text-white/50 capitalize">
+                          <span className="text-xs text-white/50 capitalize">
                             {cred.credential_type.replace("_", " ")}
                           </span>
                         </div>
                       </td>
-                      <td className="px-2 py-2 text-white/70">{keyName}</td>
-                      <td className="px-2 py-2 text-white/70 capitalize">{location}</td>
-                      <td className="px-2 py-2 text-white/70 font-mono">
+                      <td className="px-3 py-3 text-white/70">{keyName}</td>
+                      <td className="px-3 py-3 text-white/70 capitalize">{location}</td>
+                      <td className="px-3 py-3 text-white/70 font-mono">
                         {keyValue}
                       </td>
-                      <td className="px-2 py-2 text-right">
+                      <td className="px-3 py-3 text-right">
                         <button
                           onClick={() => {
                             setCredentialToDelete(cred);
                             setDeleteError("");
                           }}
-                          className="inline-flex items-center justify-center p-1.5 rounded-lg text-[#FF6B6B] hover:bg-[#FF6B6B]/15 transition-colors"
+                          className="inline-flex items-center justify-center p-2 rounded-lg text-[#FF6B6B] hover:bg-[#FF6B6B]/15 transition-colors"
                           title="Delete credential"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </td>
                     </tr>
@@ -260,7 +260,7 @@ export default function CredentialsPanel({ assistantId, refreshKey = 0 }) {
           >
             <div className="flex flex-col gap-3 p-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-white/90">Delete Credential</h3>
+                <h3 className="text-base font-semibold text-white/90">Delete Credential</h3>
                 <button
                   onClick={() => {
                     if (!deleteLoading) {
@@ -268,20 +268,20 @@ export default function CredentialsPanel({ assistantId, refreshKey = 0 }) {
                       setDeleteError("");
                     }
                   }}
-                  className="w-5 h-5 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+                  className="w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
-              <p className="text-[11px] text-white/60">
+              <p className="text-sm text-white/60">
                 Are you sure you want to delete{" "}
                 <span className="text-white/90 font-semibold">{credentialToDelete.name}</span>?
                 This action cannot be undone.
               </p>
               {deleteError && (
-                <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-2 flex items-start gap-2">
-                  <AlertCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-[11px] text-red-300">{deleteError}</span>
+                <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-3 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-red-300">{deleteError}</span>
                 </div>
               )}
               <div className="flex justify-end items-center gap-2 pt-2">
@@ -292,7 +292,7 @@ export default function CredentialsPanel({ assistantId, refreshKey = 0 }) {
                       setDeleteError("");
                     }
                   }}
-                  className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-white/70 hover:text-white transition-colors"
+                  className="px-4 py-2 rounded-lg text-sm font-semibold text-white/70 hover:text-white transition-colors"
                   style={{ background: "rgba(255,255,255,0.04)" }}
                   disabled={deleteLoading}
                 >
@@ -300,7 +300,7 @@ export default function CredentialsPanel({ assistantId, refreshKey = 0 }) {
                 </button>
                 <button
                   onClick={handleDeleteConfirm}
-                  className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-red-200 transition-all disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg text-sm font-semibold text-red-200 transition-all disabled:opacity-50"
                   style={{ background: "rgba(255, 72, 72, 0.15)" }}
                   disabled={deleteLoading}
                 >

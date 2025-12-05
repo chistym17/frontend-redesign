@@ -25,7 +25,7 @@ export default function ConsolePanel({ onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
       <div 
-        className="px-3 py-2 flex items-center justify-between backdrop-blur-sm"
+        className="px-4 py-3 flex items-center justify-between backdrop-blur-sm"
         style={{
           background: 'rgba(255, 255, 255, 0.06)',
           backdropFilter: 'blur(10px)',
@@ -33,11 +33,11 @@ export default function ConsolePanel({ onClose }) {
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
         }}
       >
-        <div className="flex items-center gap-1.5">
-          <Activity className="w-3.5 h-3.5 text-emerald-400" />
-          <span className="text-[11px] font-semibold text-white">Console</span>
+        <div className="flex items-center gap-2">
+          <Activity className="w-4 h-4 text-emerald-400" />
+          <span className="text-sm font-semibold text-white">Console</span>
           <span 
-            className="text-[9px] text-gray-300 px-1.5 py-0.5 rounded-full"
+            className="text-xs text-gray-300 px-2 py-1 rounded-full"
             style={{
               background: 'rgba(255, 255, 255, 0.08)'
             }}
@@ -45,46 +45,46 @@ export default function ConsolePanel({ onClose }) {
             {lines.length} {lines.length === 1 ? 'log' : 'logs'}
           </span>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <button
             onClick={clearConsole}
-            className="text-[10px] text-gray-300 hover:text-white transition-colors px-1.5 py-0.5 rounded-md flex items-center gap-1"
+            className="text-xs text-gray-300 hover:text-white transition-colors px-2 py-1 rounded-md flex items-center gap-1.5"
             style={{
               background: 'transparent'
             }}
           >
-            <Trash2 className="w-2.5 h-2.5" />
+            <Trash2 className="w-3.5 h-3.5" />
             Clear
           </button>
           {onClose && (
             <button
               onClick={onClose}
-              className="text-[10px] text-red-400 hover:text-red-300 transition-colors px-1.5 py-0.5 rounded-md flex items-center gap-1"
+              className="text-xs text-red-400 hover:text-red-300 transition-colors px-2 py-1 rounded-md flex items-center gap-1.5"
               style={{
                 background: 'transparent'
               }}
             >
-              <X className="w-2.5 h-2.5" />
+              <X className="w-3.5 h-3.5" />
               Close
             </button>
           )}
         </div>
       </div>
       
-      <div className="flex-1 overflow-auto p-2 space-y-1 font-mono text-[10px]">
+      <div className="flex-1 overflow-auto p-3 space-y-2 font-mono text-sm">
         {lines.length === 0 ? (
           <div className="h-full flex items-center justify-center">
             <div className="text-center text-gray-400">
-              <Activity className="w-6 h-6 mx-auto mb-1.5 opacity-30" />
-              <div className="text-[11px]">No logs yet</div>
-              <div className="text-[9px] mt-1">Run your flow to see activity</div>
+              <Activity className="w-8 h-8 mx-auto mb-2 opacity-30" />
+              <div className="text-sm">No logs yet</div>
+              <div className="text-xs mt-1">Run your flow to see activity</div>
             </div>
           </div>
         ) : (
           lines.map((l, i) => (
             <div 
               key={i} 
-              className="px-2 py-1.5 rounded-lg transition-all"
+              className="px-3 py-2 rounded-lg transition-all"
               style={{
                 background: l.kind === 'error' 
                   ? 'rgba(220, 38, 38, 0.1)' 
@@ -102,8 +102,8 @@ export default function ConsolePanel({ onClose }) {
                 }`
               }}
             >
-              <div className="flex items-start gap-1.5">
-                <span className="text-gray-400 text-[9px] leading-4 flex-shrink-0">
+              <div className="flex items-start gap-2">
+                <span className="text-gray-400 text-xs leading-5 flex-shrink-0">
                   {new Date(l.ts).toLocaleTimeString()}
                 </span>
                 <span 

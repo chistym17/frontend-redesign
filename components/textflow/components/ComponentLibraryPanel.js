@@ -33,22 +33,22 @@ function ComponentCard({ component, onUse, onDelete }) {
 
   return (
     <div 
-      className="rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg group node-card-surface flex flex-col min-h-[170px]"
+      className="rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg group node-card-surface flex flex-col min-h-[200px]"
       style={{
         borderColor: 'rgba(255, 255, 255, 0.12)'
       }}
     >
-      <div className="p-3 space-y-2.5 flex-1 min-h-[100px] flex flex-col">
+      <div className="p-4 space-y-3 flex-1 min-h-[120px] flex flex-col">
         {/* Header */}
         <div className="flex items-start gap-1.5">
           <div className="flex-1 space-y-0.5">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="inline-flex px-1.5 py-0.5 rounded-full text-[9px] uppercase tracking-wide node-badge-immediate">
+              <span className="inline-flex px-2 py-1 rounded-full text-xs uppercase tracking-wide node-badge-immediate">
                 {component.node_type || "unknown"}
               </span>
               {component.category && (
                 <span 
-                  className="px-1.5 py-0.5 rounded-full text-[9px]"
+                  className="px-2 py-1 rounded-full text-xs"
                   style={{
                     background: 'rgba(255, 255, 255, 0.1)',
                     color: 'rgba(255, 255, 255, 0.75)'
@@ -58,11 +58,11 @@ function ComponentCard({ component, onUse, onDelete }) {
                 </span>
               )}
             </div>
-            <h3 className="text-[12px] font-semibold text-white/90 leading-tight mt-1">
+            <h3 className="text-base font-semibold text-white/90 leading-tight mt-1">
               <span className="block">{firstLine}</span>
               {remaining && <span className="block text-white/75">{remaining}</span>}
             </h3>
-            <p className="text-[10px] text-white/60 line-clamp-2 leading-snug">
+            <p className="text-sm text-white/60 line-clamp-2 leading-snug">
               {descriptionText}
             </p>
           </div>
@@ -76,13 +76,13 @@ function ComponentCard({ component, onUse, onDelete }) {
         </div>
 
         {/* Stats */}
-        <div className="flex items-center gap-1 text-[9px] text-white/55">
+        <div className="flex items-center gap-1 text-xs text-white/55">
           <span>{component.usage_count || 0} uses</span>
           {component.rating && component.rating > 0 && (
             <>
               <span>·</span>
               <span className="flex items-center gap-0.5">
-                <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+                <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
                 {component.rating.toFixed(1)}
               </span>
             </>
@@ -95,7 +95,7 @@ function ComponentCard({ component, onUse, onDelete }) {
             {component.tags.slice(0, 3).map((tag, idx) => (
               <span
                 key={`${component.component_id}-tag-${idx}`}
-                className="px-2 py-0.5 rounded-full text-[10px]"
+                className="px-2.5 py-1 rounded-full text-xs"
                 style={{
                   background: 'rgba(255, 255, 255, 0.1)',
                   color: 'rgba(255, 255, 255, 0.75)'
@@ -105,7 +105,7 @@ function ComponentCard({ component, onUse, onDelete }) {
               </span>
             ))}
             {component.tags.length > 3 && (
-              <span className="text-[10px] text-white/40">+{component.tags.length - 3}</span>
+              <span className="text-xs text-white/40">+{component.tags.length - 3}</span>
             )}
           </div>
         )}
@@ -113,17 +113,17 @@ function ComponentCard({ component, onUse, onDelete }) {
 
       {/* Actions */}
       <div className="pt-2 border-t border-white/5 px-3 pb-3">
-        <div className="flex items-center gap-2 text-[10px] font-semibold">
+        <div className="flex items-center gap-2 text-sm font-semibold">
           <div className="flex-1 flex">
           <button
             onClick={() => onUse(component)}
-              className="px-2.5 py-1.5 rounded-xl text-[10px] font-semibold transition-all text-left flex items-center gap-1"
+              className="px-3 py-2 rounded-xl text-sm font-semibold transition-all text-left flex items-center gap-1.5"
               style={{
                 background: "rgba(19, 245, 132, 0.12)",
                 color: "#9EFBCD",
               }}
           >
-            <Copy className="w-3 h-3" />
+            <Copy className="w-4 h-4" />
             Use
           </button>
           </div>
@@ -259,8 +259,11 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
       
       {/* Modal */}
       <div 
-        className="relative pointer-events-auto rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
+        className="relative pointer-events-auto rounded-3xl w-full shadow-2xl flex flex-col overflow-hidden"
         style={{
+          width: '700px',
+          height: '60vh',
+          maxHeight: '60vh',
           background: 'rgba(255, 255, 255, 0.04)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
@@ -270,12 +273,12 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
         {/* Header */}
         <div className="px-6 pt-5 pb-3 border-b border-white/10 flex items-center justify-between">
           <div>
-            <h2 className="text-base font-semibold text-white/90 tracking-tight">Component Library</h2>
-            <p className="text-[11px] text-white/60">Reusable node configurations</p>
+            <h2 className="text-xl font-semibold text-white/90 tracking-tight">Component Library</h2>
+            <p className="text-sm text-white/60">Reusable node configurations</p>
           </div>
           <button
             onClick={() => onOpenCreateModal && onOpenCreateModal()}
-            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-center transition-all"
+            className="px-4 py-2 rounded-lg text-sm font-semibold text-center transition-all"
             style={{
               color: "#9EFBCD",
               background: "rgba(19, 245, 132, 0.08)",
@@ -290,7 +293,7 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
           <div className="flex gap-1.5 flex-wrap">
             <button
               onClick={() => setFilterByType("all")}
-              className="px-3 py-1 rounded-md text-[10px] font-semibold transition-all"
+              className="px-4 py-1.5 rounded-md text-sm font-semibold transition-all"
               style={
                 filterByType === "all"
                   ? {
@@ -309,7 +312,7 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
               <button
                 key={type}
                 onClick={() => setFilterByType(type)}
-                className="px-3 py-1 rounded-md text-[10px] font-semibold capitalize transition-all"
+                className="px-4 py-1.5 rounded-md text-sm font-semibold capitalize transition-all"
                 style={
                   filterByType === type
                     ? {
@@ -330,12 +333,12 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
 
         {/* Alerts */}
         {renderError && (
-          <div className="mx-6 mt-4 bg-red-950/30 border border-red-800/50 rounded-lg p-3">
-            <div className="text-sm font-semibold text-red-300 mb-1">Render Error</div>
-            <div className="text-xs text-red-400 font-mono">{renderError}</div>
+          <div className="mx-6 mt-4 bg-red-950/30 border border-red-800/50 rounded-lg p-4">
+            <div className="text-base font-semibold text-red-300 mb-1">Render Error</div>
+            <div className="text-sm text-red-400 font-mono">{renderError}</div>
             <button 
               onClick={() => setRenderError(null)}
-              className="mt-2 text-xs text-red-300 hover:text-red-100"
+              className="mt-2 text-sm text-red-300 hover:text-red-100"
             >
               Dismiss
             </button>
@@ -343,21 +346,21 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
         )}
 
         {error && (
-          <div className="mx-6 mt-4 bg-red-950/30 border border-red-800/50 rounded-lg p-3 flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+          <div className="mx-6 mt-4 bg-red-950/30 border border-red-800/50 rounded-lg p-4 flex items-start gap-2">
+            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <span className="text-sm text-red-300">{error}</span>
+              <span className="text-base text-red-300">{error}</span>
             </div>
             <button onClick={() => setError("")} className="text-red-400 hover:text-red-300">
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
         )}
 
         {success && (
-          <div className="mx-6 mt-4 bg-emerald-950/30 border border-emerald-800/50 rounded-lg p-3 flex items-start gap-2">
-            <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-            <span className="text-sm text-emerald-300">{success}</span>
+          <div className="mx-6 mt-4 bg-emerald-950/30 border border-emerald-800/50 rounded-lg p-4 flex items-start gap-2">
+            <Check className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+            <span className="text-base text-emerald-300">{success}</span>
           </div>
         )}
 
@@ -366,16 +369,16 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
           {loading ? (
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
-                <div className="w-8 h-8 border-2 border-gray-700 border-t-emerald-400 rounded-full animate-spin mx-auto mb-2"></div>
-                <div className="text-sm text-gray-200">Loading components...</div>
+                <div className="w-10 h-10 border-2 border-gray-700 border-t-emerald-400 rounded-full animate-spin mx-auto mb-3"></div>
+                <div className="text-base text-gray-200">Loading components...</div>
               </div>
             </div>
           ) : components.length === 0 ? (
             <div className="flex items-center justify-center h-64">
-              <div className="flex flex-col items-center text-center gap-1.5 translate-y-3">
-                <Package className="w-10 h-10 text-gray-500/80" />
-                <div className="text-sm font-semibold text-white/75">No components yet</div>
-                <p className="text-[11px] text-white/45 max-w-xs">
+              <div className="flex flex-col items-center text-center gap-2 translate-y-3">
+                <Package className="w-12 h-12 text-gray-500/80" />
+                <div className="text-base font-semibold text-white/75">No components yet</div>
+                <p className="text-sm text-white/45 max-w-xs">
                   Create reusable node configurations to speed up your flow building.
                 </p>
               </div>

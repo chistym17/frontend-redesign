@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import LeftSidebar from "./LeftSidebar";
 import { useSidebar } from "../lib/sidebarContext";
 import Image from "next/image";
+import AgentsPopup from './AgentsPopup';
 
 /* --------------------------  CONFIG  -------------------------- */
 const WS_AUDIO = process.env.NEXT_PUBLIC_WS_AUDIO || "wss://esapdev.xyz:7000/agentbuilder/ws/audio";
@@ -64,6 +65,21 @@ export default function Home() {
   const playerNodeRef = useRef(null);
   const micCtxRef = useRef(null);
   const micStreamRef = useRef(null);
+
+  /*---------------- Mobile Mode --------------*/
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [agentsOpen, setAgentsOpen] = useState(false);
+  const [mobilePage, setMobilePage] = useState("chat"); 
+
+
+      
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   /* ------------------------------------------------------------ *
    *  AUDIO-PLAYBACK helpers                                      *
@@ -1092,17 +1108,15 @@ const PanelTabs = ({ entries, className = "" }) => {
   return (
     <div className="min-h-screen h-screen bg-[#141A21] text-white">
       {/* Left Sidebar */}
-      <LeftSidebar />
+   
       
-      <div
-        className={`relative flex h-full flex-col overflow-hidden transition-all duration-300 ${
-          isCollapsed ? "ml-20" : "ml-[140px]"
-        }`}
-      >
+      <div className="relative flex h-full flex-col overflow-hidden" style={{  marginLeft:isMobile ? '0px' : isCollapsed ? '64px' : '105px' }}>
         <div className="flex h-full flex-col">
-          <main className="flex h-full flex-1 flex-col overflow-hidden items-center justify-center p-6 lg:px-[120px] lg:py-[60px]">
+          
+          <main className="flex h-full flex-1 flex-col overflow-hidden items-center justify-center p-6 lg:p-[60px_120px]">
             {/* Parent Container with margins (matching ChatInterface design) */}
             <div className="flex flex-1 min-h-0 w-full max-w-[1800px] max-h-[900px] flex-col gap-5 overflow-hidden lg:flex-row lg:items-stretch -mt-4 lg:-mt-6">
+              {!isMobile && (
               <div className="flex min-h-0 w-full flex-shrink-0 flex-col space-y-4 lg:h-full lg:max-w-[280px] lg:max-h-full">
                 <div className="min-h-0 lg:flex-[0.50] lg:overflow-hidden">
                   <AssistantList className="h-full min-h-0" />
@@ -1111,9 +1125,32 @@ const PanelTabs = ({ entries, className = "" }) => {
                   <FlowHUD className="h-full min-h-0" />
                 </div>
               </div>
+              )}
+                  {isMobile && (
+                    <div className="flex justify-between items-center ">
+                      <h1 className="text-lg font-bold text-white">
+                        AI VoiceAgent
+                      </h1>
+        
+                      <button
+                        onClick={() => setAgentsOpen(true)}
+                        className="group inline-flex items-center gap-2 px-4 py-2 border border-emerald-400/50 text-emerald-300 rounded-lg hover:bg-emerald-400/10 transition-colors"
+                      >
+                        Agent List
+                      </button>
+                    </div>
+                    )}
 
               <div className="flex min-h-0 flex-1 flex-col lg:h-full lg:max-h-full">
-                  <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5  backdrop-blur-xl">
+                <div
+                  className={`
+                  flex min-h-0 flex-col overflow-hidden
+                  ${isMobile ? "h-[calc(100vh-230px)]" : "flex-1"} 
+                  ${isMobile ? (mobilePage === "chat" ? "block" : "hidden") : "block"}
+                `}
+                >
+
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5  backdrop-blur-xl">
                   <div className="flex flex-wrap items-center justify-between gap-3  px-6 py-5">
                     <div className="flex items-center gap-4">
                     <div className="relative flex items-center justify-center">
@@ -1145,6 +1182,9 @@ const PanelTabs = ({ entries, className = "" }) => {
                     </div>
                     <div className="flex flex-wrap items-center justify-end gap-3">
                       <div className="flex items-center gap-2">
+                        <span className="text-xs text-white/70">
+                          {flowEnabled ? "Flow mode active" : "Flow mode off"}
+                        </span>
                         <button
                           type="button"
                           className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
@@ -1158,7 +1198,6 @@ const PanelTabs = ({ entries, className = "" }) => {
                             }`}
                           />
                         </button>
-                        <span className="text-xs text-white/70">Flow mode</span>
                       </div>
                       <button
                         onClick={isWsConnected ? disconnectWebSocket : connectWebSocket}
@@ -1287,17 +1326,79 @@ const PanelTabs = ({ entries, className = "" }) => {
                     
                   </div>
                 </div>
-
+                
+              </div>
 
                 </div>
-
+              {/* MOBILE MENU PAGE */}
+              <div className={`lg:hidden ${mobilePage === "menu" ? "block" : "hidden"}`}>
                 <div className="flex w-full flex-shrink-0 flex-col gap-4 lg:w-72">
                   {menu.length > 0 && <MenuPanel />}
                   {offers.length > 0 && <OffersPanel />}
                   <FlowHUD className="lg:hidden" />
                 </div>
               </div>
+             <div
+                className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2
+                w-[90%] max-w-[420px] h-14 
+                bg-white/10 backdrop-blur-xl border border-white/10
+                rounded-2xl 
+                flex items-center justify-center z-50 px-1 py-1"
+              >
+                <div className="flex w-full h-full gap-2">
+                  
+                  {/* Chat */}
+                  <button
+                    onClick={() => setMobilePage("chat")}
+                    className={`
+                      flex-1 flex items-center justify-center text-sm font-medium rounded-xl transition-all
+                      ${mobilePage === "chat"
+                        ? "bg-[rgba(19,245,132,0.08)] text-[11px] font-medium text-[#9EFBCD] "
+                      : "text-white/70 hover:text-white"}
+                    `}
+                  >
+                    Chat
+                  </button>
+
+                  {/* Menu */}
+                  <button
+                    onClick={() => setMobilePage("menu")}
+                    className={`
+                      flex-1 flex items-center justify-center text-sm font-medium rounded-xl transition-all
+                    ${mobilePage === "menu"
+                      ? "bg-[rgba(19,245,132,0.08)] text-[11px] font-medium text-[#9EFBCD] "
+                      : "text-white/70 hover:text-white"}
+                  `}
+                  >
+                    Menu
+                  </button>
+
+                </div>
+              </div>
+
+
+
+
             </div>
+            
+            </div>
+            {/* Agents Popup (mobile only) */}
+            {isMobile && (
+              <AgentsPopup
+                open={agentsOpen}
+                onClose={() => setAgentsOpen(false)}
+                assistants={filteredAssistants}
+                loadingAssistant={loadingAssistant}
+                assistantSearch={assistantSearch}
+                setAssistantSearch={setAssistantSearch}
+                assistantId={assistantId}
+                handleAssistantChange={(id) => {
+                  handleAssistantChange(id);
+                  setAgentsOpen(false); // close popup on select
+                }}
+              />
+
+            )}
           </main>
         </div>
       </div>

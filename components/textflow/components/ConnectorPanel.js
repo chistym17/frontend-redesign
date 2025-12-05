@@ -61,7 +61,7 @@ function ConnectorCard({
 
   return (
     <div 
-      className="rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg group node-card-surface min-h-[170px] flex"
+      className="rounded-2xl border overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lg group node-card-surface min-h-[220px] flex"
       style={{
         borderColor: 'rgba(255, 255, 255, 0.12)'
       }}
@@ -71,19 +71,19 @@ function ConnectorCard({
         e.stopPropagation();
       }}
     >
-      <div className="p-2 flex flex-col gap-1.5 flex-1">
-        <div className="space-y-1 flex-1 min-h-[100px]">
+      <div className="p-5 flex flex-col gap-4 flex-1">
+        <div className="space-y-2.5 flex-1 min-h-[150px]">
         {/* Header */}
-          <div className="flex items-start gap-1.5">
-            <div className="flex-1 space-y-0.5">
-              <span className="inline-flex px-1.5 py-0.5 rounded-full text-[8px] uppercase tracking-wide node-badge-immediate">
+          <div className="flex items-start gap-2">
+            <div className="flex-1 space-y-1.5">
+              <span className="inline-flex px-2 py-1 rounded-full text-xs uppercase tracking-wide node-badge-immediate">
                 {connector.category || 'general'}
               </span>
-              <h3 className="mt-1 text-[11px] font-semibold text-white/85 leading-tight">
+              <h3 className="mt-1.5 text-base font-semibold text-white/85 leading-tight">
                 <span className="block">{firstLine}</span>
                 {remaining && <span className="block text-white/70">{remaining}</span>}
               </h3>
-              <p className="text-[9px] text-white/50 line-clamp-2 leading-snug">
+              <p className="text-sm text-white/50 line-clamp-2 leading-snug mt-1">
                 {descriptionText}
               </p>
           </div>
@@ -99,7 +99,7 @@ function ConnectorCard({
         </div>
 
         {/* Stats */}
-          <div className="flex items-center gap-1 text-[8px] text-white/45">
+          <div className="flex items-center gap-1 text-xs text-white/45 mt-2">
             <span>{connector.usage_count || 0} users</span>
             <span>· {connector.spec?.endpoints?.length || 0} endpoints</span>
           {connector.avg_response_time && (
@@ -109,11 +109,11 @@ function ConnectorCard({
 
         {/* Tags */}
         {connector.tags && connector.tags.length > 0 && (
-            <div className="flex items-center gap-0.5 flex-wrap">
+            <div className="flex items-center gap-0.5 flex-wrap mt-2">
             {connector.tags.slice(0, 3).map((tag, idx) => (
               <span
                 key={idx}
-                  className="px-1.5 py-0.5 rounded-full text-[8px]"
+                  className="px-2.5 py-1 rounded-full text-xs"
                 style={{
                     background: 'rgba(255, 255, 255, 0.1)',
                     color: 'rgba(255, 255, 255, 0.75)'
@@ -127,9 +127,9 @@ function ConnectorCard({
         </div>
 
         {/* Actions */}
-        <div className="pt-1 space-y-1">
+        <div className="pt-2 space-y-2 border-t border-white/5">
           {context === 'discover' ? (
-            <div className="flex items-center justify-between text-[9px] font-semibold">
+            <div className="flex items-center justify-between text-sm font-semibold">
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -155,7 +155,7 @@ function ConnectorCard({
             </div>
           ) : (
             <>
-              <div className="flex flex-wrap items-center gap-2 text-[9px] font-semibold">
+              <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">
                 <button
                   onClick={() => onSelect && onSelect(connector)}
                   className="text-[#9EFBCD] hover:text-white transition-colors"
@@ -183,7 +183,7 @@ function ConnectorCard({
           )}
               </div>
 
-              <div className="flex items-center gap-1.5 text-[9px] font-semibold">
+              <div className="flex items-center gap-1.5 text-sm font-semibold">
           {showActions && isOwner && onTogglePublic && (
             <button
               onClick={() => onTogglePublic(connector.connector_id, !connector.is_public)}
@@ -213,7 +213,7 @@ function ConnectorCard({
         {/* Expandable Details */}
         {isExpanded && (
           <div className="pt-3 border-t border-white/10 space-y-2" onClick={(e) => e.stopPropagation()}>
-            <div className="text-xs space-y-1">
+            <div className="text-sm space-y-1">
               <div className="flex justify-between text-gray-200">
                 <span>Base URL:</span>
                 <span className="font-mono text-gray-100 truncate ml-2">
@@ -544,8 +544,11 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
       
       {/* Modal */}
       <div 
-          className="relative pointer-events-auto rounded-3xl w-full max-w-xl h-[50vh] max-h-[50vh] shadow-2xl flex flex-col overflow-hidden"
+          className="relative pointer-events-auto rounded-3xl w-full shadow-2xl flex flex-col overflow-hidden"
         style={{
+          width: '700px',
+          height: '60vh',
+          maxHeight: '60vh',
           background: 'rgba(255, 255, 255, 0.04)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
@@ -566,12 +569,12 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
         {/* Header */}
         <div className="px-6 py-3 flex items-center justify-between">
             <div>
-            <h2 className="text-sm font-semibold text-white/90">API Connectors</h2>
-            <p className="text-[11px] text-white/50">Universal connector generator</p>
+            <h2 className="text-xl font-semibold text-white/90">API Connectors</h2>
+            <p className="text-sm text-white/50">Universal connector generator</p>
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
-            className="px-3 py-1.5 rounded-xl text-[11px] font-semibold transition-all text-center"
+            className="px-4 py-2 rounded-xl text-sm font-semibold transition-all text-center"
             style={{
               color: "#9EFBCD",
               background: "rgba(19, 245, 132, 0.08)",
@@ -585,24 +588,24 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
         <div className="px-6 pb-1 flex gap-1">
           <button
             onClick={() => setActiveTab('discover')}
-            className={`px-2 py-1 text-[10px] font-semibold rounded-md transition-all flex items-center gap-1 ${
+            className={`px-3 py-2 text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 ${
               activeTab === 'discover'
                 ? 'bg-[rgba(19,245,132,0.08)] text-[#9EFBCD]'
                 : 'text-white/60 hover:text-white/80'
             }`}
           >
-            <TrendingUp className="w-2.5 h-2.5 opacity-80" />
+            <TrendingUp className="w-4 h-4 opacity-80" />
             Discover
           </button>
           <button
             onClick={() => setActiveTab('my-connectors')}
-            className={`px-2 py-1 text-[10px] font-semibold rounded-md transition-all flex items-center gap-1 ${
+            className={`px-3 py-2 text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 ${
               activeTab === 'my-connectors'
                 ? 'bg-[rgba(19,245,132,0.08)] text-[#9EFBCD]'
                 : 'text-white/60 hover:text-white/80'
             }`}
           >
-            <Code className="w-2.5 h-2.5 opacity-80" />
+            <Code className="w-4 h-4 opacity-80" />
             My Connectors
           </button>
         </div>
@@ -610,13 +613,13 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
         {/* Search & Filters */}
         <div className="px-6 py-2 space-y-2.5">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-white/40" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
             <input
               type="text"
               placeholder="Search connectors..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="w-full pl-8 pr-3 py-1 rounded-xl text-[11px] text-white placeholder-white/40 transition-colors focus:ring-2 focus:ring-emerald-400/20 focus:border-emerald-400/60 border"
+              className="w-full pl-10 pr-4 py-2 rounded-xl text-sm text-white placeholder-white/40 transition-colors focus:ring-2 focus:ring-emerald-400/20 focus:border-emerald-400/60 border"
               style={{
                 background: 'rgba(255, 255, 255, 0.03)',
                 borderColor: 'rgba(145, 158, 171, 0.18)'
@@ -629,7 +632,7 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className="px-2.5 py-1 rounded-md text-[10px] font-semibold whitespace-nowrap transition-all"
+                className="px-4 py-1.5 rounded-md text-sm font-semibold whitespace-nowrap transition-all"
                 style={
                   selectedCategory === cat
                     ? { background: 'rgba(19, 245, 132, 0.08)', color: '#9EFBCD' }
@@ -644,19 +647,19 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
 
         {/* Alerts */}
         {error && (
-          <div className="mx-6 mt-4 bg-red-950/30 border border-red-800/50 rounded-lg p-3 flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-            <span className="text-sm text-red-300">{error}</span>
+          <div className="mx-6 mt-4 bg-red-950/30 border border-red-800/50 rounded-lg p-4 flex items-start gap-2">
+            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <span className="text-base text-red-300">{error}</span>
             <button onClick={() => setError('')} className="ml-auto text-red-400 hover:text-red-300">
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
         )}
 
         {success && (
-          <div className="mx-6 mt-4 bg-emerald-950/30 border border-emerald-800/50 rounded-lg px-2 py-1.5 flex items-center gap-2">
-            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-xs text-emerald-300">{success}</span>
+          <div className="mx-6 mt-4 bg-emerald-950/30 border border-emerald-800/50 rounded-lg p-4 flex items-center gap-2">
+            <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <span className="text-base text-emerald-300">{success}</span>
           </div>
         )}
 
@@ -664,17 +667,17 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
         <div className="flex-1 overflow-auto px-6 py-4 template-scroll">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <div className="text-center space-y-2">
-                <div className="w-7 h-7 border-2 border-gray-700 border-t-emerald-400 rounded-full animate-spin mx-auto"></div>
-                <div className="text-xs text-white/60">Loading connectors...</div>
+              <div className="text-center space-y-3">
+                <div className="w-10 h-10 border-2 border-gray-700 border-t-emerald-400 rounded-full animate-spin mx-auto"></div>
+                <div className="text-base text-white/60">Loading connectors...</div>
               </div>
             </div>
           ) : connectors.length === 0 ? (
             <div className="flex items-center justify-center h-64">
-              <div className="text-center space-y-1.5">
-                <Plug className="w-10 h-10 mx-auto text-white/30" />
-                <div className="text-sm font-semibold text-white/80">No connectors found</div>
-                <p className="text-[11px] text-white/55">
+              <div className="text-center space-y-2">
+                <Plug className="w-12 h-12 mx-auto text-white/30" />
+                <div className="text-base font-semibold text-white/80">No connectors found</div>
+                <p className="text-sm text-white/55">
                   {activeTab === 'my-connectors' 
                     ? 'Create your first connector or install one from Discover'
                     : 'Try adjusting your filters'
@@ -757,7 +760,7 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
             >
               <div className="flex flex-col gap-3 p-4">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-white/90">
+                    <h3 className="text-base font-semibold text-white/90">
                       {deleteModal.isOwner ? 'Delete Connector' : 'Remove Connector'}
                     </h3>
                   <button
@@ -767,12 +770,12 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
                         setDeleteError('');
                       }
                     }}
-                    className="w-5 h-5 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+                    className="w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-colors"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-5 h-5" />
                   </button>
                 </div>
-                <p className="text-[11px] text-white/60">
+                <p className="text-sm text-white/60">
                     {deleteModal.isOwner ? (
                       <>
                       Are you sure you want to delete{" "}
@@ -788,9 +791,9 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
                     )}
                   </p>
                 {deleteError && (
-                  <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-2 flex items-start gap-2">
-                    <AlertCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-[11px] text-red-300">{deleteError}</span>
+                  <div className="bg-red-950/30 border border-red-800/50 rounded-lg p-3 flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-red-300">{deleteError}</span>
                   </div>
                 )}
                 <div className="flex justify-end items-center gap-2 pt-2">
@@ -801,7 +804,7 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
                         setDeleteError('');
                       }
                     }}
-                    className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-white/70 hover:text-white transition-colors"
+                    className="px-4 py-2 rounded-lg text-sm font-semibold text-white/70 hover:text-white transition-colors"
                     style={{ background: "rgba(255,255,255,0.04)" }}
                     disabled={deleteLoading}
                   >
@@ -809,7 +812,7 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
                   </button>
                   <button
                     onClick={deleteModal.isOwner ? confirmDelete : confirmUninstall}
-                    className="px-3 py-1.5 rounded-lg text-[11px] font-semibold text-red-200 transition-all disabled:opacity-50"
+                    className="px-4 py-2 rounded-lg text-sm font-semibold text-red-200 transition-all disabled:opacity-50"
                     style={{ background: "rgba(255, 72, 72, 0.15)" }}
                     disabled={deleteLoading}
                   >

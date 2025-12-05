@@ -1308,11 +1308,15 @@ function FlowContent({ assistantId }) {
           />
 
           <div
-            className="relative pointer-events-auto w-full max-w-xl px-4"
+            className="relative pointer-events-auto w-full px-4"
+            style={{ maxWidth: '700px' }}
           >
             <div
-              className="rounded-[24px] h-[50vh] max-h-[50vh]"
+              className="rounded-[24px]"
               style={{
+                width: '100%',
+                height: '60vh',
+                maxHeight: '60vh',
                 background: 'rgba(255, 255, 255, 0.04)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
@@ -1321,23 +1325,23 @@ function FlowContent({ assistantId }) {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '10px'
+                gap: '12px'
               }}
             >
               {/* Header Section */}
               <div
                 className="w-full flex items-center justify-between"
-                style={{ padding: '20px 16px 16px 16px', gap: '32px' }}
+                style={{ padding: '24px 20px 20px 20px', gap: '32px' }}
               >
                 <div className="flex-1">
-                  <h2 className="text-base font-semibold text-white/90 tracking-tight">Components</h2>
+                  <h2 className="text-xl font-semibold text-white/90 tracking-tight">Components</h2>
                 </div>
                 </div>
 
               {/* Search Section */}
               <div
                 className="w-full"
-                style={{ padding: '0px 16px 8px 16px', gap: '24px', display: 'flex', flexDirection: 'column' }}
+                style={{ padding: '0px 20px 12px 20px', gap: '24px', display: 'flex', flexDirection: 'column' }}
               >
                 <div 
                   className="w-full flex items-center"
@@ -1347,12 +1351,12 @@ function FlowContent({ assistantId }) {
                     borderWidth: '1px',
                     borderStyle: 'solid',
                     background: 'rgba(255, 255, 255, 0.04)',
-                    padding: '0px 12px',
-                    height: '32px'
+                    padding: '0px 14px',
+                    height: '40px'
                   }}
                 >
-                  <div className="flex items-center" style={{ padding: '0px 8px 0px 0px' }}>
-                    <Search className="h-4 w-4 text-white/40" />
+                  <div className="flex items-center" style={{ padding: '0px 10px 0px 0px' }}>
+                    <Search className="h-5 w-5 text-white/40" />
                   </div>
                   <input
                     type="text"
@@ -1363,7 +1367,7 @@ function FlowContent({ assistantId }) {
                     style={{
                       fontFamily: 'Public Sans, sans-serif',
                       fontWeight: 400,
-                      fontSize: '12px',
+                      fontSize: '14px',
                       lineHeight: '1.4em',
                       padding: 0
                     }}
@@ -1375,8 +1379,8 @@ function FlowContent({ assistantId }) {
                 <div
                 className="component-scroll w-full overflow-y-auto"
                 style={{
-                  padding: '0px 16px 12px 16px',
-                  gap: '24px',
+                  padding: '0px 20px 16px 20px',
+                  gap: '16px',
                   display: 'flex',
                   flexDirection: 'column',
                   flex: 1
@@ -1384,10 +1388,10 @@ function FlowContent({ assistantId }) {
                 >
                   {filteredComponents.length === 0 && (
                   <div 
-                    className="rounded-2xl border border-dashed bg-white/5 p-5 text-center text-white/60"
+                    className="rounded-2xl border border-dashed bg-white/5 p-6 text-center text-white/60"
                     style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}
                   >
-                    <p style={{ fontSize: '11px' }}>No components match "{componentSearch}".</p>
+                    <p style={{ fontSize: '14px' }}>No components match "{componentSearch}".</p>
                     </div>
                   )}
 
@@ -1428,32 +1432,32 @@ function FlowContent({ assistantId }) {
                           setComponentSearch("");
                           setShowComponentModal(false);
                         }}
-                      className="w-full flex items-center text-left"
-                      style={{ gap: '7px' }}
+                      className="w-full flex items-center text-left py-2"
+                      style={{ gap: '12px' }}
                       >
                       <div 
                         className="flex items-center justify-center relative"
                         style={{
-                          width: '56px',
-                          padding: '9.33px',
-                          borderRadius: '12.44px',
+                          width: '64px',
+                          padding: '12px',
+                          borderRadius: '14px',
                           backdropFilter: 'blur(38.89px)',
                           background: getComponentIconStyle(item.type).background,
                           border: `${getComponentIconStyle(item.type).borderWidth} solid ${getComponentIconStyle(item.type).borderColor}`
                         }}
                       >
                         <Icon 
-                          className="h-4 w-4" 
+                          className="h-5 w-5" 
                           style={{ color: getComponentIconStyle(item.type).iconColor }}
                         />
                         </div>
-                      <div className="flex-1 flex flex-col" style={{ gap: '4px' }}>
+                      <div className="flex-1 flex flex-col" style={{ gap: '6px' }}>
                         <p 
                           className="text-white"
                           style={{
                             fontFamily: 'Public Sans, sans-serif',
                             fontWeight: 600,
-                            fontSize: '12px',
+                            fontSize: '15px',
                             lineHeight: '1.5714285714285714em'
                           }}
                         >
@@ -1463,7 +1467,7 @@ function FlowContent({ assistantId }) {
                           style={{
                             fontFamily: 'Public Sans, sans-serif',
                             fontWeight: 400,
-                            fontSize: '11px',
+                            fontSize: '13px',
                             lineHeight: '1.5em',
                             color: '#919EAB'
                           }}
