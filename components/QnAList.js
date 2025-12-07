@@ -409,15 +409,30 @@ const QnAList = ({ assistantId, onEdit }) => {
                   }}
                 />
               </div>
-            ) : (
-              <ToolsList
-                key={toolsReloadKey}
-                assistantId={assistantId}
-                onAdd={handleAddTool}
-                onEdit={handleEditTool}
-              />
-            )}
-
+             ) : (
+                <>
+                  {/* Mobile popup */}
+                  <div className="block sm:hidden w-full flex justify-center">
+                  <div className="relative w-[110vw] max-w-3xl max-h-[90vh] rounded-3xl  flex flex-col overflow-auto p-5 block sm:hidden">
+                    <ToolsList
+                      key={toolsReloadKey}
+                      assistantId={assistantId}
+                      onAdd={handleAddTool}
+                      onEdit={handleEditTool}
+                    />
+                  </div>
+                    </div>
+                  {/* Desktop normal rendering */}
+                  <div className="hidden sm:block">
+                    <ToolsList
+                      key={toolsReloadKey}
+                      assistantId={assistantId}
+                      onAdd={handleAddTool}
+                      onEdit={handleEditTool}
+                    />
+                  </div>
+                </>
+              )}
             </>
           )}
 

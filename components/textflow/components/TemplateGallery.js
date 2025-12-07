@@ -557,7 +557,11 @@ export default function TemplateGallery({ assistantId, onSelectTemplate, onClose
 
   return (
     <>
-    <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none" style={{ paddingBottom: bottomOffset }}>
+    <div
+    className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none px-4 sm:px-0"
+    style={{ paddingBottom: bottomOffset }}
+    >
+
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-transparent pointer-events-auto" 
@@ -593,7 +597,8 @@ export default function TemplateGallery({ assistantId, onSelectTemplate, onClose
         </div>
 
         {/* Tabs */}
-        <div className="px-6 pb-2 flex gap-1">
+        <div className="px-6 pb-2 flex gap-1 overflow-x-auto scrollbar-none sm:overflow-visible whitespace-nowrap">
+
           {[
             { id: "browse", label: "Browse", icon: Sparkles },
             { id: "trending", label: "Trending", icon: TrendingUp },

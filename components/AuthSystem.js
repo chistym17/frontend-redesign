@@ -130,7 +130,7 @@ const AuthSystem = ({ initialMode = 'login' }) => {
       }}
     >
 
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md mx-4">
         <div
           className="rounded-3xl shadow-2xl overflow-hidden border"
           style={{

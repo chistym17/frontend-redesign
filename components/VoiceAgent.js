@@ -1128,10 +1128,24 @@ const PanelTabs = ({ entries, className = "" }) => {
               )}
                   {isMobile && (
                     <div className="flex justify-between items-center ">
-                      <h1 className="text-lg font-bold text-white">
-                        AI VoiceAgent
-                      </h1>
-        
+                      <div className="flex items-center gap-2">
+                        {(() => {
+                          const selectedAssistant = assistants.find(a => a.id === assistantId);
+                          const name = selectedAssistant?.name || "AI VoiceAgent";
+                          const displayName = name.length > 15 ? `${name.slice(0, 15)}...` : name;
+                          return (
+                            <>
+                              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M27.846 14.4555L26.6665 13.8661C26.6665 7.97426 21.8905 3.19922 16 3.19922C10.1088 3.19922 5.33307 7.97426 5.33307 13.8661L4.15419 14.4555C3.62939 14.7179 3.19995 15.413 3.19995 15.9992V18.1327C3.19995 18.7189 3.62939 19.4139 4.15419 19.6763L5.33307 20.2658H6.93307V13.8661C6.93307 8.8661 11.0006 4.79922 16 4.79922C20.999 4.79922 25.0665 8.8661 25.0665 13.8661V22.3992C25.0665 25.0501 22.9177 27.1992 20.2665 27.1992H17.0665V25.5992H14.9331V28.7992H20.2665C23.8009 28.7992 26.6665 25.9336 26.6665 22.3992V20.2658L27.846 19.6763C28.3708 19.4139 28.7999 18.7189 28.7999 18.1327V15.9992C28.7999 15.413 28.3708 14.7179 27.846 14.4555Z" fill="#8E33FF"/>
+                                <path d="M20.2665 11.2004H16.8V8.93351C17.4291 8.71911 17.8665 8.26471 17.8665 7.73351C17.8665 6.99719 17.0313 6.40039 16 6.40039C14.9686 6.40039 14.1331 6.99719 14.1331 7.73351C14.1331 8.26471 14.5705 8.72039 15.2 8.93351V11.2004H11.7331C9.96668 11.2004 8.53308 12.6337 8.53308 14.4004V18.667C8.53308 21.6106 10.9232 24.0004 13.8668 24.0004H18.1334C21.0771 24.0004 23.4665 21.6106 23.4665 18.667V14.4004C23.4665 12.6337 22.0332 11.2004 20.2665 11.2004ZM12.2668 16.5338V15.4673C12.2668 14.8772 12.7449 14.4004 13.3331 14.4004C13.9219 14.4004 14.4 14.8772 14.4 15.4673V16.5338C14.4 17.1245 13.9219 17.6004 13.3331 17.6004C12.7449 17.6004 12.2668 17.1245 12.2668 16.5338ZM18.6665 20.8004L16.5334 21.3338H15.4668L13.3331 20.8004V19.7338H18.6665V20.8004ZM19.7334 16.5338C19.7334 17.1245 19.2553 17.6004 18.6665 17.6004C18.078 17.6004 17.6 17.1245 17.6 16.5338V15.4673C17.6 14.8772 18.078 14.4004 18.6665 14.4004C19.2553 14.4004 19.7334 14.8772 19.7334 15.4673V16.5338Z" fill="#8E33FF"/>
+                              </svg>
+                              <h1 className="text-lg font-bold text-white">
+                                {displayName}
+                              </h1>
+                            </>
+                          );
+                        })()}
+                      </div>
                       <button
                         onClick={() => setAgentsOpen(true)}
                         className="group inline-flex items-center gap-2 px-4 py-2 border border-emerald-400/50 text-emerald-300 rounded-lg hover:bg-emerald-400/10 transition-colors"
@@ -1139,7 +1153,7 @@ const PanelTabs = ({ entries, className = "" }) => {
                         Agent List
                       </button>
                     </div>
-                    )}
+                  )}
 
               <div className="flex min-h-0 flex-1 flex-col lg:h-full lg:max-h-full">
                 <div
@@ -1176,9 +1190,12 @@ const PanelTabs = ({ entries, className = "" }) => {
                       />
                     </div>
 
+                    {!isMobile && (
                       <div>
                         <h2 className="text-sm font-medium text-white">AI Assistance</h2>
                       </div>
+                    )}
+                    
                     </div>
                     <div className="flex flex-wrap items-center justify-end gap-3">
                       <div className="flex items-center gap-2">

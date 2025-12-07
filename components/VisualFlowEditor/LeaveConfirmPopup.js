@@ -7,12 +7,12 @@ export default function LeaveConfirmPopup({ onConfirm, onClose }) {
 
   return (
     <div
-      className="relative flex flex-col items-center p-6 gap-4
-                 bg-white/5 border border-[rgba(80,80,80,0.24)]
-               
-                 backdrop-blur-[37px] rounded-[16px]
-                 w-[420px] min-h-[180px] text-center"
-    >
+  className="relative flex flex-col items-center p-6 sm:px-6
+             bg-white/5 border border-[rgba(80,80,80,0.24)]
+             backdrop-blur-[37px] rounded-[16px]
+             w-[90vw] max-w-[420px] min-h-[180px] text-center"
+>
+
       {/* Close button */}
       <button
         onClick={onClose}

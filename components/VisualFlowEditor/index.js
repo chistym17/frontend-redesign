@@ -7,7 +7,7 @@ import { flowsService } from "../../lib/flowsService";
 import { convertToReactFlow, convertFromReactFlow, createDefaultNode, PositionStorage } from "./utils";
 import ToolEditor from "../ToolEditor";
 import ToolsList from "../ToolsList";
-
+import { createPortal } from "react-dom";
 import LeaveConfirmPopup from "./LeaveConfirmPopup"
 
 // ============================================================================
@@ -33,6 +33,54 @@ export default function VisualFlowEditor({ assistantId, router }) {
   const savePositionTimeoutRef = useRef(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showLeavePopup, setShowLeavePopup] = useState(false);
+  
+  // mobile mode 
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [initialNodeDropdownOpen, setInitialNodeDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const sidebarRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target) && mobileSidebarOpen) {
+        setMobileSidebarOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mobileSidebarOpen]);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  function DropdownMenu({ rect, children }) {
+    if (!rect) return null; // ✅ prevents crash
+
+    return createPortal(
+      <div
+        style={{
+          position: "fixed",
+          top: rect.top + rect.height + 10,
+          left: rect.left,
+          width: rect.width,
+          zIndex: 9999
+        }}
+      >
+        {children}
+      </div>,
+      document.body
+    );
+  }
+
+  
 
   // Tools state
   const [showToolsPanel, setShowToolsPanel] = useState(false);
@@ -462,31 +510,84 @@ useEffect(() => {
                 {flowName || "Visual Flow Editor"}
               </h1>
             </div>
-            
-            {/* Initial Node Selector */}
-            <div className="flex items-center gap-2">
-              <label className="text-[10px] font-semibold text-white/60 uppercase">Select Initial Node</label>
-              <select
-                value={initialNodeId}
-                onChange={(e) => setInitialNodeId(e.target.value)}
-                className="px-2 py-1 text-xs bg-white/4 border border-white/20 rounded-lg text-white focus:border-[#13F584] focus:outline-none focus:ring-1 focus:ring-[#13F584]/50 transition-all min-w-[150px]"
-                style={{
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  backdropFilter: 'blur(10px)',
-                  WebkitBackdropFilter: 'blur(10px)'
-                }}
-              >
-                <option value="" className="bg-black/90 text-white">Select initial node</option>
-                {nodes.map(node => (
-                  <option key={node.id} value={node.data.id} className="bg-black/90 text-white">
-                    {node.data.title || node.data.id}
-                  </option>
-                ))}
-              </select>
-            </div>
+           
+            {/* Modern Initial Node Selector */}
+              {!isMobile && (
+                <div className="flex items-center gap-2"> 
+                  <label className="text-[10px] font-semibold text-white/60 uppercase">Select Initial Node</label>
+
+                  <div className="relative flex-1">
+                    {/* Dropdown header */}
+                    <div
+                      ref={dropdownRef}                                 // ✅ FIXED: ref added
+                      onClick={() => setInitialNodeDropdownOpen(!initialNodeDropdownOpen)}
+                       className="flex items-center justify-between px-3 py-2 bg-white/5 rounded-lg text-white text-xs cursor-pointer 
+                        backdrop-blur-md transition hover:bg-white/10 border border-white/10 min-w-[160px]"                  >
+                      {initialNodeId
+                        ? nodes.find(node => node.data.id === initialNodeId)?.data.title ||
+                          initialNodeId
+                        : "Select initial node"}
+
+                      <span className="ml-2 opacity-70">
+                        <svg width="12" height="6" viewBox="0 0 12 6" fill="none">
+                          <path
+                            d="M5.8344 5.8344C5.63969 5.83478 5.45099 5.76696 5.30106 5.64273L0.301063 1.47606C-0.0533202 
+                              1.18151 -0.101823 0.655445 0.192729 0.301062C0.487281 -0.0533202 1.01335 -0.101823 
+                              1.36773 0.192729L5.8344 3.92606L10.3011 0.326063C10.4732 0.186254 10.694 0.120838 
+                              10.9145 0.1443C11.1351 0.167761 11.3372 0.278163 11.4761 0.451063C11.6303 0.624279 
+                              11.7054 0.85396 11.6833 1.08486C11.6612 1.31576 11.5438 1.52699 11.3594 1.66773L6.3594 
+                              5.69273C6.20516 5.79733 6.02031 5.8472 5.8344 5.8344Z"
+                            fill="#919EAB"
+                            fillOpacity="0.8"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+
+                    {/* Dropdown menu */}
+                    {initialNodeDropdownOpen && dropdownRef.current && (
+                      <DropdownMenu rect={dropdownRef.current.getBoundingClientRect()}>
+                        <div className="absolute top-full left-0 w-full mt-1 bg-black/90 rounded-lg 
+                                        backdrop-blur-xl shadow-[0_0_12px_rgba(0,0,0,0.4)] z-50 max-h-48 
+                                        overflow-y-scroll">
+                          <style>{`div::-webkit-scrollbar { display: none; }`}</style>
+
+                          {/* Clear option */}
+                          <div
+                            onClick={() => {
+                              setInitialNodeId("");
+                              setInitialNodeDropdownOpen(false);
+                            }}
+                            className="p-2 text-white text-xs hover:bg-white/10 cursor-pointer"
+                          >
+                            Select initial node
+                          </div>
+
+                          {/* Node list */}
+                          {nodes.map(node => (
+                            <div
+                              key={node.id}
+                              onClick={() => {
+                                setInitialNodeId(node.data.id);
+                                setInitialNodeDropdownOpen(false);
+                              }}
+                              className="p-2 text-white text-xs hover:bg-white/10 cursor-pointer"
+                            >
+                              {node.data.title || node.data.id}
+                            </div>
+                          ))}
+                        </div>
+                      </DropdownMenu>
+                    )}
+                  </div>
+                </div>
+              )}
+
+
           </div>
           
       {/* Center: Active Toggle */}
+      {!isMobile && ( 
       <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
         <p className={`text-xs ${activating ? 'text-emerald-300' : 'text-white/60'}`}>
           {activating ? 'Active' : 'Disabled'}
@@ -504,11 +605,25 @@ useEffect(() => {
             }`}
           />
         </button>
-      </div>
+      </div>)}
 
+     
+          {isMobile && (
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="p-2 text-white/70 hover:text-white border border-white/30 rounded-lg flex items-center gap-2"
+            >
+          
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+                  <span className="text-xs">More</span>
+            </button>
+          )}
 
           
           {/* Right: Action Buttons */}
+          {!isMobile && ( 
           <div className="flex items-center gap-1">
       
               {/* Run/Activate Button */}
@@ -578,7 +693,7 @@ useEffect(() => {
                 {saving ? 'Saving...' : 'Save'}
               </button>
               
-          </div>
+          </div>)}
         </div>
       </div>
       
@@ -597,24 +712,52 @@ useEffect(() => {
           />
         </div>
 
-      {/* AI Chatbot Panel - Right Side (Full) */}
-      {showChatbot && !chatbotMinimized && (
-        <div className="flex-shrink-0 w-[420px] transition-all duration-300 p-4 pl-0 h-full">
-          <VoiceFlowChatbotPanel
-            assistantId={assistantId}
-            currentFlow={getCurrentFlow()}
-            onApplyFlow={handleApplyChatbotFlow}
-            onPreviewFlow={handlePreviewChatbotFlow}
-            sessionId={chatSessionId}
-            isMinimized={false}
-            onToggleMinimize={() => setChatbotMinimized(true)}
-            onCloseChatbot={() => {
-              setShowChatbot(false);
-              setChatbotMinimized(false);
-            }}
-          />
-        </div>
-      )}
+      {/* AI Chatbot Panel */}
+        {showChatbot && !chatbotMinimized && (
+          <>
+            {!isMobile ? (
+              // Desktop sidebar
+              <div className="flex-shrink-0 w-[420px] transition-all duration-300 p-4 pl-0 h-full">
+                <VoiceFlowChatbotPanel
+                  assistantId={assistantId}
+                  currentFlow={getCurrentFlow()}
+                  onApplyFlow={handleApplyChatbotFlow}
+                  onPreviewFlow={handlePreviewChatbotFlow}
+                  sessionId={chatSessionId}
+                  isMinimized={false}
+                  onToggleMinimize={() => setChatbotMinimized(true)}
+                  onCloseChatbot={() => {
+                    setShowChatbot(false);
+                    setChatbotMinimized(false);
+                  }}
+                />
+              </div>
+            ) : (
+              // Mobile popup
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+                onClick={() => setShowChatbot(false)} // closes on background click
+              >
+                <div
+                  className="w-full max-w-md h-full max-h-[90vh] rounded-xl shadow-lg overflow-hidden"
+                  onClick={(e) => e.stopPropagation()} // prevents closing when clicking panel
+                >
+                  <VoiceFlowChatbotPanel
+                    assistantId={assistantId}
+                    currentFlow={getCurrentFlow()}
+                    onApplyFlow={handleApplyChatbotFlow}
+                    onPreviewFlow={handlePreviewChatbotFlow}
+                    sessionId={chatSessionId}
+                    isMinimized={false}
+                    onToggleMinimize={() => setChatbotMinimized(true)}
+                    onCloseChatbot={() => setShowChatbot(false)}
+                  />
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
 
       {/* Node Editor Sidebar - Right Side */}
       <div className={`transition-all duration-300 ${
@@ -661,21 +804,7 @@ useEffect(() => {
       </div>
       </div>
 
-      {showChatbot && chatbotMinimized && (
-        <VoiceFlowChatbotPanel
-          assistantId={assistantId}
-          currentFlow={getCurrentFlow()}
-          onApplyFlow={handleApplyChatbotFlow}
-          onPreviewFlow={handlePreviewChatbotFlow}
-          sessionId={chatSessionId}
-          isMinimized
-          onToggleMinimize={() => setChatbotMinimized(false)}
-          onCloseChatbot={() => {
-            setShowChatbot(false);
-            setChatbotMinimized(false);
-          }}
-        />
-      )}
+      
 
       {/* Bottom Navigation Bar - Figma Design */}
       <div 
@@ -793,15 +922,16 @@ useEffect(() => {
           }}
         >
           <div 
-            className="rounded-3xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
+            className="rounded-3xl shadow-2xl w-[95vw] max-w-6xl max-h-[90vh] overflow-vis flex flex-col"
             style={{
-          background: "rgba(255, 255, 255, 0.04)",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
-          border: "1px solid rgba(80, 80, 80, 0.24)",
-          borderRadius: "24px",
-        }}
+              background: "rgba(255, 255, 255, 0.04)",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+              border: "1px solid rgba(80, 80, 80, 0.24)",
+              borderRadius: "24px",
+            }}
           >
+
             {/* Header Section */}
             <div 
               className="px-6 py-4 flex items-center justify-between"
@@ -821,22 +951,23 @@ useEffect(() => {
               
               }}
             >
-              {!showToolEditor && (
+             {!showToolEditor && (
                 <button
                   onClick={handleAddTool}
-                  className="absolute top-5 right-5 px-3 py-1.5 flex items-center gap-2 rounded-lg transition-all z-10"
-                  style={{
-                    background: 'rgba(19, 245, 132, 0.08)',
-                    border: '1px solid rgba(19, 245, 132, 0.3)',
-                    color: '#9EFBCD'
-                  }}
+                  className="absolute top-5 right-5 flex items-center justify-center gap-2 
+                            px-3 py-3 sm:px-3 sm:py-1.5 sm:flex-row rounded-lg transition-all z-10
+                            bg-[rgba(19,245,132,0.08)] border border-[rgba(19,245,132,0.3)] text-[#9EFBCD]"
                 >
+                  {/* Icon always visible */}
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  <span className="text-sm font-semibold">Add Tool</span>
+
+                  {/* Text only visible on small screens and up */}
+                  <span className="hidden sm:inline text-sm font-semibold">Add Tool</span>
                 </button>
               )}
+
               <ToolsList
               key={toolsReloadKey}
               assistantId={assistantId}
@@ -887,6 +1018,188 @@ useEffect(() => {
       }}
       onClose={() => setShowLeavePopup(false)}
     />
+  </div>
+)}
+
+{/* Mobile Side Menu */}
+{isMobile && (
+  <div ref={sidebarRef} className={`fixed top-0 right-0 h-full w-64  z-50 transform transition-transform  ${
+    mobileSidebarOpen ? 'translate-x-0' : 'translate-x-full'
+  }`}
+   style={{
+          background: "rgba(255, 255, 255, 0.04)",
+          backdropFilter: "blur(90px)",
+          WebkitBackdropFilter: "blur(90px)",
+          border: "1px solid rgba(80, 80, 80, 0.24)",
+       
+        }}>
+    {/* Close button */}
+    
+
+    <div className="p-4 flex flex-col gap-4">
+      {/* Modern Initial Node Selector */}
+        <div className="space-y-1.5">
+          <label className="text-[10px] font-semibold text-white/60 uppercase">
+            Select Initial Node
+          </label>
+
+          <div className="relative w-full">
+            {/* Dropdown header */}
+            <div
+              onClick={() => setInitialNodeDropdownOpen(!initialNodeDropdownOpen)}
+              className="flex px-3.5 py-2.5 justify-between items-center bg-white/0 rounded-lg text-white text-xs cursor-pointer backdrop-blur-md transition hover:bg-white/10 border border-white/10"
+            >
+              {initialNodeId
+                ? nodes.find(node => node.data.id === initialNodeId)?.data.title ||
+                  initialNodeId
+                : "Select initial node"}
+              
+              <span className="ml-2 opacity-70">
+                <svg width="12" height="6" viewBox="0 0 12 6" fill="none">
+                  <path
+                    d="M5.8344 5.8344C5.63969 5.83478 5.45099 5.76696 5.30106 5.64273L0.301063 1.47606C-0.0533202 
+                      1.18151 -0.101823 0.655445 0.192729 0.301062C0.487281 -0.0533202 1.01335 -0.101823 
+                      1.36773 0.192729L5.8344 3.92606L10.3011 0.326063C10.4732 0.186254 10.694 0.120838 
+                      10.9145 0.1443C11.1351 0.167761 11.3372 0.278163 11.4761 0.451063C11.6303 0.624279 
+                      11.7054 0.85396 11.6833 1.08486C11.6612 1.31576 11.5438 1.52699 11.3594 1.66773L6.3594 
+                      5.69273C6.20516 5.79733 6.02031 5.8472 5.8344 5.8344Z"
+                    fill="#919EAB"
+                    fillOpacity="0.8"
+                  />
+                </svg>
+              </span>
+            </div>
+
+            {/* Dropdown menu */}
+            {initialNodeDropdownOpen && (
+              <div className="absolute top-full left-0 w-full mt-1 bg-black/90 rounded-lg backdrop-blur-xl shadow-[0_0_12px_rgba(0,0,0,0.4)] z-50 max-h-48 overflow-y-scroll">
+                <style>{`
+                  div::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}</style>
+
+                {/* Clear option */}
+                <div
+                  onClick={() => {
+                    setInitialNodeId("");
+                    setInitialNodeDropdownOpen(false);
+                  }}
+                  className="p-2 text-white text-xs hover:bg-white/10 cursor-pointer"
+                >
+                  Select initial node
+                </div>
+
+                {/* Node list */}
+                {nodes.map(node => (
+                  <div
+                    key={node.id}
+                    onClick={() => {
+                      setInitialNodeId(node.data.id);
+                      setInitialNodeDropdownOpen(false);
+                    }}
+                    className="p-2 text-white text-xs hover:bg-white/10 cursor-pointer"
+                  >
+                    {node.data.title || node.data.id}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+
+      {/* Active Toggle */}
+   
+      <div className="flex items-center gap-3">
+        <p className={`text-xs ${activating ? 'text-emerald-300' : 'text-white/60'}`}>
+          {activating ? 'Active' : 'Disabled'}
+        </p>
+        <button
+          type="button"
+          className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
+            activating ? 'bg-emerald-500/30 border-emerald-400/50' : 'bg-white/5 border-white/15'
+          }`}
+          onClick={() => setActivating(prev => !prev)}
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              activating ? 'translate-x-6' : 'translate-x-1'
+            }`}
+          />
+        </button>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col gap-2">
+        {/* Run/Activate Button */}
+              <button
+                onClick={() => router.push('/voice')}
+                className="px-2 py-1 text-xs font-bold text-white  rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+                style={{
+                  border: "2px solid rgba(145, 158, 171, 0.32)",
+                }}
+              >
+               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.16675 9.99884V5.66808C4.16675 3.8738 6.10947 2.75139 7.66156 3.64984L11.4142 5.81652L15.1668 7.9832C16.7215 8.87904 16.7215 11.1238 15.1668 12.0197L11.4142 14.1864L7.66156 16.353C6.10947 17.2463 4.16675 16.1265 4.16675 14.3322V9.99884Z" fill="white"/>
+              </svg>
+
+                Run
+              </button>
+              
+              {/* Import Button */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json"
+                onChange={importFlow}
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="px-2 py-1 text-xs font-bold text-white  rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+                style={{
+                  border: "2px solid rgba(145, 158, 171, 0.32)",
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.125 12.5C3.125 12.3342 3.05915 12.1753 2.94194 12.0581C2.82473 11.9408 2.66576 11.875 2.5 11.875C2.33424 11.875 2.17527 11.9408 2.05806 12.0581C1.94085 12.1753 1.875 12.3342 1.875 12.5V12.5458C1.875 13.685 1.875 14.6042 1.9725 15.3267C2.0725 16.0767 2.28917 16.7083 2.79 17.21C3.29167 17.7117 3.92333 17.9267 4.67333 18.0283C5.39583 18.125 6.315 18.125 7.45417 18.125H12.5458C13.685 18.125 14.6042 18.125 15.3267 18.0283C16.0767 17.9267 16.7083 17.7117 17.21 17.21C17.7117 16.7083 17.9267 16.0767 18.0283 15.3267C18.125 14.6042 18.125 13.685 18.125 12.5458V12.5C18.125 12.3342 18.0592 12.1753 17.9419 12.0581C17.8247 11.9408 17.6658 11.875 17.5 11.875C17.3342 11.875 17.1753 11.9408 17.0581 12.0581C16.9408 12.1753 16.875 12.3342 16.875 12.5C16.875 13.6958 16.8733 14.53 16.7892 15.16C16.7067 15.7717 16.5558 16.095 16.3258 16.3258C16.095 16.5567 15.7717 16.7067 15.1592 16.7892C14.53 16.8733 13.6958 16.875 12.5 16.875H7.5C6.30417 16.875 5.46917 16.8733 4.84 16.7892C4.22833 16.7067 3.905 16.5558 3.67417 16.3258C3.44333 16.095 3.29333 15.7717 3.21083 15.1592C3.12667 14.53 3.125 13.6958 3.125 12.5Z" fill="white"/>
+                <path d="M9.54507 2.07801C9.60363 2.01396 9.67489 1.96282 9.7543 1.92782C9.83371 1.89283 9.91954 1.87476 10.0063 1.87476C10.0931 1.87476 10.1789 1.89283 10.2583 1.92782C10.3378 1.96282 10.409 2.01396 10.4676 2.07801L13.8009 5.72384C13.9101 5.84659 13.9666 6.00741 13.9582 6.17149C13.9497 6.33558 13.877 6.48974 13.7557 6.6006C13.6344 6.71146 13.4744 6.77011 13.3102 6.76385C13.146 6.7576 12.9909 6.68694 12.8784 6.56717L10.6317 4.10884L10.6317 13.333C10.6317 13.4988 10.5659 13.6577 10.4487 13.7749C10.3315 13.8922 10.1725 13.958 10.0067 13.958C9.84098 13.958 9.68201 13.8922 9.5648 13.775C9.44759 13.6577 9.38174 13.4988 9.38174 13.333L9.38174 4.10968L7.13424 6.56801C7.0223 6.69034 6.86634 6.76319 6.70068 6.77054C6.53503 6.77788 6.37324 6.71912 6.2509 6.60718C6.12857 6.49523 6.05572 6.33928 6.04838 6.17362C6.04103 6.00796 6.09979 5.84617 6.21174 5.72384L9.54507 2.07801Z" fill="white"/>
+                </svg>
+
+                Import
+              </button>
+              
+              {/* Export Button */}
+              <button
+                onClick={exportFlow}
+                className="px-2 py-1 text-xs font-bold text-white  rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+                style={{
+                  border: "2px solid rgba(145, 158, 171, 0.32)",
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.4617 13.755C10.4031 13.819 10.3319 13.8702 10.2524 13.9052C10.173 13.9402 10.0872 13.9582 10.0004 13.9582C9.91364 13.9582 9.82781 13.9402 9.74839 13.9052C9.66898 13.8702 9.59773 13.819 9.53917 13.755L6.20583 10.1092C6.09661 9.98642 6.04012 9.8256 6.04858 9.66151C6.05705 9.49743 6.12978 9.34327 6.25105 9.23241C6.37232 9.12155 6.53236 9.0629 6.69655 9.06916C6.86073 9.07541 7.01585 9.14607 7.12833 9.26583L9.375 11.7242V2.5C9.375 2.33424 9.44085 2.17527 9.55806 2.05806C9.67527 1.94085 9.83424 1.875 10 1.875C10.1658 1.875 10.3247 1.94085 10.4419 2.05806C10.5592 2.17527 10.625 2.33424 10.625 2.5V11.7233L12.8725 9.265C12.9844 9.14267 13.1404 9.06982 13.3061 9.06247C13.4717 9.05513 13.6335 9.11389 13.7558 9.22583C13.8782 9.33778 13.951 9.49373 13.9584 9.65939C13.9657 9.82505 13.9069 9.98684 13.795 10.1092L10.4617 13.755Z" fill="white"/>
+                <path d="M3.125 12.5C3.125 12.3342 3.05915 12.1753 2.94194 12.0581C2.82473 11.9408 2.66576 11.875 2.5 11.875C2.33424 11.875 2.17527 11.9408 2.05806 12.0581C1.94085 12.1753 1.875 12.3342 1.875 12.5V12.5458C1.875 13.685 1.875 14.6042 1.9725 15.3267C2.0725 16.0767 2.28917 16.7083 2.79 17.21C3.29167 17.7117 3.92333 17.9267 4.67333 18.0283C5.39583 18.125 6.315 18.125 7.45417 18.125H12.5458C13.685 18.125 14.6042 18.125 15.3267 18.0283C16.0767 17.9267 16.7083 17.7117 17.21 17.21C17.7117 16.7083 17.9267 16.0767 18.0283 15.3267C18.125 14.6042 18.125 13.685 18.125 12.5458V12.5C18.125 12.3342 18.0592 12.1753 17.9419 12.0581C17.8247 11.9408 17.6658 11.875 17.5 11.875C17.3342 11.875 17.1753 11.9408 17.0581 12.0581C16.9408 12.1753 16.875 12.3342 16.875 12.5C16.875 13.6958 16.8733 14.53 16.7892 15.16C16.7067 15.7717 16.5558 16.095 16.3258 16.3258C16.095 16.5567 15.7717 16.7067 15.1592 16.7892C14.53 16.8733 13.6958 16.875 12.5 16.875H7.5C6.30417 16.875 5.46917 16.8733 4.84 16.7892C4.22833 16.7067 3.905 16.5558 3.67417 16.3258C3.44333 16.095 3.29333 15.7717 3.21083 15.1592C3.12667 14.53 3.125 13.6958 3.125 12.5Z" fill="white"/>
+                </svg>
+
+                Export
+              </button>
+
+               {/* Save Button */}
+              <button
+                onClick={saveFlow}
+                disabled={saving}
+                className="px-2 py-1 text-xs font-bold text-[#13F584] border border-[#13F584] rounded-lg bg-transparent hover:bg-[#13F584]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.0154 5.01013L14.9899 3.98464C14.5733 3.56736 14.0083 3.3335 13.4188 3.3335H4.86106C4.01715 3.3335 3.33325 4.0174 3.33325 4.86131V15.139C3.33325 15.9829 4.01715 16.6668 4.86106 16.6668H15.1388C15.9827 16.6668 16.6666 15.9829 16.6666 15.139V6.58128C16.6666 5.99178 16.4327 5.4268 16.0154 5.01013ZM5.55544 6.80568V5.41683C5.55544 5.18683 5.74211 5.00016 5.97211 5.00016H11.8054C12.0354 5.00016 12.2221 5.18683 12.2221 5.41683V6.80568C12.2221 7.03569 12.0354 7.22235 11.8054 7.22235H5.97211C5.74211 7.22235 5.55544 7.03569 5.55544 6.80568ZM9.99992 14.4446C8.6194 14.4446 7.49992 13.3252 7.49992 11.9446C7.49992 10.564 8.6194 9.44464 9.99992 9.44464C11.3804 9.44464 12.4999 10.564 12.4999 11.9446C12.4999 13.3252 11.3804 14.4446 9.99992 14.4446Z" fill="#13F584"/>
+                </svg>
+
+                {saving ? 'Saving...' : 'Save'}
+              </button>
+      </div>
+    </div>
   </div>
 )}
 

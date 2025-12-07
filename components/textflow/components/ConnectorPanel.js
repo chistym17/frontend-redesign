@@ -535,7 +535,10 @@ export default function ConnectorPanel({ assistantId, onSelectConnector, onClose
 
   return (
     <>
-    <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none" style={{ paddingBottom: bottomOffset }}>
+    <div
+    className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none px-4 sm:px-0"
+    style={{ paddingBottom: bottomOffset }}
+    >
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-transparent pointer-events-auto" 

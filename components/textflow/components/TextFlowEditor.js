@@ -142,6 +142,52 @@ function FlowContent({ assistantId }) {
   const [flowActive, setFlowActive] = useState(false);
   const [selectedNodeType, setSelectedNodeType] = useState(null);
   const [notification, setNotification] = useState(null);
+
+// mobile mode 
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [initialNodeDropdownOpen, setInitialNodeDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const sidebarRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target) && mobileSidebarOpen) {
+        setMobileSidebarOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [mobileSidebarOpen]);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  function DropdownMenu({ rect, children }) {
+    if (!rect) return null; // ✅ prevents crash
+
+    return createPortal(
+      <div
+        style={{
+          position: "fixed",
+          top: rect.top + rect.height + 10,
+          left: rect.left,
+          width: rect.width,
+          zIndex: 9999
+        }}
+      >
+        {children}
+      </div>,
+      document.body
+    );
+  }
   
   // AI Chatbot states
   const [showChatbot, setShowChatbot] = useState(false);
@@ -178,38 +224,52 @@ function FlowContent({ assistantId }) {
 
   // Console resize handlers
   const handleResizeStart = (e) => {
-    e.preventDefault();
-    setIsResizing(true);
-    resizeStartY.current = e.clientY;
-    resizeStartHeight.current = consoleHeight;
-    document.body.style.cursor = 'ns-resize';
-    document.body.style.userSelect = 'none';
+  e.preventDefault();
+  setIsResizing(true);
+
+  // Get starting Y position for mouse or touch
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  resizeStartY.current = clientY;
+  resizeStartHeight.current = consoleHeight;
+
+  document.body.style.cursor = 'ns-resize';
+  document.body.style.userSelect = 'none';
   };
 
 
+
   useEffect(() => {
-    if (!isResizing) return;
+  if (!isResizing) return;
 
-    const handleMouseMove = (e) => {
-      const delta = resizeStartY.current - e.clientY;
-      const newHeight = Math.max(150, Math.min(600, resizeStartHeight.current + delta));
-      setConsoleHeight(newHeight);
-    };
+  const handleMove = (e) => {
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const delta = resizeStartY.current - clientY;
+    const newHeight = Math.max(150, Math.min(600, resizeStartHeight.current + delta));
+    setConsoleHeight(newHeight);
+  };
 
-    const handleMouseUp = () => {
-      setIsResizing(false);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-    };
+  const handleEnd = () => {
+    setIsResizing(false);
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+  // Mouse events
+  document.addEventListener('mousemove', handleMove);
+  document.addEventListener('mouseup', handleEnd);
 
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isResizing]);
+  // Touch events
+  document.addEventListener('touchmove', handleMove);
+  document.addEventListener('touchend', handleEnd);
+
+  return () => {
+    document.removeEventListener('mousemove', handleMove);
+    document.removeEventListener('mouseup', handleEnd);
+    document.removeEventListener('touchmove', handleMove);
+    document.removeEventListener('touchend', handleEnd);
+  };
+}, [isResizing]);
+
 
   // Load flow from backend
   useEffect(() => {
@@ -785,6 +845,7 @@ function FlowContent({ assistantId }) {
           </div>
         </div>
 
+        {!isMobile && (
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
           <p className={`text-xs ${flowActive ? 'text-emerald-300' : 'text-white/60'}`}>
             {flowActive ? 'Active' : 'Disabled'}
@@ -803,7 +864,9 @@ function FlowContent({ assistantId }) {
             />
           </button>
         </div>
+        )}
 
+          {!isMobile && (
         <div className="flex items-center gap-1">
             <button
               onClick={handleRun}
@@ -868,12 +931,26 @@ function FlowContent({ assistantId }) {
               </svg>
               <span>{saveStatus || "Save"}</span>
             </button>
-        </div>
+        </div>)}
+         {isMobile && (
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="p-2 text-white/70 hover:text-white border border-white/30 rounded-lg flex items-center gap-2"
+            >
+          
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+                  <span className="text-xs">More</span>
+            </button>
+          )}
+
         </div>
       </div>
 
       {/* Canvas Area - Full Page */}
-      <div className="flex-1 relative bg-[#141A21]">
+      <div className="flex-1 relative bg-[#141A21] h-[calc(100vh-0px)] w-full overflow-hidden">
+
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -915,7 +992,7 @@ function FlowContent({ assistantId }) {
               style={{ opacity: 0.2 }}
             />
             <Controls 
-              className="!bg-white/8 !border-0 !rounded-xl !shadow-2xl !backdrop-blur-xl [&_button]:!bg-transparent [&_button]:!border-0 [&_button:hover]:!bg-white/10 [&_button]:!text-white [&_svg]:!text-white [&_svg_path]:!stroke-white [&_svg_path]:!fill-white"
+              className="!bg-white/8 !border-0 !rounded-xl !shadow-2xl !backdrop-blur-xl [&_button]:!bg-transparent [&_button]:!border-0 [&_button:hover]:!bg-white/10 [&_button]:!text-white [&_svg]:!text-white [&_svg_path]:!stroke-white [&_svg_path]:!fill-white sm:scale-100 scale-125"
               showInteractive={false}
               showFitView={false}
               style={{ 
@@ -923,7 +1000,7 @@ function FlowContent({ assistantId }) {
                 backdropFilter: 'blur(16px)',
                 WebkitBackdropFilter: 'blur(16px)',
                 border: 'none',
-                bottom: '16px',
+                bottom: window.innerWidth < 640 ? '70px' : '16px', // mobile 100px, desktop 16px
                 left: '2px',
                 right: 'auto',
                 top: 'auto'
@@ -968,34 +1045,66 @@ function FlowContent({ assistantId }) {
             </div>
           )}
 
+       
         {/* AI Chatbot Panel - Right Side */}
         {showChatbot && !chatbotMinimized && (
-          <div
-            className="absolute right-0 top-4 w-[420px] flex-shrink-0 p-4 pl-0 z-20 pointer-events-none"
-            style={{ bottom: `${chatbotBottomOffset}px` }}
-          >
-            <div className="relative h-full">
-              <div className="absolute inset-0 rounded-[32px] bg-[#0C1118] opacity-95 shadow-[0_0_40px_rgba(0,0,0,0.45)]"></div>
-              <div className="relative h-full pointer-events-auto">
-                <FlowChatbotPanel
-                  currentFlow={{ nodes, edges }}
-                  onApplyFlow={handleApplyChatbotFlow}
-                  onPreviewFlow={handlePreviewChatbotFlow}
-                  sessionId={chatSessionId}
-                  isMinimized={chatbotMinimized}
-                  onToggleMinimize={() => setChatbotMinimized(!chatbotMinimized)}
-                  onCloseChatbot={() => {
-                    setShowChatbot(false);
-                    setChatbotMinimized(false);
-                  }}
-                />
+          <>
+            {!isMobile ? (
+              // Desktop Right-Side Panel
+              <div
+                className="absolute right-0 top-4 w-[420px] flex-shrink-0 p-4 pl-0 z-20 pointer-events-none"
+                style={{ bottom: `${chatbotBottomOffset}px` }}
+              >
+                <div className="relative h-full pointer-events-auto">
+                  <div className="absolute inset-0 rounded-[32px] bg-[#0C1118] opacity-95 shadow-[0_0_40px_rgba(0,0,0,0.45)]"></div>
+
+                  <div className="relative h-full">
+                    <FlowChatbotPanel
+                          currentFlow={{ nodes, edges }}
+                          onApplyFlow={handleApplyChatbotFlow}
+                          onPreviewFlow={handlePreviewChatbotFlow}
+                          sessionId={chatSessionId}
+                          isMinimized={chatbotMinimized}
+                          onToggleMinimize={() => setChatbotMinimized(!chatbotMinimized)}
+                          onCloseChatbot={() => {
+                            setShowChatbot(false);
+                            setChatbotMinimized(false);
+                          }}
+                        />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            ) : (
+              // Mobile Popup (same style as your AI chatbot mobile popup)
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+                onClick={() => setShowChatbot(false)}
+              >
+                <div
+                  className="w-full max-w-md h-full max-h-[90vh] rounded-xl shadow-lg overflow-hidden"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <FlowChatbotPanel
+                          currentFlow={{ nodes, edges }}
+                          onApplyFlow={handleApplyChatbotFlow}
+                          onPreviewFlow={handlePreviewChatbotFlow}
+                          sessionId={chatSessionId}
+                          isMinimized={chatbotMinimized}
+                          onToggleMinimize={() => setChatbotMinimized(!chatbotMinimized)}
+                          onCloseChatbot={() => {
+                            setShowChatbot(false);
+                            setChatbotMinimized(false);
+                          }}
+                        />
+                </div>
+              </div>
+            )}
+          </>
         )}
 
+
         {/* Minimized Chatbot Button */}
-        {showChatbot && chatbotMinimized && (
+        {!isMobile && showChatbot && chatbotMinimized && (
           <FlowChatbotPanel
             currentFlow={{ nodes, edges }}
             onApplyFlow={handleApplyChatbotFlow}
@@ -1015,7 +1124,7 @@ function FlowContent({ assistantId }) {
         <div 
           className="absolute left-1/2 -translate-x-1/2 z-20 flex items-center"
           style={{
-            bottom: consoleCollapsed ? '60px' : `${consoleHeight + 10}px`,
+            bottom: consoleCollapsed ? '20px' : `${consoleHeight + 10}px`,
             background: 'rgba(255, 255, 255, 0.04)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
@@ -1199,6 +1308,10 @@ function FlowContent({ assistantId }) {
           <div
             className="absolute top-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-emerald-500/20 transition-colors group z-10"
             onMouseDown={(e) => {
+              e.stopPropagation();
+              handleResizeStart(e);
+            }}
+            onTouchStart={(e) => {
               e.stopPropagation();
               handleResizeStart(e);
             }}
@@ -1509,6 +1622,113 @@ function FlowContent({ assistantId }) {
         </div>
       )}
       </div>
+      {/* Mobile Side Menu */}
+        {isMobile && (
+          <div ref={sidebarRef} className={`fixed top-0 right-0 h-full w-64  z-50 transform transition-transform  ${
+            mobileSidebarOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          style={{
+                  background: "rgba(255, 255, 255, 0.04)",
+                  backdropFilter: "blur(90px)",
+                  WebkitBackdropFilter: "blur(90px)",
+                  border: "1px solid rgba(80, 80, 80, 0.24)",
+              
+                }}>
+            {/* Close button */}
+            
+
+            <div className="p-4 flex flex-col gap-4">
+              
+              {/* Active Toggle */}
+          
+              <div className="flex items-center gap-3">
+                <p className={`text-xs ${flowActive ? 'text-emerald-300' : 'text-white/60'}`}>
+                  {flowActive ? 'Active' : 'Disabled'}
+                </p>
+                <button
+                  type="button"
+                  className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
+                    flowActive ? 'bg-emerald-500/30 border-emerald-400/50' : 'bg-white/5 border-white/15'
+                  }`}
+                  onClick={() => setFlowActive((prev) => !prev)}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      flowActive ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Action Buttons */}
+             <div className="flex flex-col gap-2">
+            <button
+              onClick={handleRun}
+              disabled={!nodes.length || !isConnected()}
+              className="px-2 py-1 text-xs font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{
+                border: "2px solid rgba(145, 158, 171, 0.32)",
+              }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.16675 9.99884V5.66808C4.16675 3.8738 6.10947 2.75139 7.66156 3.64984L11.4142 5.81652L15.1668 7.9832C16.7215 8.87904 16.7215 11.1238 15.1668 12.0197L11.4142 14.1864L7.66156 16.353C6.10947 17.2463 4.16675 16.1265 4.16675 14.3322V9.99884Z"
+                  fill="white"
+                />
+              </svg>
+              Run
+            </button>
+            <button
+              onClick={handleImport}
+              className="px-2 py-1 text-xs font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+              style={{
+                border: "2px solid rgba(145, 158, 171, 0.32)",
+              }}
+              title="Import flow"
+            >
+              <Upload className="w-4 h-4" />
+              <span>Import</span>
+            </button>
+            <button
+              onClick={handleExport}
+              className="px-2 py-1 text-xs font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+              style={{
+                border: "2px solid rgba(145, 158, 171, 0.32)",
+              }}
+              title="Export flow"
+            >
+              <Download className="w-4 h-4" />
+              <span>Export</span>
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={loading}
+              className="px-2 py-1 text-xs font-bold text-[#13F584] border border-[#13F584] rounded-lg bg-transparent hover:bg-[#13F584]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M16.0154 5.01013L14.9899 3.98464C14.5733 3.56736 14.0083 3.3335 13.4188 3.3335H4.86106C4.01715 3.3335 3.33325 4.0174 3.33325 4.86131V15.139C3.33325 15.9829 4.01715 16.6668 4.86106 16.6668H15.1388C15.9827 16.6668 16.6666 15.9829 16.6666 15.139V6.58128C16.6666 5.99178 16.4327 5.4268 16.0154 5.01013ZM5.55544 6.80568V5.41683C5.55544 5.18683 5.74211 5.00016 5.97211 5.00016H11.8054C12.0354 5.00016 12.2221 5.18683 12.2221 5.41683V6.80568C12.2221 7.03569 12.0354 7.22235 11.8054 7.22235H5.97211C5.74211 7.22235 5.55544 7.03569 5.55544 6.80568ZM9.99992 14.4446C8.6194 14.4446 7.49992 13.3252 7.49992 11.9446C7.49992 10.564 8.6194 9.44464 9.99992 9.44464C11.3804 9.44464 12.4999 10.564 12.4999 11.9446C12.4999 13.3252 11.3804 14.4446 9.99992 14.4446Z"
+                  fill="#13F584"
+                />
+              </svg>
+              <span>{saveStatus || "Save"}</span>
+            </button>
+        </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 }

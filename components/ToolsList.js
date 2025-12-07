@@ -349,7 +349,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                 <div className="flex flex-col sm:flex-row items-center justify-end w-full border-t border-[rgba(145,158,171,0.2)] py-1 px-5 bg-white/[0.05] rounded-bl-2xl rounded-br-2xl gap-3">
 
                   {/* Pagination (right) */}
-                  <div className="flex items-center gap-2 flex-wrap justify-end sm:justify-end mt-2 sm:mt-0">
+                  <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
 
                     
                     {/* Rows per page selector */}
@@ -409,7 +409,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToFirstPage}
                         disabled={currentPage === 1 || totalPages === 0}
-                        className={`w-10 h-0 flex items-center justify-center rounded-lg transition-all text-2xl ${
+                        className={`w-10 h-8 flex items-center justify-center rounded-lg transition-all text-2xl ${
                           currentPage === 1 ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >
@@ -420,7 +420,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToPreviousPage}
                         disabled={currentPage === 1 || totalPages === 0}
-                        className={`w-10 h-0 flex items-center justify-center rounded-lg transition-all text-2xl ${
+                        className={`w-10 h-8 flex items-center justify-center rounded-lg transition-all text-2xl ${
                           currentPage === 1 ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >
@@ -431,7 +431,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToNextPage}
                         disabled={currentPage === totalPages || totalPages === 0}
-                        className={`w-10 h-0 flex items-center justify-center rounded-lg transition-all text-2xl ${
+                        className={`w-10 h-8 flex items-center justify-center rounded-lg transition-all text-2xl ${
                           currentPage === totalPages ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >
@@ -442,7 +442,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToLastPage}
                         disabled={currentPage === totalPages || totalPages === 0}
-                        className={`w-10 h-0 flex items-center justify-center rounded-lg transition-all text-2xl ${
+                        className={`w-10 h-8 flex items-center justify-center rounded-lg transition-all text-2xl ${
                           currentPage === totalPages ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >

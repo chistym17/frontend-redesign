@@ -58,9 +58,9 @@ function ConditionRow({ row, onChange, onRemove }) {
   ];
   const type = row.when || 'user.contains';
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
       {/* Condition Type Select (Custom Dropdown) */}
-      <div className="relative w-[199px]">
+      <div className="relative w-full sm:w-[199px]">
         {/* Dropdown header */}
         <div
           onClick={() => setTypeDropdownOpen(!typeDropdownOpen)}
@@ -114,86 +114,68 @@ function ConditionRow({ row, onChange, onRemove }) {
         )}
       </div>
 
-
       {/* Fields by type */}
-      {type === 'user.contains' && (
-        <div className="flex-1">
-          <input
-            placeholder='Value'
-            value={row.value || ''}
-            onChange={(e) => onChange({ ...row, value: e.target.value })}
-            className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
-            style={{
-              background: 'rgba(255, 255, 255, 0.00)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-         
-            }}
-          />
-        </div>
-      )}
-
-      {type === 'user.regex' && (
-        <div className="flex-1">
-          <input
-            placeholder='Regex'
-            value={row.value || ''}
-            onChange={(e) => onChange({ ...row, value: e.target.value })}
-            className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
-            style={{
-              background: 'rgba(255, 255, 255, 0.00)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-         
-            }}
-          />
-        </div>
-      )}
-
-      {type === 'intent_is' && (
-        <div className="flex-1">
-          <input
-            placeholder='Intent name'
-            value={row.value || ''}
-            onChange={(e) => onChange({ ...row, value: e.target.value })}
-            className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
-            style={{
-              background: 'rgba(255, 255, 255, 0.00)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-             
-            }}
-          />
-        </div>
-      )}
-
-      {type === 'tool.ok' && (
-        <div className="flex-1">
-          <div className="h-10 px-3.5 py-0 flex items-center rounded-lg text-sm text-[#919EAB]">
-            ✓ true when tool returns ok: true
+      <div className="flex flex-col sm:flex-row gap-4 flex-1 w-full">
+        {type === 'user.contains' && (
+          <div className="flex-1">
+            <input
+              placeholder='Value'
+              value={row.value || ''}
+              onChange={(e) => onChange({ ...row, value: e.target.value })}
+              className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+              style={{
+                background: 'rgba(255, 255, 255, 0.00)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+           
+              }}
+            />
           </div>
-        </div>
-      )}
+        )}
 
-      {type === 'parameters.has' && (
-        <div className="flex-1">
-          <input
-            placeholder='Key'
-            value={row.key || ''}
-            onChange={(e) => onChange({ ...row, key: e.target.value })}
-            className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
-            style={{
-              background: 'rgba(255, 255, 255, 0.00)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-        
-            }}
-          />
-        </div>
-      )}
+        {type === 'user.regex' && (
+          <div className="flex-1">
+            <input
+              placeholder='Regex'
+              value={row.value || ''}
+              onChange={(e) => onChange({ ...row, value: e.target.value })}
+              className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+              style={{
+                background: 'rgba(255, 255, 255, 0.00)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+           
+              }}
+            />
+          </div>
+        )}
 
-      {type === 'parameters.equals' && (
-        <>
+        {type === 'intent_is' && (
+          <div className="flex-1">
+            <input
+              placeholder='Intent name'
+              value={row.value || ''}
+              onChange={(e) => onChange({ ...row, value: e.target.value })}
+              className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+              style={{
+                background: 'rgba(255, 255, 255, 0.00)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+             
+              }}
+            />
+          </div>
+        )}
+
+        {type === 'tool.ok' && (
+          <div className="flex-1">
+            <div className="h-10 px-3.5 py-0 flex items-center rounded-lg text-sm text-[#919EAB]">
+              ✓ true when tool returns ok: true
+            </div>
+          </div>
+        )}
+
+        {type === 'parameters.has' && (
           <div className="flex-1">
             <input
               placeholder='Key'
@@ -204,64 +186,83 @@ function ConditionRow({ row, onChange, onRemove }) {
                 background: 'rgba(255, 255, 255, 0.00)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
-           
-              }}
-            />
-          </div>
-          <div className="flex-1">
-            <input
-              placeholder='Value'
-              value={row.value ?? ''}
-              onChange={(e) => onChange({ ...row, value: e.target.value })}
-              className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
-              style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-            
-              }}
-            />
-          </div>
-        </>
-      )}
-
-      {type === 'tool.field_equals' && (
-        <>
-          <div className="flex-1">
-            <input
-              placeholder='Path (e.g. data.status)'
-              value={row.path || ''}
-              onChange={(e) => onChange({ ...row, path: e.target.value })}
-              className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
-              style={{
-                background: 'rgba(255, 255, 255, 0.00)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-
-              }}
-            />
-          </div>
-          <div className="flex-1">
-            <input
-              placeholder='Value'
-              value={row.value ?? ''}
-              onChange={(e) => onChange({ ...row, value: e.target.value })}
-              className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
-              style={{
-                background: 'rgba(255, 255, 255, 0.00)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
         
               }}
             />
           </div>
-        </>
-      )}
+        )}
+
+        {type === 'parameters.equals' && (
+          <>
+            <div className="flex-1">
+              <input
+                placeholder='Key'
+                value={row.key || ''}
+                onChange={(e) => onChange({ ...row, key: e.target.value })}
+                className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.00)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+             
+                }}
+              />
+            </div>
+            <div className="flex-1">
+              <input
+                placeholder='Value'
+                value={row.value ?? ''}
+                onChange={(e) => onChange({ ...row, value: e.target.value })}
+                className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+            
+                }}
+              />
+            </div>
+          </>
+        )}
+
+        {type === 'tool.field_equals' && (
+          <>
+            <div className="flex-1">
+              <input
+                placeholder='Path (e.g. data.status)'
+                value={row.path || ''}
+                onChange={(e) => onChange({ ...row, path: e.target.value })}
+                className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.00)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+
+                }}
+              />
+            </div>
+            <div className="flex-1">
+              <input
+                placeholder='Value'
+                value={row.value ?? ''}
+                onChange={(e) => onChange({ ...row, value: e.target.value })}
+                className="h-10 w-full px-3.5 py-0 flex items-center rounded-lg text-sm text-white placeholder-[#919EAB] focus:border-[#13F584] focus:outline-none"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.00)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+        
+                }}
+              />
+            </div>
+          </>
+        )}
+      </div>
 
       {/* Delete Button */}
       <button
         onClick={onRemove}
-        className="w-12 h-12 flex items-center justify-center rounded-lg transition-colors"
+        className="w-full sm:w-12 h-10   flex items-center justify-center rounded-lg transition-colors self-center sm:self-auto"
         style={{
           background: 'rgba(255, 86, 48, 0.08)',
         
@@ -277,6 +278,7 @@ function ConditionRow({ row, onChange, onRemove }) {
     </div>
   );
 }
+
 
 function ConditionModal({ edge, onSave, onClose, onDeleteEdge }) {
   const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
@@ -352,36 +354,38 @@ function ConditionModal({ edge, onSave, onClose, onDeleteEdge }) {
       `}} />
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div 
-        className="relative rounded-3xl w-[810px] max-w-[90vw] shadow-2xl edge-condition-modal"
+        className="relative rounded-3xl w-full max-w-[810px] mx-4 sm:mx-auto shadow-2xl edge-condition-modal"
         style={{
           background: 'rgba(255, 255, 255, 0.04)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.12)'
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          maxHeight: '90vh',
+          overflowY: 'auto'
         }}
       >
-        <div className="flex flex-col gap-4 p-5">
+        <div className="flex flex-col gap-4 p-4 sm:p-5">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-2">
-              <h2 className="text-xl font-bold text-white">Edge Condition</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-white">Edge Condition</h2>
             </div>
             <button
-            onClick={onClose}
-            className="absolute top-4 right-4 w-6 h-6 flex items-center justify-center rounded-full bg-white text-black font-bold text-xs hover:bg-gray-200 transition"
-          >
-            ×
-          </button>
+              onClick={onClose}
+              className="absolute top-4 right-4 w-6 h-6 flex items-center justify-center rounded-full bg-white text-black font-bold text-xs hover:bg-gray-200 transition"
+            >
+              ×
+            </button>
           </div>
 
           {/* Connection Section */}
-          <div className="flex gap-16 pt-4">
-            <div className="flex flex-col gap-2.5" style={{ width: '150px' }}>
-              <h3 className="text-base font-semibold text-white">Connection</h3>
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-16 pt-4">
+            <div className="flex flex-col gap-2.5 sm:w-[150px]">
+              <h3 className="text-sm sm:text-base font-semibold text-white">Connection</h3>
             </div>
-            <div className="flex-1 flex flex-col gap-16">
+            <div className="flex-1 flex flex-col gap-8 sm:gap-16">
               <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Source Field */}
                   <div className="flex flex-col gap-2.5">
                     <label className="text-xs font-semibold text-[#919EAB]">Source</label>
@@ -420,17 +424,17 @@ function ConditionModal({ edge, onSave, onClose, onDeleteEdge }) {
             </div>
           </div>
 
-          <div className="flex gap-16 py-4">
-            <div className="flex flex-col gap-2.5" style={{ width: '150px' }}>
-              <h3 className="text-base font-semibold text-white">Conditions</h3>
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-16 py-4">
+            <div className="flex flex-col gap-2.5 sm:w-[150px]">
+              <h3 className="text-sm sm:text-base font-semibold text-white">Conditions</h3>
             </div>
-            <div className="flex-1 flex flex-col gap-16">
+            <div className="flex-1 flex flex-col gap-8 sm:gap-16">
               <div className="flex flex-col gap-4">
                 {/* Mode Selector */}
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <label className="text-xs font-semibold text-[#919EAB]">Mode</label>
 
-                  <div className="relative w-[160px]">
+                  <div className="relative w-full sm:w-[160px]">
                     {/* Dropdown header */}
                     <div
                       onClick={() => setModeDropdownOpen(!modeDropdownOpen)}
@@ -470,24 +474,25 @@ function ConditionModal({ edge, onSave, onClose, onDeleteEdge }) {
                       </div>
                     )}
                   </div>
+                  <div className="flex justify-start sm:justify-end w-full sm:w-auto">
+                    <button
+                      onClick={addRow}
+                      className="h-9 px-3 flex items-center gap-2 rounded-lg text-sm font-bold text-[#9EFBCD] transition-colors"
+                      style={{
+                        background: 'rgba(19, 245, 132, 0.08)',
+                      
+                      }}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      Add Condition
+                    </button>
+                  </div>
                 </div>
 
                 
-                <div className="flex justify-end">
-                  <button
-                    onClick={addRow}
-                    className="h-9 px-3 flex items-center gap-2 rounded-lg text-sm font-bold text-[#9EFBCD] transition-colors"
-                    style={{
-                      background: 'rgba(19, 245, 132, 0.08)',
-                    
-                    }}
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Condition
-                  </button>
-                </div>
+                
 
                 {/* Condition Rows */}
                 <div className="flex flex-col gap-4">
