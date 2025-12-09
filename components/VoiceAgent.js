@@ -1199,7 +1199,8 @@ const PanelTabs = ({ entries, className = "" }) => {
                     </div>
                     <div className="flex flex-wrap items-center justify-end gap-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-white/70">
+                        
+                        <span className="hidden sm:inline text-xs text-white/70">
                           {flowEnabled ? "Flow mode active" : "Flow mode off"}
                         </span>
                         <button
@@ -1387,7 +1388,7 @@ const PanelTabs = ({ entries, className = "" }) => {
                       : "text-white/70 hover:text-white"}
                   `}
                   >
-                    Menu
+                    Flow
                   </button>
 
                 </div>

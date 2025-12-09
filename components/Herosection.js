@@ -7,6 +7,23 @@ const HeroSection = () => {
   const router = useRouter();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
+  const cardsData = [
+    { title: "Restaurants", subtitle: "Orders & Reservations" },
+    { title: "E-commerce", subtitle: "Customer Support" },
+    { title: "Healthcare", subtitle: "Patient Management" },
+    { title: "Education", subtitle: "Learning Assistance" },
+    { title: "Finance", subtitle: "Accounts & Transactions" },
+    { title: "Real Estate", subtitle: "Property Listings" },
+    { title: "Travel", subtitle: "Booking & Guidance" },
+    { title: "Travel", subtitle: "Booking & Guidance" },
+    { title: "Entertainment", subtitle: "Recommendations" },
+    { title: "Fitness", subtitle: "Workout & Nutrition" },
+    { title: "Legal", subtitle: "Case Management" },
+    { title: "Automotive", subtitle: "Sales & Services" },
+    { title: "Marketing", subtitle: "Campaign Management" },
+    { title: "Hospitality", subtitle: "Reservations & Feedback" },
+    { title: "Technology", subtitle: "IT Solutions & Support" }
+  ];
 
   useEffect(() => {
     setIsVisible(true);
@@ -282,8 +299,8 @@ const HeroSection = () => {
                 },
                 {
                   image: '/images/design_flows.svg',
-                  width: 285,
-                  height: 250,
+                  width: 200,
+                  height: 200,
                   title: 'Design Flows',
                   description: 'Use the visual editor to create conversation flows and connect tools',
                 },
@@ -321,33 +338,82 @@ const HeroSection = () => {
       </section>
 
       {/* Use Cases Section */}
-     <section className="relative mt-10 h-auto lg:h-[850px] bg-[url('/images/use-cases.svg')] bg-contain md:bg-cover bg-center bg-no-repeat overflow-hidden pt-10 lg:pt-14">
+      <section className="relative mt-10 min-h-[850px] p-10">
+        {/* Header */}
+        <div className="relative max-w-7xl mx-auto text-center mb-12">
+          <h2 className="text-4xl sm:text-5xl font-semibold text-white mb-2">
+            Built for Every Industry
+          </h2>
+          <p className="text-gray-400 max-w-xl mx-auto">
+            Customize AI agents for your specific business needs
+          </p>
+        </div>
 
+        {/* Cards data */}
+        {/*
+          Define an array of objects for each card:
+          title: string, subtitle: string
+        */}
+        
 
+        {/* Responsive Chessboard */}
+        <div className="relative max-w-7xl mx-auto flex flex-wrap justify-center gap-4 sm:gap-1 md:gap-0">
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col h-full max-w-7xl mx-auto px-4 gap-44 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2
-              className="
-                mx-auto max-w-[841px]
-                font-barlow font-semibold
-                text-[40px] leading-[48px]
-                lg:text-[56px] lg:leading-[64px]
-                text-center mb-4
-                bg-gradient-to-r from-white via-[#E8E8E8] to-[#BCBCBC]
-                bg-clip-text text-transparent
-              "
-            >
-              Built for Every Industry
-            </h2>
-            <p className="text-lg text-white/70 max-w-2xl mx-auto">
-              Customize AI agents for your specific business needs
-            </p>
-          </div>
-          {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-96 items-center justify-center">
-                <button 
+          {Array.from({ length: 28 }).map((_, idx) => {
+            const row = Math.floor(idx / 7);
+            const col = idx % 7;
+
+            // Alternate pattern for cards
+            const showCard = (row + col) % 2 !== 0;
+
+            // Hide last row on mobile
+            const isHiddenOnMobile = row === 3;
+
+            if (showCard) {
+              const cardData = cardsData[idx % cardsData.length]; // loop over text if more cards than data
+              return (
+                <div
+                  key={idx}
+                  className={`relative w-[155px] sm:w-[140px] h-[158px] sm:h-[140px] p-4 rounded-[20px] flex flex-col justify-center items-center 
+                              bg-[rgba(19,245,132,0.04)] border border-[rgba(145,158,171,0.12)]
+                              transition cursor-pointer hover:bg-[rgba(19,245,132,0.08)] m-[0px]
+                              ${isHiddenOnMobile ? "hidden sm:flex" : "flex"}`}
+                >
+                  {/* SVG Icon Top-Right */}
+                  <div className="absolute top-2 left-2 w-6 h-6">
+                      <svg width="35" height="35" viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="61.5177" height="61.5177" rx="30.7589" fill="white" fill-opacity="0.04"/>
+                        <rect x="0.768971" y="0.768971" width="59.9798" height="59.9798" rx="29.9899" stroke="#919EAB" stroke-opacity="0.32" stroke-width="1.53794"/>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M25.0851 30.3C25.9461 30.5046 26.7672 30.8448 27.522 31.3098L29.1059 30.6056L30.9715 32.4712L30.2699 34.0551C30.735 34.8098 31.0751 35.631 31.2798 36.4947L32.8956 37.1166V39.7556L31.2798 40.3774C31.0751 41.2384 30.7323 42.0597 30.2699 42.8144L30.9715 44.3983L29.1059 46.2639L27.522 45.5623C26.7699 46.0273 25.9461 46.3675 25.0851 46.5722L24.4631 48.1879H21.8243L21.2023 46.5722C20.3386 46.3675 19.5175 46.0247 18.7627 45.5623L17.1788 46.2639L15.3132 44.3983L16.0175 42.8144C15.5524 42.0623 15.2123 41.2384 15.005 40.3774L13.3892 39.7556V37.1166L15.005 36.4947C15.2123 35.631 15.5524 34.8098 16.0175 34.0551L15.3132 32.4712L17.1788 30.6056L18.7627 31.3098C19.5175 30.8448 20.3386 30.5046 21.1997 30.3L21.8243 28.6815H24.4631L25.0851 30.3ZM23.1424 33.8319C20.5991 33.8319 18.5395 35.8915 18.5395 38.4348C18.5395 40.978 20.5991 43.0403 23.1424 43.0403C25.6856 43.0403 27.7479 40.978 27.7479 38.4348C27.7479 35.8915 25.6856 33.8319 23.1424 33.8319ZM40.3181 15.067C41.1791 15.2716 42.0002 15.6118 42.755 16.0768L44.3389 15.3726L46.2045 17.2382L45.5029 18.8221C45.968 19.5768 46.3082 20.3981 46.5128 21.2618L48.1286 21.8836V24.5226L46.5128 25.1444C46.3082 26.0054 45.9653 26.8267 45.5029 27.5814L46.2045 29.1653L44.3389 31.0309L42.755 30.3293C42.0029 30.7943 41.1791 31.1346 40.3181 31.3392L39.6962 32.955H37.0572L36.4354 31.3392C35.5717 31.1346 34.7505 30.7917 33.9957 30.3293L32.4118 31.0309L30.5462 29.1653L31.2505 27.5814C30.7854 26.8293 30.4453 26.0054 30.2379 25.1444L28.6222 24.5226V21.8836L30.2379 21.2618C30.4453 20.3981 30.7854 19.5768 31.2505 18.8221L30.5462 17.2382L32.4118 15.3726L33.9957 16.0768C34.7505 15.6118 35.5716 15.2716 36.4327 15.067L37.0572 13.4485H39.6962L40.3181 15.067ZM38.3753 18.5988C35.8321 18.5988 33.7725 20.6585 33.7725 23.2017C33.7725 25.745 35.8321 27.8072 38.3753 27.8072C40.9186 27.8072 42.9809 25.745 42.9809 23.2017C42.9809 20.6585 40.9186 18.5988 38.3753 18.5988ZM28.9235 14.4956L28.8218 14.4698C28.5121 14.391 28.3245 14.0757 28.4032 13.766C28.4819 13.4563 28.7972 13.2687 29.107 13.3474L30.1941 13.6237C30.3946 13.6747 30.5527 13.8287 30.6088 14.0278L30.9131 15.1074C30.9998 15.415 30.8205 15.7351 30.5129 15.8217C30.2054 15.9084 29.8852 15.7291 29.7985 15.4216L29.7626 15.2938C27.8492 17.3764 26.6805 20.1536 26.6805 23.2017C26.6805 24.3768 26.8541 25.5116 27.1771 26.582C27.2694 26.8879 27.096 27.2112 26.7901 27.3035C26.4842 27.3959 26.1609 27.2225 26.0685 26.9165C25.7135 25.7403 25.5225 24.4932 25.5225 23.2017C25.5225 19.8444 26.8125 16.786 28.9235 14.4956ZM33.9089 33.8638L33.8654 33.9291C33.6885 34.1952 33.3288 34.2675 33.0627 34.0906C32.7966 33.9136 32.7243 33.5539 32.9013 33.2878L33.5225 32.3538C33.637 32.1817 33.8348 32.0836 34.0412 32.0967L35.1606 32.1677C35.4796 32.188 35.722 32.4633 35.7019 32.7822C35.6816 33.1011 35.4063 33.3436 35.0873 33.3234L34.9328 33.3136C35.6161 34.883 35.9953 36.615 35.9953 38.4348C35.9953 41.5497 34.8848 44.4072 33.0386 46.6329C32.8345 46.8789 32.4692 46.9129 32.2233 46.7089C31.9774 46.5049 31.9433 46.1396 32.1473 45.8936C33.827 43.8687 34.8373 41.2687 34.8373 38.4348C34.8373 36.8132 34.5066 35.2682 33.9089 33.8638Z" fill="white"/>
+                      </svg>
+
+                  </div>
+
+                    {/* Card Text */}
+                  <div className="text-white font-semibold text-[18px] text-center leading-[22px] mt-6">
+                    {cardData.title}
+                  </div>
+                  <div className="text-[#919EAB] text-[12px] text-center leading-[16px]">
+                      {cardData.subtitle}
+                    </div>
+                </div>
+
+              );
+            } else {
+              // Empty card hidden on mobile
+              return (
+                <div
+                  key={idx}
+                  className={`w-[155px] sm:w-[140px] h-[158px] sm:h-[140px] border border-[rgba(86,86,86,0.5)] m-[0px] hidden sm:block`}
+                />
+              );
+            }
+          })}
+        </div>
+
+        {/* CTA */}
+        <div className="relative flex justify-center mt-16">
+         <button 
                   onClick={() => router.push('/assistants')}
                   className="
                     group relative flex items-center justify-center gap-2.5 bg-[#13F584] 
@@ -359,14 +425,12 @@ const HeroSection = () => {
                 >
                   <span>Get Started </span>
                 </button>
-                </div>
 
-              
-              </div>
-
- 
         </div>
       </section>
+
+
+
 
       {/* Flow Editor Showcase */}
       <section className="relative mt-10 py-20  overflow-hidden">

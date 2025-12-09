@@ -1,0 +1,30 @@
+<svg width="1509" height="860" viewBox="0 0 1509 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_19421_376095" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="1509" height="860">
+<rect width="1509" height="860" fill="url(#paint0_radial_19421_376095)"/>
+</mask>
+<g mask="url(#mask0_19421_376095)">
+<line x1="72.8279" y1="-264.157" x2="72.8279" y2="1140.16" stroke="#565656" stroke-width="1.04956"/>
+<line x1="228.163" y1="-264.157" x2="228.163" y2="1140.16" stroke="#565656" stroke-width="1.04956"/>
+<line x1="383.499" y1="-264.157" x2="383.499" y2="1140.16" stroke="#565656" stroke-width="1.04956"/>
+<line x1="538.834" y1="-264.157" x2="538.834" y2="1140.16" stroke="#565656" stroke-width="1.04956"/>
+<line x1="694.169" y1="-264.157" x2="694.169" y2="1140.16" stroke="#565656" stroke-width="1.04956"/>
+<line x1="849.505" y1="-264.157" x2="849.505" y2="1140.16" stroke="#565656" stroke-width="1.04956"/>
+<line x1="1004.84" y1="-264.157" x2="1004.84" y2="1140.16" stroke="#565656" stroke-width="1.04956"/>
+<line x1="1160.18" y1="-264.157" x2="1160.18" y2="1140.16" stroke="#565656" stroke-width="1.04956"/>
+<line x1="1315.51" y1="-264.157" x2="1315.51" y2="1140.16" stroke="#565656" stroke-width="1.04956"/>
+<line x1="-39.9999" y1="726.63" x2="1400" y2="726.63" stroke="#565656" stroke-width="1.04956"/>
+<line x1="-39.9999" y1="571.294" x2="1400" y2="571.294" stroke="#565656" stroke-width="1.04956"/>
+<line x1="-39.9999" y1="415.959" x2="1400" y2="415.959" stroke="#565656" stroke-width="1.04956"/>
+<line x1="-39.9999" y1="260.624" x2="1400" y2="260.624" stroke="#565656" stroke-width="1.04956"/>
+<line x1="-39.9999" y1="105.288" x2="1400" y2="105.288" stroke="#565656" stroke-width="1.04956"/>
+<rect x="228.163" y="105.813" width="154.286" height="154.286" fill="#13F584" fill-opacity="0.05" stroke="#565656" stroke-width="1.04956"/>
+<rect x="694.169" y="416.484" width="154.286" height="154.286" fill="#13F584" fill-opacity="0.05" stroke="#565656" stroke-width="1.04956"/>
+<rect x="694.169" y="105.813" width="154.286" height="154.286" fill="#13F584" fill-opacity="0.05" stroke="#565656" stroke-width="1.04956"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_19421_376095" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(754.5 430) rotate(-90) scale(573.5 945.488)">
+<stop stop-color="#5C5C5C"/>
+<stop offset="0.748375" stop-color="#737373" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>

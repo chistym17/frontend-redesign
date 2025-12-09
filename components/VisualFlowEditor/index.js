@@ -497,9 +497,9 @@ useEffect(() => {
 
                     router.push(`/assistants/${assistantId}`);
                   }}
-                  className="p-0.5 text-white/60 hover:text-white transition-colors"
+                  className=" p-2 sm:p-0.5  text-white/60 hover:text-white transition-colors"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
@@ -611,10 +611,10 @@ useEffect(() => {
           {isMobile && (
             <button
               onClick={() => setMobileSidebarOpen(true)}
-              className="p-2 text-white/70 hover:text-white border border-white/30 rounded-lg flex items-center gap-2"
+              className="p-1 text-white/70 hover:text-white border border-white/30 rounded-lg flex items-center gap-2"
             >
           
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
                   <span className="text-xs">More</span>
@@ -1038,8 +1038,8 @@ useEffect(() => {
 
     <div className="p-4 flex flex-col gap-4">
       {/* Modern Initial Node Selector */}
-        <div className="space-y-1.5">
-          <label className="text-[10px] font-semibold text-white/60 uppercase">
+        <div className="space-y-2 w-full">
+          <label className="text-sm font-semibold text-white/70">
             Select Initial Node
           </label>
 
@@ -1047,15 +1047,22 @@ useEffect(() => {
             {/* Dropdown header */}
             <div
               onClick={() => setInitialNodeDropdownOpen(!initialNodeDropdownOpen)}
-              className="flex px-3.5 py-2.5 justify-between items-center bg-white/0 rounded-lg text-white text-xs cursor-pointer backdrop-blur-md transition hover:bg-white/10 border border-white/10"
+              className="
+                flex justify-between items-center
+                px-5 py-3                        /* Mobile: match button padding */
+                sm:px-4 sm:py-2                  /* Desktop: original smaller size */
+                bg-transparent rounded-lg
+                text-white text-sm
+                cursor-pointer backdrop-blur-md
+                transition hover:bg-white/10
+                border border-[rgba(145,158,171,0.32)]
+              "
             >
               {initialNodeId
-                ? nodes.find(node => node.data.id === initialNodeId)?.data.title ||
-                  initialNodeId
+                ? nodes.find(node => node.data.id === initialNodeId)?.data.title || initialNodeId
                 : "Select initial node"}
-              
               <span className="ml-2 opacity-70">
-                <svg width="12" height="6" viewBox="0 0 12 6" fill="none">
+                <svg width="20" height="20" viewBox="0 0 12 6" fill="none">
                   <path
                     d="M5.8344 5.8344C5.63969 5.83478 5.45099 5.76696 5.30106 5.64273L0.301063 1.47606C-0.0533202 
                       1.18151 -0.101823 0.655445 0.192729 0.301062C0.487281 -0.0533202 1.01335 -0.101823 
@@ -1073,11 +1080,7 @@ useEffect(() => {
             {/* Dropdown menu */}
             {initialNodeDropdownOpen && (
               <div className="absolute top-full left-0 w-full mt-1 bg-black/90 rounded-lg backdrop-blur-xl shadow-[0_0_12px_rgba(0,0,0,0.4)] z-50 max-h-48 overflow-y-scroll">
-                <style>{`
-                  div::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}</style>
+                <style>{`div::-webkit-scrollbar { display: none; }`}</style>
 
                 {/* Clear option */}
                 <div
@@ -1085,7 +1088,7 @@ useEffect(() => {
                     setInitialNodeId("");
                     setInitialNodeDropdownOpen(false);
                   }}
-                  className="p-2 text-white text-xs hover:bg-white/10 cursor-pointer"
+                  className="p-3 text-white text-sm hover:bg-white/10 cursor-pointer"
                 >
                   Select initial node
                 </div>
@@ -1098,7 +1101,7 @@ useEffect(() => {
                       setInitialNodeId(node.data.id);
                       setInitialNodeDropdownOpen(false);
                     }}
-                    className="p-2 text-white text-xs hover:bg-white/10 cursor-pointer"
+                    className="p-3 text-white text-sm hover:bg-white/10 cursor-pointer"
                   >
                     {node.data.title || node.data.id}
                   </div>
@@ -1109,33 +1112,54 @@ useEffect(() => {
         </div>
 
 
+
       {/* Active Toggle */}
    
       <div className="flex items-center gap-3">
-        <p className={`text-xs ${activating ? 'text-emerald-300' : 'text-white/60'}`}>
-          {activating ? 'Active' : 'Disabled'}
+        <p
+          className={`
+            text-sm                               /* Mobile: bigger label */
+            sm:text-xs                            /* Desktop: original */
+            ${activating ? "text-emerald-300" : "text-white/60"}
+          `}
+        >
+          {activating ? "Active" : "Disabled"}
         </p>
+
         <button
           type="button"
-          className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
-            activating ? 'bg-emerald-500/30 border-emerald-400/50' : 'bg-white/5 border-white/15'
-          }`}
+          className={`
+            relative inline-flex 
+            h-8 w-16                              /* Mobile: larger switch */
+            items-center rounded-full border transition-colors
+            sm:h-6 sm:w-12                        /* Desktop: original size */
+            ${activating
+              ? "bg-emerald-500/30 border-emerald-400/50"
+              : "bg-white/5 border-white/15"}
+          `}
           onClick={() => setActivating(prev => !prev)}
         >
           <span
-            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-              activating ? 'translate-x-6' : 'translate-x-1'
-            }`}
+            className={`
+              inline-block
+              h-6 w-6                              /* Mobile: larger knob */
+              rounded-full bg-white transition-transform
+              sm:h-4 sm:w-4                        /* Desktop: original size */
+              ${activating
+                ? "translate-x-8 sm:translate-x-6"
+                : "translate-x-1"}
+            `}
           />
         </button>
       </div>
+
 
       {/* Action Buttons */}
       <div className="flex flex-col gap-2">
         {/* Run/Activate Button */}
               <button
                 onClick={() => router.push('/voice')}
-                className="px-2 py-1 text-xs font-bold text-white  rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+                className="px-5 py-3 text-[14px] font-bold text-white  rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
                 style={{
                   border: "2px solid rgba(145, 158, 171, 0.32)",
                 }}
@@ -1157,7 +1181,7 @@ useEffect(() => {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="px-2 py-1 text-xs font-bold text-white  rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+                className="px-5 py-3 text-[14px] font-bold text-white  rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
                 style={{
                   border: "2px solid rgba(145, 158, 171, 0.32)",
                 }}
@@ -1173,7 +1197,7 @@ useEffect(() => {
               {/* Export Button */}
               <button
                 onClick={exportFlow}
-                className="px-2 py-1 text-xs font-bold text-white  rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+                className="px-5 py-3 text-[14px] font-bold text-white  rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
                 style={{
                   border: "2px solid rgba(145, 158, 171, 0.32)",
                 }}
@@ -1190,7 +1214,7 @@ useEffect(() => {
               <button
                 onClick={saveFlow}
                 disabled={saving}
-                className="px-2 py-1 text-xs font-bold text-[#13F584] border border-[#13F584] rounded-lg bg-transparent hover:bg-[#13F584]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                className="px-5 py-3 text-[14px] font-bold text-[#13F584] border border-[#13F584] rounded-lg bg-transparent hover:bg-[#13F584]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M16.0154 5.01013L14.9899 3.98464C14.5733 3.56736 14.0083 3.3335 13.4188 3.3335H4.86106C4.01715 3.3335 3.33325 4.0174 3.33325 4.86131V15.139C3.33325 15.9829 4.01715 16.6668 4.86106 16.6668H15.1388C15.9827 16.6668 16.6666 15.9829 16.6666 15.139V6.58128C16.6666 5.99178 16.4327 5.4268 16.0154 5.01013ZM5.55544 6.80568V5.41683C5.55544 5.18683 5.74211 5.00016 5.97211 5.00016H11.8054C12.0354 5.00016 12.2221 5.18683 12.2221 5.41683V6.80568C12.2221 7.03569 12.0354 7.22235 11.8054 7.22235H5.97211C5.74211 7.22235 5.55544 7.03569 5.55544 6.80568ZM9.99992 14.4446C8.6194 14.4446 7.49992 13.3252 7.49992 11.9446C7.49992 10.564 8.6194 9.44464 9.99992 9.44464C11.3804 9.44464 12.4999 10.564 12.4999 11.9446C12.4999 13.3252 11.3804 14.4446 9.99992 14.4446Z" fill="#13F584"/>

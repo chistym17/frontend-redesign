@@ -769,70 +769,22 @@ function FlowContent({ assistantId }) {
         <div className="absolute inset-0 pointer-events-none"/>
         
         <div className="relative z-10 flex items-center justify-between w-full">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => router.back()}
-            className="text-white/70 hover:text-white transition-colors p-1"
+            className=" p-2 sm:p-0.5  text-white/60 hover:text-white transition-colors"
             aria-label="Go back"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <div className="flex items-center gap-4">
-            {isEditingName ? (
-              <input
-                type="text"
-                value={flowName}
-                onChange={(e) => {
-                  const newName = e.target.value;
-                  setFlowName(newName);
-                  tf.setFlow({ name: newName });
-                  if (typeof window !== 'undefined' && assistantId) {
-                    localStorage.setItem(`flow_name_${assistantId}`, newName);
-                  }
-                }}
-                onBlur={() => {
-                  setIsEditingName(false);
-                  if (!flowName.trim()) {
-                    const defaultName = "Untitled Text Flow";
-                    setFlowName(defaultName);
-                    tf.setFlow({ name: defaultName });
-                    if (typeof window !== 'undefined' && assistantId) {
-                      localStorage.setItem(`flow_name_${assistantId}`, defaultName);
-                    }
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    setIsEditingName(false);
-                    if (!flowName.trim()) {
-                      const defaultName = "Untitled Text Flow";
-                      setFlowName(defaultName);
-                      tf.setFlow({ name: defaultName });
-                      if (typeof window !== 'undefined' && assistantId) {
-                        localStorage.setItem(`flow_name_${assistantId}`, defaultName);
-                      }
-                    }
-                  } else if (e.key === 'Escape') {
-                    setIsEditingName(false);
-                    const originalName = tf.flow.name || "Untitled Text Flow";
-                    setFlowName(originalName);
-                  }
-                }}
-                className="text-sm font-semibold text-white bg-transparent border-b border-white/30 focus:outline-none focus:border-white px-1 py-0.5 max-w-[160px]"
-                autoFocus
-              />
-            ) : (
-              <h1
-              className="text-sm font-semibold text-white cursor-pointer"
-                onClick={() => setIsEditingName(true)}
-                title="Click to edit workflow name"
-              >
-                {flowName}
+           {/* Title */}
+              <h1 className="text-sm font-semibold text-white">
+                {"Text Flow Editor"}
               </h1>
-            )}
             <span
               className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-semibold font-["Public Sans",sans-serif] ${
                 isConnected()
@@ -932,13 +884,13 @@ function FlowContent({ assistantId }) {
               <span>{saveStatus || "Save"}</span>
             </button>
         </div>)}
-         {isMobile && (
+          {isMobile && (
             <button
               onClick={() => setMobileSidebarOpen(true)}
-              className="p-2 text-white/70 hover:text-white border border-white/30 rounded-lg flex items-center gap-2"
+              className="p-1 text-white/70 hover:text-white border border-white/30 rounded-lg flex items-center gap-2"
             >
           
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
                   <span className="text-xs">More</span>
@@ -1641,31 +1593,51 @@ function FlowContent({ assistantId }) {
               
               {/* Active Toggle */}
           
-              <div className="flex items-center gap-3">
-                <p className={`text-xs ${flowActive ? 'text-emerald-300' : 'text-white/60'}`}>
-                  {flowActive ? 'Active' : 'Disabled'}
+             <div className="flex items-center gap-3">
+                <p
+                  className={`
+                    text-sm                      /* Mobile: bigger text */
+                    sm:text-xs                   /* Desktop: original */
+                    ${flowActive ? "text-emerald-300" : "text-white/60"}
+                  `}
+                >
+                  {flowActive ? "Active" : "Disabled"}
                 </p>
+
                 <button
                   type="button"
-                  className={`relative inline-flex h-6 w-12 items-center rounded-full border transition-colors ${
-                    flowActive ? 'bg-emerald-500/30 border-emerald-400/50' : 'bg-white/5 border-white/15'
-                  }`}
+                  className={`
+                    relative inline-flex
+                    h-8 w-16                     /* Mobile: larger switch */
+                    items-center rounded-full border transition-colors
+                    sm:h-6 sm:w-12               /* Desktop: original size */
+                    ${flowActive
+                      ? "bg-emerald-500/30 border-emerald-400/50"
+                      : "bg-white/5 border-white/15"}
+                  `}
                   onClick={() => setFlowActive((prev) => !prev)}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      flowActive ? 'translate-x-6' : 'translate-x-1'
-                    }`}
+                    className={`
+                      inline-block
+                      h-6 w-6                    /* Mobile: larger knob */
+                      rounded-full bg-white transition-transform
+                      sm:h-4 sm:w-4              /* Desktop: original size */
+                      ${flowActive
+                        ? "translate-x-8 sm:translate-x-6"
+                        : "translate-x-1"}
+                    `}
                   />
                 </button>
               </div>
+
 
               {/* Action Buttons */}
              <div className="flex flex-col gap-2">
             <button
               onClick={handleRun}
               disabled={!nodes.length || !isConnected()}
-              className="px-2 py-1 text-xs font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-5 py-3  text-[14px] font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed"
               style={{
                 border: "2px solid rgba(145, 158, 171, 0.32)",
               }}
@@ -1686,7 +1658,7 @@ function FlowContent({ assistantId }) {
             </button>
             <button
               onClick={handleImport}
-              className="px-2 py-1 text-xs font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+              className="px-5 py-3 text-[14px] font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
               style={{
                 border: "2px solid rgba(145, 158, 171, 0.32)",
               }}
@@ -1697,7 +1669,7 @@ function FlowContent({ assistantId }) {
             </button>
             <button
               onClick={handleExport}
-              className="px-2 py-1 text-xs font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
+              className="px-5 py-3 text-[14px] font-bold text-white rounded-lg bg-transparent hover:bg-white/10 transition-all flex items-center gap-1"
               style={{
                 border: "2px solid rgba(145, 158, 171, 0.32)",
               }}
@@ -1709,7 +1681,7 @@ function FlowContent({ assistantId }) {
             <button
               onClick={handleSave}
               disabled={loading}
-              className="px-2 py-1 text-xs font-bold text-[#13F584] border border-[#13F584] rounded-lg bg-transparent hover:bg-[#13F584]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              className="px-5 py-3 text-[14px] font-bold text-[#13F584] border border-[#13F584] rounded-lg bg-transparent hover:bg-[#13F584]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
             >
               <svg
                 width="20"

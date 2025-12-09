@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Home, Settings, AudioLines, LogIn, LogOut, MessageSquare } from 'lucide-react';
 import { useAuth } from '../lib/authContext';
+import { useRouter } from 'next/router';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, accessToken, logout } = useAuth();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsLoggedIn(!!accessToken);
@@ -46,7 +48,7 @@ const Navbar = () => {
       left: '50%',
       transform: 'translateX(-50%)',
       top: '40px',
-      background: 'radial-gradient(12.36% 81.25% at 34.02% 100%, rgba(19, 245, 132, 0.4) 0%, rgba(19, 245, 132, 0) 100%), rgba(255, 255, 255, 0.1)',
+      background: 'rgba(255, 255, 255, 0.1)',
       backdropFilter: 'blur(8px)',
       borderRadius: '40px',
       zIndex: 50
@@ -105,46 +107,95 @@ const Navbar = () => {
       </div>
 
       {/* Menu items are display: none in provided CSS, so omitted in desktop */}
+      <div
+        style={{
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: '1px',
+          gap: '4px',         // small gap between buttons
+          marginLeft: 'auto',  // pushes container to the RIGHT
+        
+        }}
+      >
+            
+            <div style={{
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: '12px 24px',
+        width: '103px',
+        height: '44px',
+        background: 'rgba(255, 255, 255, 0.1)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        backdropFilter: 'blur(8px)',
+        borderRadius: '40px',
+      }}>
 
-      <div style={{
-  boxSizing: 'border-box',
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  padding: '12px 24px',
-  gap: '24px',
-  marginLeft: 'auto',   // <-- pushes to the RIGHT
-  width: '103px',
-  height: '44px',
-  background: 'rgba(255, 255, 255, 0.1)',
-  border: '1px solid rgba(255, 255, 255, 0.2)',
-  backdropFilter: 'blur(8px)',
-  borderRadius: '40px',
-}}>
-
-        <button
-          onClick={handleAuthClick}
+              <button
+                onClick={handleAuthClick}
+                style={{
+                  width: '55px',
+                  height: '20px',
+                  fontFamily: 'DM Sans',
+                  fontStyle: 'normal',
+                  fontWeight: 400,
+                  fontSize: '16px',
+                  lineHeight: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                  color: '#FFFFFF',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                {isLoggedIn ? 'Log out' : 'Login'}
+              </button>
+            </div>
+           <div
           style={{
-            width: '55px',
-            height: '20px',
-            fontFamily: 'DM Sans',
-            fontStyle: 'normal',
-            fontWeight: 400,
-            fontSize: '16px',
-            lineHeight: '20px',
+            boxSizing: 'border-box',
             display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
             alignItems: 'center',
-            textAlign: 'center',
-            color: '#FFFFFF',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer'
+            padding: '12px 20px',
+            gap: '8px',
+            width: '125px',       // increased width to fit text
+            height: '44px',
+            background: '#13F584',
+            borderRadius: '40px',
           }}
         >
-          {isLoggedIn ? 'Log out' : 'Login'}
-        </button>
+          <button
+            onClick={() => router.push('/assistants')}
+            style={{
+              fontFamily: 'DM Sans',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              fontSize: '16px',
+              lineHeight: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              color: '#000000',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',  // prevent wrapping
+              width: '100%',          // take full parent width
+              padding: 0,
+            }}
+          >
+            Get Started
+          </button>
+        </div>
       </div>
-
     </nav>
   );
 };

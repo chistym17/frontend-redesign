@@ -474,12 +474,31 @@ const QnAList = ({ assistantId, onEdit }) => {
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => router.push(`/assistants/${assistantId}/text-flows`)}
-                          className="flex justify-center items-center px-2 py-1.5 w-[64px] min-w-[64px] h-[30px] bg-[rgba(255,171,0,0.08)] rounded-[8px] font-['Public Sans'] font-bold text-[13px] leading-[22px] text-[#FFD666] hover:bg-[rgba(255,171,0,0.15)] transition-colors"
-
+                          className="
+                            flex justify-center items-center
+                            px-4 py-3                   /* Mobile: bigger padding */
+                            w-[80px] min-w-[80px] h-[40px] /* Mobile: bigger button */
+                            sm:px-2 sm:py-1.5 sm:w-[64px] sm:min-w-[64px] sm:h-[30px] /* Desktop: original */
+                            bg-[rgba(255,171,0,0.08)] rounded-[8px]
+                            font-['Public Sans'] font-bold text-[15px] sm:text-[13px]
+                            leading-[22px] text-[#FFD666] hover:bg-[rgba(255,171,0,0.15)]
+                            transition-colors
+                          "
                         >
                           Open
                         </button>
-                        <button className="flex justify-center items-center px-2 py-1.5 w-[87px] min-w-[64px] h-[30px] bg-[rgba(145,158,171,0.08)] rounded-[8px] font-['Public Sans'] font-bold text-[13px] leading-[22px] text-[#FFFFFF] hover:bg-[rgba(145,158,171,0.12)] transition-colors">
+
+                        <button
+                          className="
+                            flex justify-center items-center
+                            px-4 py-3 w-[100px] min-w-[80px] h-[40px] /* Mobile */
+                            sm:px-2 sm:py-1.5 sm:w-[87px] sm:min-w-[64px] sm:h-[30px] /* Desktop */
+                            bg-[rgba(145,158,171,0.08)] rounded-[8px]
+                            font-['Public Sans'] font-bold text-[15px] sm:text-[13px]
+                            leading-[22px] text-[#FFFFFF] hover:bg-[rgba(145,158,171,0.12)]
+                            transition-colors
+                          "
+                        >
                           Documents
                         </button>
                       </div>
@@ -520,11 +539,31 @@ const QnAList = ({ assistantId, onEdit }) => {
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => router.push(`/assistants/${assistantId}/visual-flows`)}
-                          className="flex justify-center items-center px-2 py-1.5 w-[64px] min-w-[64px] h-[30px] bg-[rgba(255,86,48,0.08)] rounded-[8px] font-['Public Sans'] font-bold text-[13px] leading-[22px] text-[#FFAC82] hover:bg-[rgba(255,86,48,0.08)] transition-colors"
+                          className="
+                            flex justify-center items-center
+                            px-4 py-3                   /* Mobile: bigger padding */
+                            w-[80px] min-w-[80px] h-[40px] /* Mobile: bigger size */
+                            sm:px-2 sm:py-1.5 sm:w-[64px] sm:min-w-[64px] sm:h-[30px] /* Desktop: original */
+                            bg-[rgba(255,86,48,0.08)] rounded-[8px]
+                            font-['Public Sans'] font-bold text-[15px] sm:text-[13px]
+                            leading-[22px] text-[#FFAC82] hover:bg-[rgba(255,86,48,0.08)]
+                            transition-colors
+                          "
                         >
                           Open
                         </button>
-                        <button className="flex justify-center items-center px-2 py-1.5 w-[87px] min-w-[64px] h-[30px] bg-[rgba(145,158,171,0.08)] rounded-[8px] font-['Public Sans'] font-bold text-[13px] leading-[22px] text-[#FFFFFF] hover:bg-[rgba(145,158,171,0.12)] transition-colors">
+
+                        <button
+                          className="
+                            flex justify-center items-center
+                            px-4 py-3 w-[100px] min-w-[80px] h-[40px] /* Mobile */
+                            sm:px-2 sm:py-1.5 sm:w-[87px] sm:min-w-[64px] sm:h-[30px] /* Desktop */
+                            bg-[rgba(145,158,171,0.08)] rounded-[8px]
+                            font-['Public Sans'] font-bold text-[15px] sm:text-[13px]
+                            leading-[22px] text-[#FFFFFF] hover:bg-[rgba(145,158,171,0.12)]
+                            transition-colors
+                          "
+                        >
                           Documents
                         </button>
                       </div>

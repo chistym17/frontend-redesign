@@ -280,24 +280,49 @@ const ToolEditor = ({ assistantId, tool = null, onCancel, onSaved, isOpen }) => 
           
 
           {/* Tabs */}
-          <div className="flex items-center gap-4  border-b border-white/20">
+         <div className="flex items-center gap-4 border-b border-white/20">
+
             <button
-              className={`pb-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] ${
-                step === 'configure' ? 'text-white border-b-2 border-emerald-300' : 'text-white/50'
+              className={`pb-1.5 tracking-[0.1em] ${
+                step === 'configure'
+                  ? 'text-white border-b-2 border-emerald-300'
+                  : ''
               }`}
+              style={{
+                fontStyle: "normal",
+                fontWeight: 500,
+                fontSize: "14px",
+                lineHeight: "22px",
+                textTransform: "capitalize",
+                color: step === 'configure' ? '#FFFFFF' : '#919EAB'
+              }}
               onClick={() => setStep('configure')}
             >
               Configuration
             </button>
+
             <button
-              className={`pb-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] ${
-                step === 'verify' ? 'text-white border-b-2 border-emerald-300' : 'text-white/50'
+              className={`pb-1.5 tracking-[0.1em] ${
+                step === 'verify'
+                  ? 'text-white border-b-2 border-emerald-300'
+                  : ''
               }`}
+              style={{
+                fontStyle: "normal",
+                fontWeight: 500,
+                fontSize: "14px",
+                lineHeight: "22px",
+                textTransform: "capitalize",
+                color: step === 'verify' ? '#FFFFFF' : '#919EAB'
+              }}
               onClick={() => setStep('verify')}
             >
               Verify
             </button>
+
           </div>
+
+
 
           {step === 'configure' ? (
             <form onSubmit={onSubmit} className="space-y-4 pt-4">

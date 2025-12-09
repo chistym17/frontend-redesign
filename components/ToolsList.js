@@ -360,8 +360,16 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
 
                       <div
                         onClick={() => setRowsDropdownOpen(!rowsDropdownOpen)}
-                        className="flex items-center justify-center bg-transparent text-white text-[12px] px-2 py-1 w-[50px] rounded-xl outline-none border border-white/[0.2] hover:bg-white/[0.1] transition-all cursor-pointer"
+                        className="
+                          flex items-center justify-center 
+                          bg-transparent text-white 
+                          text-[14px] px-3 py-2 w-[60px] 
+                          rounded-xl outline-none border border-white/[0.2]
+                          hover:bg-white/[0.1] transition-all cursor-pointer
+                          sm:text-[12px] sm:px-2 sm:py-1 sm:w-[50px]
+                        "
                       >
+
                         {itemsPerPage === filteredTools.length ? "All" : itemsPerPage}
                         <span className="ml-1 text-[10px]">
                           <svg width="12" height="6" viewBox="0 0 12 6" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -371,7 +379,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       </div>
 
                       {rowsDropdownOpen && (
-                        <div className="absolute left-[85px] top-full mt-[2px] w-[50px] bg-black/80  rounded-lg backdrop-blur-2xl z-50">
+                        <div className="absolute left-[85px] top-full mt-[2px] w-[60px] bg-black/80 rounded-lg backdrop-blur-2xl z-50 sm:w-[50px]">
                           {[5, 10, 20, "All"].map((option) => (
                             <div
                               key={option}
@@ -384,7 +392,7 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                                 setCurrentPage(1);
                                 setRowsDropdownOpen(false);
                               }}
-                              className={`px-2 py-1 text-[12px] text-white hover:bg-white/10 rounded-[7px] cursor-pointer text-center ${
+                              className={`px-3 py-2 text-[14px] text-white hover:bg-white/10 rounded-[7px] cursor-pointer text-center sm:px-2 sm:py-1 sm:text-[12px] ${
                                 (option === "All" && itemsPerPage === filteredTools.length) || option === itemsPerPage
                                   ? "bg-white/10"
                                   : ""
@@ -398,9 +406,17 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                     </div>
 
                     {/* Page info */}
-                    <span className="text-white text-[12px] min-w-[100px] text-center">
+                    <span className="
+                      text-white 
+                      text-[14px]           /* Mobile: bigger */
+                      min-w-[100px]         /* Mobile: wider */
+                      text-center
+                      sm:text-[12px]        /* Desktop: normal */
+                
+                    ">
                       Page {totalPages > 0 ? currentPage : 0} of {totalPages}
                     </span>
+
 
                     {/* Navigation Buttons */}
                     <div className="flex items-center gap-2">
@@ -409,7 +425,9 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToFirstPage}
                         disabled={currentPage === 1 || totalPages === 0}
-                        className={`w-10 h-8 flex items-center justify-center rounded-lg transition-all text-2xl ${
+                        className={`w-12 h-10 flex items-center justify-center rounded-lg 
+                          transition-all text-3xl
+                          sm:w-10 sm:h-8 sm:text-2xl ${
                           currentPage === 1 ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >
@@ -420,7 +438,9 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToPreviousPage}
                         disabled={currentPage === 1 || totalPages === 0}
-                        className={`w-10 h-8 flex items-center justify-center rounded-lg transition-all text-2xl ${
+                        className={`w-12 h-10 flex items-center justify-center rounded-lg 
+                          transition-all text-3xl
+                          sm:w-10 sm:h-8 sm:text-2xl ${
                           currentPage === 1 ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >
@@ -431,7 +451,9 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToNextPage}
                         disabled={currentPage === totalPages || totalPages === 0}
-                        className={`w-10 h-8 flex items-center justify-center rounded-lg transition-all text-2xl ${
+                        className={`w-12 h-10 flex items-center justify-center rounded-lg 
+                          transition-all text-3xl
+                          sm:w-10 sm:h-8 sm:text-2xl ${
                           currentPage === totalPages ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >
@@ -442,7 +464,9 @@ const ToolsList = ({ assistantId, onAdd, onEdit }) => {
                       <button
                         onClick={goToLastPage}
                         disabled={currentPage === totalPages || totalPages === 0}
-                        className={`w-10 h-8 flex items-center justify-center rounded-lg transition-all text-2xl ${
+                        className={`w-12 h-10 flex items-center justify-center rounded-lg 
+                          transition-all text-3xl
+                          sm:w-10 sm:h-8 sm:text-2xl ${
                           currentPage === totalPages ? "opacity-40 cursor-not-allowed" : "hover:bg-white/[0.08]"
                         }`}
                       >

@@ -279,16 +279,29 @@ export default function ComponentLibraryPanel({ assistantId, nodeType, onSelectC
             <h2 className="text-xl font-semibold text-white/90 tracking-tight">Component Library</h2>
             <p className="text-sm text-white/60">Reusable node configurations</p>
           </div>
+          
           <button
             onClick={() => onOpenCreateModal && onOpenCreateModal()}
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-center transition-all"
+            className="
+              flex items-center justify-center gap-0        /* Mobile: square, no gap */
+              px-3 py-3 rounded-lg transition-all
+              sm:px-4 sm:py-2 sm:gap-2 sm:flex-row        /* Desktop: rectangle with text & icon */
+              text-[#9EFBCD]
+            " 
             style={{
               color: "#9EFBCD",
               background: "rgba(19, 245, 132, 0.08)",
             }}
           >
-            New Component
+            {/* Icon always visible */}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+
+            {/* Text only on desktop */}
+            <span className="hidden sm:inline text-sm font-semibold">New Component</span>
           </button>
+
         </div>
 
         {/* Filters */}
