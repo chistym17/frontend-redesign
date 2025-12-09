@@ -336,50 +336,64 @@ const HeroSection = () => {
 
         </div>
       </section>
-
+      
       {/* Use Cases Section */}
-      <section className="relative mt-10 min-h-[850px] p-10">
-        {/* Header */}
-        <div className="relative max-w-7xl mx-auto text-center mb-12">
-          <h2 className="text-4xl sm:text-5xl font-semibold text-white mb-2">
-            Built for Every Industry
-          </h2>
-          <p className="text-gray-400 max-w-xl mx-auto">
-            Customize AI agents for your specific business needs
-          </p>
-        </div>
+      <section className="relative mt-10 min-h-[850px]">
+        {/* BACKGROUND SPOTLIGHT EFFECT: Bright center, dark edges */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(62.66% 66.69% at 50% 50%,  0%, rgba(115, 115, 115, 0) 74.84%)',
+          }}
+        />
+        {/* Existing background gradient for the grid lines */}
+        <div
+          className="absolute top-0 left-0 w-full h-full opacity-50"
+        />
 
-        {/* Cards data */}
-        {/*
-          Define an array of objects for each card:
-          title: string, subtitle: string
-        */}
-        
+        {/* Content Wrapper: Ensure content is above the background effects with z-index */}
+        <div className="relative z-10 max-w-7xl mx-auto pt-10 pb-16">
+            
+          {/* Header */}
+          <div className="relative max-w-7xl mx-auto text-center mb-12">
+            <h2 className="text-4xl sm:text-5xl font-semibold text-white mb-2">
+              Built for Every Industry
+            </h2>
+            <p className="text-gray-400 max-w-xl mx-auto">
+              Customize AI agents for your specific business needs
+            </p>
+          </div>
 
-        {/* Responsive Chessboard */}
-        <div className="relative max-w-7xl mx-auto flex flex-wrap justify-center gap-4 sm:gap-1 md:gap-0">
+          {/* Responsive Chessboard (the grid of cards) with radial mask for fade effect */}
+          <div 
+            className="relative max-w-7xl mx-auto flex flex-wrap justify-center gap-4 sm:gap-1 md:gap-0"
+            style={{
+              maskImage: 'radial-gradient(62.66% 66.69% at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 74.84%)',
+              WebkitMaskImage: 'radial-gradient(62.66% 66.69% at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 74.84%)',
+            }}
+          >
+            {/* ... (Your existing map logic for cards goes here) ... */}
+            {Array.from({ length: 28 }).map((_, idx) => {
+              const row = Math.floor(idx / 7);
+              const col = idx % 7;
+              const showCard = (row + col) % 2 !== 0;
+              const isHiddenOnMobile = row === 3;
 
-          {Array.from({ length: 28 }).map((_, idx) => {
-            const row = Math.floor(idx / 7);
-            const col = idx % 7;
-
-            // Alternate pattern for cards
-            const showCard = (row + col) % 2 !== 0;
-
-            // Hide last row on mobile
-            const isHiddenOnMobile = row === 3;
-
-            if (showCard) {
-              const cardData = cardsData[idx % cardsData.length]; // loop over text if more cards than data
-              return (
-                <div
-                  key={idx}
-                  className={`relative w-[155px] sm:w-[140px] h-[158px] sm:h-[140px] p-4 rounded-[20px] flex flex-col justify-center items-center 
-                              bg-[rgba(19,245,132,0.04)] border border-[rgba(145,158,171,0.12)]
-                              transition cursor-pointer hover:bg-[rgba(19,245,132,0.08)] m-[0px]
-                              ${isHiddenOnMobile ? "hidden sm:flex" : "flex"}`}
-                >
-                  {/* SVG Icon Top-Right */}
+              if (showCard) {
+                const cardData = cardsData[idx % cardsData.length];
+                return (
+                  <div
+                    key={idx}
+                    // Added z-20 to ensure cards are above the new background layer
+                    className={`relative z-20 w-[155px] sm:w-[140px] h-[158px] sm:h-[140px] p-4  flex flex-col justify-center items-center
+                                bg-[rgba(19,245,132,0.04)] border border-[rgba(145,158,171,0.12)]
+                                transition cursor-pointer hover:bg-[rgba(19,245,132,0.08)] m-[0px]
+                                ${isHiddenOnMobile ? "hidden sm:flex" : "flex"}`}
+                  >
+                    
+                    {/* SVG Icon Top-Right */}
+                    <div className="absolute top-2 left-2 w-6 h-6">
+                    
                   <div className="absolute top-2 left-2 w-6 h-6">
                       <svg width="35" height="35" viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="61.5177" height="61.5177" rx="30.7589" fill="white" fill-opacity="0.04"/>
@@ -388,49 +402,47 @@ const HeroSection = () => {
                       </svg>
 
                   </div>
+                    </div> 
 
                     {/* Card Text */}
-                  <div className="text-white font-semibold text-[18px] text-center leading-[22px] mt-6">
-                    {cardData.title}
-                  </div>
-                  <div className="text-[#919EAB] text-[12px] text-center leading-[16px]">
-                      {cardData.subtitle}
+                    <div className="text-white font-semibold text-[18px] text-center leading-[22px] mt-6">
+                      {cardData.title}
                     </div>
-                </div>
+                    <div className="text-[#919EAB] text-[12px] text-center leading-[16px]">
+                        {cardData.subtitle}
+                      </div>
+                  </div>
+                );
+              } else {
+                // Empty card matching the grid lines specifications
+                return (
+                  <div
+                    key={idx}
+                    className={`w-[155px] sm:w-[140px] h-[158px] sm:h-[140px] border m-[0px] hidden sm:block`}
+                    style={{ borderColor: '#565656', borderWidth: '1.04956px' }}
+                  />
+                );
+              }
+            })}
+          </div>
 
-              );
-            } else {
-              // Empty card hidden on mobile
-              return (
-                <div
-                  key={idx}
-                  className={`w-[155px] sm:w-[140px] h-[158px] sm:h-[140px] border border-[rgba(86,86,86,0.5)] m-[0px] hidden sm:block`}
-                />
-              );
-            }
-          })}
-        </div>
-
-        {/* CTA */}
-        <div className="relative flex justify-center mt-16">
-         <button 
-                  onClick={() => router.push('/assistants')}
-                  className="
-                    group relative flex items-center justify-center gap-2.5 bg-[#13F584] 
-                    hover:from-emerald-700 hover:to-green-700 
-                    text-black px-4 py-4 rounded-full font-semibold 
-                    transition-all duration-300 shadow-lg shadow-emerald-600/20 
-                    hover:shadow-xl hover:shadow-emerald-600/30 hover:-translate-y-0.5
-                  "
-                >
-                  <span>Get Started </span>
-                </button>
-
+          {/* CTA */}
+          <div className="relative z-10 flex justify-center mt-0" style={{ left: '0px', top: '10px' }}>
+          <button 
+                    onClick={() => router.push('/assistants')}
+                    className="
+                      group relative flex items-center justify-center gap-2.5 bg-[#13F584] 
+                      hover:from-emerald-700 hover:to-green-700 
+                      text-black px-4 py-4 rounded-full font-semibold 
+                      transition-all duration-300 shadow-lg shadow-emerald-600/20 
+                      hover:shadow-xl hover:shadow-emerald-600/30 hover:-translate-y-0.5
+                    "
+                  >
+                    <span>Get Started </span>
+                  </button>
+          </div>
         </div>
       </section>
-
-
-
 
       {/* Flow Editor Showcase */}
       <section className="relative mt-10 py-20  overflow-hidden">
